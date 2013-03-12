@@ -10,7 +10,7 @@ define("PASSWORD" , 'mzlluhgycwrzcare'); // Your google account password
 //-------------------------------------------------------------------------------
 // base
 define("HOSTNAME_BASE", "localhost");
-define("DATABASE_BASE", "compte");
+define("DATABASE_BASE", "comptes");
 define("USERNAME_BASE", "root");
 define("PASSWORD_BASE", "");
 

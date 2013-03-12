@@ -45,7 +45,7 @@ require_once(ROOT.'classes/database.php');
 					
 					<div class="widget-content">
 						
-						<form id="import_fichier" action="import.php" enctype='multipart/form-data'>
+						<form id="import_fichier" action="import.php" enctype='multipart/form-data' method="POST">
 							<label for="fichier">test</label>
 							<input type="file" name="fichier_import">    
           					<input type="submit" value="Envoyer">  
