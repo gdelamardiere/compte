@@ -1,16 +1,12 @@
 <?php
-session_start(); 
 header('Content-Type: text/html; charset=utf-8');
 require_once('conf.php'); 
 require_once(ROOT.'classes/database.php');
   require_once ('header.html');
   ?>
     
-<div class="main">
 	
-	<div class="main-inner">
-
-	    <div class="container">
+	
 	
 	      <div class="row">
 	      	
@@ -60,11 +56,9 @@ require_once(ROOT.'classes/database.php');
 	      	
 	      </div> <!-- /row -->
 	
-	    </div> <!-- /container -->
-	    
-	</div> <!-- /main-inner -->
+
     
-</div> <!-- /main -->
+
     
 
 

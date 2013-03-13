@@ -1,5 +1,4 @@
 <?php
-session_start(); 
 require_once('conf.php'); 
 require_once(ROOT.'classes/database.php');
 require_once(ROOT.'lib/file.lib.php');
@@ -31,10 +30,11 @@ if(isset($_FILES['fichier_import'])){
 		// on crée la requête SQL
 		$stmt = $pdo->prepare('SELECT * FROM regex_replace where TYPE is not null order by ordre ');
 		$stmt->execute();
-		$aRegex_find=array();
+		/*$aRegex_find=array();
 		while($assoc_keywords2=$stmt->fetch(PDO::FETCH_ASSOC)){
 			$aRegex_find[]=$assoc_keywords2;
-		}
+		}*/
+		$aRegex_find=$stmt->fetchAll(PDO::FETCH_ASSOC);
 //todo cf si fetchall
 		
 
@@ -70,28 +70,35 @@ if(isset($_FILES['fichier_import'])){
 		VALUES (:id_operations,:type,:libelle,:id_releve,:montant,:date)"
 		);
 
+		$stmt_erreur = $pdo->prepare("INSERT INTO  `releve_detail` (
+			trouve,type,libelle,id_releve,montant,date
+			)
+		VALUES (:trouve,:type,:libelle,:id_releve,:montant,:date)"
+		);
 
-		$ligne_erronne=array();
 		foreach($aContenuFichier as $key=> $value){
 			$j=0;
+			$montant=number_format(floatval(str_replace(",",".",$value[3])) , 2,',','' );
+			$date=preg_replace("#([0-9]{2})/([0-9]{2})/([0-9]{4})#","$3-$2-$1",$value[0]);							
+			$type=($montant<0)?"DEBIT":"CREDIT";	
 			while($j<sizeof($aRegex_find) && !preg_match($aRegex_find[$j]['regex'],$value[1])){
 				$j++;
 			}
-			if($j>=sizeof($aRegex_find)){$ligne_erronne[]=$value;}
-			else{
-				$montant=number_format(floatval(str_replace(",",".",$value[3])) , 2,',','' );
-				$type=($montant<0)?"DEBIT":"CREDIT";		    		
-				$val=array('id_releve'=>$id_releve,'id_operations'=>$aRegex_find[$j]['id_operations'],'type'=>$type,"libelle"=>$value[1],"montant"=>$montant,'date'=>$value[0]);  
+			if($j>=sizeof($aRegex_find)){
+				$val=array('id_releve'=>$id_releve,'trouve'=>'0','type'=>$type,"libelle"=>$value[1],"montant"=>$montant,'date'=>$date);
+				$stmt_erreur->execute($val);
+			}
+			else{	    		
+				$val=array('id_releve'=>$id_releve,'id_operations'=>$aRegex_find[$j]['id_operations'],'type'=>$type,"libelle"=>$value[1],"montant"=>$montant,'date'=>$date);  
 				$stmt->execute($val);
 			}
 		}
-		var_dump($ligne_erronne);
 
 
 
 
 
-//header('Location: update_releve.php?id_releve='.$id_releve); 
+header('Location: releve.php?id_releve='.$id_releve); 
 
 
 

@@ -207,7 +207,123 @@
 	}
 	
 	
-	
+
+
+
+
+
+/*table*/
+
+.detail_releve table {
+		border-collapse:collapse;
+		background:#EFF4FB url(http://www.roscripts.com/images/teaser.gif) repeat-x;
+		border-left:1px solid #686868;
+		border-right:1px solid #686868;
+		font:0.8em/145% 'Trebuchet MS',helvetica,arial,verdana;
+		color: #333;
+}
+
+.detail_releve td, th {
+		padding:5px;
+}
+
+.detail_releve caption {
+		padding: 0 0 .5em 0;
+		text-align: left;
+		font-size: 1.4em;
+		font-weight: bold;
+		text-transform: uppercase;
+		color: #333;
+		background: transparent;
+}
+
+/* =links
+----------------------------------------------- */
+
+.detail_releve table a {
+		color:#950000;
+		text-decoration:none;
+}
+
+.detail_releve table a:link {}
+
+.detail_releve table a:visited {
+		font-weight:normal;
+		color:#666;
+		text-decoration: line-through;
+}
+
+.detail_releve table a:hover {
+		border-bottom: 1px dashed #bbb;
+}
+
+/* =head =foot
+----------------------------------------------- */
+
+.detail_releve thead th, tfoot th, tfoot td {
+		background:#333 url(http://www.roscripts.com/images/llsh.gif) repeat-x;
+		color:#fff
+}
+
+.detail_releve tfoot td {
+		text-align:right
+}
+
+/* =body
+----------------------------------------------- */
+
+.detail_releve tbody th, tbody td {
+		border-bottom: dotted 1px #333;
+}
+
+.detail_releve tbody th {
+		white-space: nowrap;
+}
+
+.detail_releve tbody th a {
+		color:#333;
+}
+
+.detail_releve .odd {color:red;}
+
+.detail_releve tbody tr:hover {
+		background:#fafafa
+}
+
+.edition{
+	display: none;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	
 	
 	
