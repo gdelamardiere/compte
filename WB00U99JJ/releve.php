@@ -61,6 +61,8 @@ if(isset($_GET['id_releve'])){
 
 
 	$aPointage=array("0"=>"","-1"=>"en erreur","1"=>"ok");
+	$debit=0;
+	$credit=0;
 
 	require_once ('header.html');
 	?>
@@ -93,12 +95,6 @@ if(isset($_GET['id_releve'])){
 					<th>Pointage</th>
 				</tr>
 			</thead>
-			<tfoot>
-				<tr>
-					<th scope="row">Total</th>
-					<td colspan="4">67 designs</td>
-				</tr>
-			</tfoot>
 			<tbody>
 			<?php foreach($aReleve as $value){
 				switch($value['pointe']){
@@ -113,13 +109,21 @@ if(isset($_GET['id_releve'])){
 						break;
 
 				}
+				switch($value['type']){
+					case 'DEBIT':
+						$debit+=$value['montant'];
+						break;
+					case 'CREDIT':
+						$credit+=$value['montant'];
+						break;
+				}
 
 				echo "<tr>
 				<td>n°".$value['id_releve']." du ".$value['mois_releve']."/".$value['annee_releve']."</td>
 				<td>".$value['date']."</td>
 				<td>".$value['libelle']."</td>
 				<td>".$value['operations']."</td>
-				<td class='odd'>".$value['montant']."</td>
+				<td class='odd'>".$value['montant']." &euro;</td>
 				<td>".$value['type']."</td> 
 
 				<td class='lecture'>".$value['categorie']."</td> 
@@ -139,6 +143,16 @@ if(isset($_GET['id_releve'])){
 				</tr>";
 			}?>  
 			</tbody>
+
+			<tfoot>
+				<tr>
+					<th>Total Débit : <?php echo $debit;?> &euro;</th>
+					<td></td>
+					<th>Total Crédit : <?php echo $credit;?> &euro;</th>
+					<td colspan="2"></td>
+					<th colspan="3">Total : <?php echo $debit+$credit;?> &euro;</th>
+				</tr>
+			</tfoot>
 		</table>
 	</div>
 <?php if(sizeof($aReleveErreur>0) && !empty($aReleveErreur)){?>	
@@ -159,14 +173,16 @@ if(isset($_GET['id_releve'])){
 					<th>Pointage</th>
 				</tr>
 			</thead>
-			<tfoot>
-				<tr>
-					<th scope="row">Total</th>
-					<td colspan="4">67 designs</td>
-				</tr>
-			</tfoot>
 			<tbody>
 			<?php foreach($aReleveErreur as $value){
+				switch($value['type']){
+					case 'DEBIT':
+						$debit+=$value['montant'];
+						break;
+					case 'CREDIT':
+						$credit+=$value['montant'];
+						break;
+				}
 				echo "<tr>
 				<td>n°".$value['id_releve']." du ".$value['mois_releve']."/".$value['annee_releve']."</td>
 				<td>".$value['date']."</td>
@@ -195,6 +211,15 @@ if(isset($_GET['id_releve'])){
 				</tr>";
 			}?>  
 			</tbody>
+			<tfoot>
+				<tr>
+					<th>Total Débit : <?php echo $debit;?> &euro;</th>
+					<td></td>
+					<th>Total Crédit : <?php echo $credit;?> &euro;</th>
+					<td colspan="2"></td>
+					<th colspan="3">Total : <?php echo $debit+$credit;?> &euro;</th>
+				</tr>
+			</tfoot>
 		</table>
 	</div>
 <?php
