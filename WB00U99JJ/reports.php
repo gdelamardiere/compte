@@ -30,7 +30,12 @@ require_once ('header.html');
 </div> <!-- /row -->
 
 <div class="row">
-
+<div class="quintile-outer-container ui-widget ui-corner-all">
+        <div class="quintile-toolbar ui-widget-header  ui-corner-top">
+            <span class="quintile-title">Income Level:  First Quintile</span>
+            <div class="quintile-toggle ui-icon ui-icon-arrowthickstop-1-n"></div>
+            <div class="ui-icon ui-icon-newwin"></div>
+        
 	<div class="span6">
 
 		<div class="widget">
@@ -38,11 +43,12 @@ require_once ('header.html');
 			<div class="widget-header">
 				<i class="icon-star"></i>
 				<h3>Découpage en catégorie</h3>
+				<span class="print" onclick='$("#percentByCategorie").print();'>test</span>
 			</div> <!-- /widget-header -->
 
 			<div class="widget-content">
 
-				<div id="percentByCategorie" style="height:400px;width:500px; "></div>
+				<div id="percentByCategorie" style="height:400px;width:500px; " class="jqplot-target"></div>
 
 			</div> <!-- /widget-content -->
 
@@ -53,6 +59,12 @@ require_once ('header.html');
 
 	</div> <!-- /span6 -->
 
+
+</div>
+                </div>
+    </div> 
+
+    
 
 	<div class="span6">
 
@@ -128,14 +140,7 @@ require_once ('header.html');
 <div id="plot2" style="height:400px;width:500px; "></div>
 
 
- <div class="quintile-outer-container ui-widget ui-corner-all">
-        <div class="quintile-toolbar ui-widget-header  ui-corner-top">
-            <span class="quintile-title">Income Level:  First Quintile</span>
-            <div class="quintile-toggle ui-icon ui-icon-arrowthickstop-1-n"></div>
-            <div class="ui-icon ui-icon-newwin"></div>
-        </div>
-                </div>
-    </div> 
+ 
 
 
 
@@ -366,6 +371,8 @@ $(document).ready(function(){
             div.parent().fadeOut(600);
             $('div.overlay-shadow').fadeOut(1000);
         });
+
+
 
 
 

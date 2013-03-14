@@ -16,7 +16,7 @@
 
 
 // Create a jquery plugin that prints the given element.
-jQuery.fn.print = function(){
+jQuery.fn.print = function(){alert('1');
 	// NOTE: We are trimming the jQuery collection down to the
 	// first element in the collection.
 	if (this.size() > 1){
@@ -24,13 +24,13 @@ jQuery.fn.print = function(){
 		return;
 	} else if (!this.size()){
 		return;
-	}
-
-    var chart = $(this).closest('div.quintile-outer-container').find('div.jqplot-target');
+	}alert('f');
+var imgData = $('#percentByCategorie').jqplotToImageStr({}); alert('2');
+   // var chart = $(this).closest('div.quintile-outer-container').find('div.jqplot-target');
     // var imgelem = chart.jqplotToImageElem();
-    var imageElemStr = chart.jqplotToImageElemStr();
+ //   var imageElemStr = chart.jqplotToImageElemStr();
     // var statsrows = $(this).closest('div.quintile-outer-container').find('table.stats-table tr');
-    var statsTable = $('<div></div>').append($(this).closest('div.quintile-outer-container').find('table.stats-table').clone());
+    // var statsTable = $('<div></div>').append($(this).closest('div.quintile-outer-container').find('table.stats-table').clone());alert('3');
     // var rowstyles = window.getComputedStyle(statsrows.get(0), '');
  
 	// ASSERT: At this point, we know that the current jQuery
@@ -92,17 +92,23 @@ jQuery.fn.print = function(){
             <tr> \
                 <td class="chart-cell">');
 
-    objDoc.write(imageElemStr);
+    objDoc.write(imgData);
     
     objDoc.write('</td> <td class="stats-cell">');
 
-    objDoc.write(statsTable.html());
+    // objDoc.write(statsTable.html());
 
     objDoc.write('</td></tr></table></div></div>');
 
 	objDoc.write( "</body>" );
 	objDoc.write( "</html>" );
 	objDoc.close();
+
+
+// objDoc.write( this.html() );
+// objDoc.write( "</body>" );
+// objDoc.write( "</html>" );
+// objDoc.close();
  
  	// 
 	// When the iframe is completely loaded, print it.
