@@ -10,6 +10,7 @@ $stmt = $pdo->prepare("SELECT r.`id`,r.mois_releve,r.annee_releve,
 							(SELECT SUM(montant) from releve_detail where id_releve=r.id AND type='CREDIT') as total_credit,
 							(SELECT count(*)  from releve_detail where id_releve=r.id ) as nb_operations,
 							(SELECT count(*)  from releve_detail where id_releve=r.id AND trouve='0') as nb_operations_erreur,
+							(SELECT count(*)  from releve_detail where id_releve=r.id AND (id_cat='1' OR id_cat is null)) as nb_operations_sans_categorie,
 							(SELECT count(*)  from releve_detail where id_releve=r.id AND pointe='0') as nb_operations_non_pointe,
 							(SELECT count(*)  from releve_detail where id_releve=r.id AND pointe='-1') as nb_operations_pointe_erreur,
 							(SELECT count(*)  from releve_detail where id_releve=r.id AND pointe='1') as nb_operations_pointe_ok
@@ -33,6 +34,7 @@ $stmt = $pdo->prepare("SELECT r.`id`,r.mois_releve,r.annee_releve,
 					<th>Total</th>
 					<th>Nb Opé</th>
 					<th>Nb Opé non trouvé</th>
+					<th>Nb Opé sans catégorie</th>
 					<th>Nb opé pointé</th>
 					<th>Nb opé non pointé</th>
 					<th>Nb opé pointé en erreur</th>
@@ -49,6 +51,7 @@ $stmt = $pdo->prepare("SELECT r.`id`,r.mois_releve,r.annee_releve,
 				<td>".$total."  &euro;</td>
 				<td >".$value['nb_operations']."</td>
 				<td >".$value['nb_operations_erreur']."</td>
+				<td >".$value['nb_operations_sans_categorie']."</td>
 				<td>".$value['nb_operations_pointe_ok']."</td> 
 				<td >".$value['nb_operations_non_pointe']."</td>
 				<td >".$value['nb_operations_pointe_erreur']."</td>

@@ -1,7 +1,7 @@
-$(function () {
+function pie() {
 		var data = [];
 		var series = Math.floor(Math.random()*10)+1;
-		var series = 4;
+		var series = 5;
 		for( var i = 0; i<series; i++)
 		{
 			data[i] = { label: "Series"+(i+1), data: Math.floor(Math.random()*100)+1 }
@@ -38,4 +38,4 @@ $(function () {
 			},
 	});
 	
-	});
+});

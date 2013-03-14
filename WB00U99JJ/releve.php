@@ -20,6 +20,24 @@ if(isset($_GET['id_releve'])){
 	$stmt->execute();
 
 
+	$stmt = $pdo->prepare("SELECT r.`id`,r.mois_releve,r.annee_releve,
+							(SELECT SUM(montant) from releve_detail where id_releve=r.id AND type='DEBIT') as total_debit,
+							(SELECT SUM(montant) from releve_detail where id_releve=r.id AND type='CREDIT') as total_credit,
+							(SELECT count(*)  from releve_detail where id_releve=r.id ) as nb_operations,
+							(SELECT count(*)  from releve_detail where id_releve=r.id AND trouve='0') as nb_operations_erreur,
+							(SELECT count(*)  from releve_detail where id_releve=r.id AND (id_cat='1' OR id_cat is null)) as nb_operations_sans_categorie,
+							(SELECT count(*)  from releve_detail where id_releve=r.id AND pointe='0') as nb_operations_non_pointe,
+							(SELECT count(*)  from releve_detail where id_releve=r.id AND pointe='-1') as nb_operations_pointe_erreur,
+							(SELECT count(*)  from releve_detail where id_releve=r.id AND pointe='1') as nb_operations_pointe_ok
+						FROM `releve` r 
+						WHERE r.id=:id_releve
+						"
+						);
+
+	$stmt->execute(array("id_releve"=>$_GET['id_releve']));
+	$aGlobalReleve=$stmt->fetch(PDO::FETCH_ASSOC);
+
+
 
 	$stmt = $pdo->prepare("SELECT rd.*,r.mois_releve,r.annee_releve,o.nom_operations as operations, lc.libelle as categorie
 		from releve_detail rd
@@ -63,9 +81,65 @@ if(isset($_GET['id_releve'])){
 	$aPointage=array("0"=>"","-1"=>"en erreur","1"=>"ok");
 	$debit=0;
 	$credit=0;
-
+	$total=$aGlobalReleve['total_debit']+$aGlobalReleve['total_credit'];
 	require_once ('header.html');
 	?>
+	<link href="css/pages/reports.css" rel="stylesheet">
+	<div class="widget big-stats-container">
+	      			
+	      			<div class="widget-content">
+	      				
+			      		<div id="big_stats" class="cf">
+							<div class="stat">								
+								<h4>Nb total <br/>d'opérations</h4>
+								<span class="value" id="nb_operations"><?php echo $aGlobalReleve['nb_operations'];?></span>								
+							</div> <!-- .stat -->
+							
+							<div class="stat">								
+								<h4>Total Débit</h4>
+								<span class="value" id="total_debit"><?php echo $aGlobalReleve['total_debit'];?> &euro;</span>								
+							</div> <!-- .stat -->
+							
+							<div class="stat">								
+								<h4>Total Crédit</h4>
+								<span class="value" id="total_credit"><?php echo $aGlobalReleve['total_credit'];?> &euro;</span>								
+							</div> <!-- .stat -->
+
+							<div class="stat">								
+								<h4>Montant total</h4>
+								<span class="value" id="total"><?php echo $total;?> &euro;</span>								
+							</div> <!-- .stat -->
+
+							<div class="stat">								
+								<h4>Nb d'opérations <br/>sans catégorie</h4>
+								<span class="value" id="nb_operations_sans_categorie"><?php echo $aGlobalReleve['nb_operations_sans_categorie'];?></span>								
+							</div> <!-- .stat -->
+							
+							<div class="stat">								
+								<h4>Nb d'opérations <br/>mal enregistrés</h4>
+								<span class="value" id="nb_operations_erreur"><?php echo $aGlobalReleve['nb_operations_erreur'];?></span>								
+							</div> <!-- .stat -->
+
+							<div class="stat">								
+								<h4>Nb d'opérations <br/>pointés</h4>
+								<span class="value" id="nb_operations_pointe_ok"><?php echo $aGlobalReleve['nb_operations_pointe_ok'];?></span>								
+							</div> <!-- .stat -->
+
+							<div class="stat">								
+								<h4>Nb d'opérations <br/>à pointer</h4>
+								<span class="value" id="nb_operations_non_pointe"><?php echo $aGlobalReleve['nb_operations_non_pointe'];?></span>								
+							</div> <!-- .stat -->
+
+							<div class="stat">								
+								<h4>Nb d'opérations <br/>pointés en erreur</h4>
+								<span class="value" id="nb_operations_pointe_erreur"><?php echo $aGlobalReleve['nb_operations_pointe_erreur'];?></span>								
+							</div> <!-- .stat -->
+						</div>
+					
+					</div> <!-- /widget-content -->
+					
+				</div> <!-- /widget -->
+
 
 	<form method="post" action="#">
 		<div class="bouton_edition">

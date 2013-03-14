@@ -23,7 +23,7 @@
 
 #big_stats .stat
 {
-	width: 25%;
+	/*width: 25%;*/
 	height: 90px;
 	text-align: center;
 	display: table-cell;
@@ -44,15 +44,16 @@
 
 #big_stats .stat h4
 {
-	font-size: 11px;
+	font-size: 15px;
 	font-weight: bold;
 	color: #777;
 	margin-bottom: 1.5em;
+	height: 30px;
 }
 
 #big_stats .stat .value
 {
-	font-size: 56px;
+	font-size: 26px;
 	font-weight: bold;
 	color: #333;
 	line-height: 1em;

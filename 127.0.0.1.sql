@@ -19,7 +19,7 @@ SET time_zone = "+00:00";
 --
 -- Base de données: `comptes`
 --
-DROP DATABASE `comptes`;
+DROP DATABASE IF EXISTS `comptes`;
 CREATE DATABASE `comptes` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci;
 USE `comptes`;
 
@@ -433,16 +433,5 @@ ALTER TABLE `releve_detail`
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-DELIMITER $$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `update_releve_detail`()
-BEGIN
-      update releve_detail rd  set rd.id_cat=
-             (select k.id_cat
-              from keywords k
-              where rd.libelle REGEXP k.value
-              limit 1)
-       where rd.id_cat is null ;
-END$$
 
-DELIMITER ; 
 
