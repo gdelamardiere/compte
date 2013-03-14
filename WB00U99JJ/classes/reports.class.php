@@ -74,7 +74,7 @@ class reports{
 		$requete->execute();
 		$resultat=array();
 		while($result=$requete->fetch(PDO::FETCH_ASSOC)){
-			$resultat[$result['id_releve']]= $result;
+			$resultat[$result['id_releve']][]= $result;
 		}
 		return $resultat;
 	}
@@ -107,7 +107,7 @@ class reports{
 		$requete->execute();
 		$resultat=array();
 		while($result=$requete->fetch(PDO::FETCH_ASSOC)){
-			$resultat[$result['id_releve']]= $result;
+			$resultat[$result['id_releve']][$result['libelle']]= $result['montant'];
 		}
 		return $resultat;
 	}

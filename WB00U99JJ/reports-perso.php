@@ -6,9 +6,6 @@ header('Content-Type: text/html; charset=utf-8');
 $reports=new reports();
 
 require_once ('header.html');
-
-
-	
 ?>
 
 <div class="row">
@@ -128,28 +125,7 @@ require_once ('header.html');
 		
 </div> <!-- /row -->
 
-<div class="row">
-
-	<div class="span12" >
-
-		<div class="widget">
-
-			<div class="widget-header">
-				<i class="icon-star"></i>
-				<h3>Comparatif des derniers mois</h3>
-			</div> <!-- /widget-header -->
-
-			<div class="widget-content">
-
-				<div id="plot2" style="height:700px;width:1000px; "></div>
-				<div style="margin-top: 10px; float: right;"><input type="button" id="annuel" value="reset du zoom"/></div>
-			</div> <!-- /widget-content -->
-
-		</div> <!-- /widget -->	
-			</div> <!-- /span6 -->
-</div> <!-- /row -->
-
-
+<div id="plot2" style="height:400px;width:500px; "></div>
 
 
 
@@ -290,8 +266,7 @@ $(document).ready(function(){
 		axes: {
 			xaxis: {
 				renderer: $.jqplot.CategoryAxisRenderer
-			}
-			,yaxis: {
+			},yaxis: {
                 tickOptions: {
                     formatString: "%'d €"
                 },
@@ -309,92 +284,24 @@ $(document).ready(function(){
 	$('#ByOperations').click(function() { line1.resetZoom() });
 
 		
-<?php
 
-$data=$reports->CompareByCategorie('2,3',"AND type='DEBIT'");
-
-$aLibelle=array();
-foreach($data as $id_releve=>$value){
-	//var_dump($value);
-	foreach($value as $libelle => $montant){		
-		if(!in_array($libelle, $aLibelle)){
-			$aLibelle[]=$libelle;
-		}
-	}	
-}
-
-$aSeries=array();
-$max=0;
-foreach($data as $id_releve=>$value){
-	$temp=array();
-	foreach($aLibelle as &$libelle){
-		$montant=(!empty($value[$libelle]))?abs($value[$libelle]):0;
-		$temp[]=$montant;
-		$max=($max>$montant)?$max:$montant;
-		if($libelle=="" || $libelle == null){
-			$libelle="Non défini";
-		}
-	}
-	echo "var s".$id_releve." = ['".implode("','",$temp)."']; ";
-	$aSeries[]="s".$id_releve;
-}
-
-echo "var ticks = ['".implode("','",$aLibelle)."']; ";
-	
-	
-
-
-?>
-		
+		var s1 = [2, 6, 7, 10];
+        var s2 = [7, 5, 3, 2];
+        var ticks = ['a', 'b', 'c', 'd'];
          
-        plot2 = $.jqplot('plot2', [<?php echo implode(",",$aSeries);?>], {
+        plot2 = $.jqplot('plot2', [s1, s2], {
             seriesDefaults: {
                 renderer:$.jqplot.BarRenderer,
-                pointLabels: { 
-                	show: true 
-                }
+                pointLabels: { show: true }
             },
-            axesDefaults: {
-			tickRenderer: $.jqplot.CanvasAxisTickRenderer ,
-			showHighlight: false,
-			tickOptions: {
-				angle: -30,
-				fontSize: '10pt'
-			}
-		},
             axes: {
                 xaxis: {
                     renderer: $.jqplot.CategoryAxisRenderer,
                     ticks: ticks
                 }
-                ,yaxis: {
-	                tickOptions: {
-	                    formatString: "%'d €"
-	                },
-	                rendererOptions: {
-	                    forceTickAt0: true
-	                },
-	                min:0, 
-	                max: <?php echo $max*1.1;?>//, 
-	                // numberTicks: 20
-	            }
-            }, 
-			cursor:{ 
-				show: true,
-				zoom:true, 
-				showTooltip:false
-			} ,
-			pointLabels: {
-                    show: true
-                },
-			highlighter: {
-            show: true, 
-            showLabel: true, 
-            tooltipAxes: 'y',
-            sizeAdjust: 7.5 , tooltipLocation : 'ne'
-        }
+            }
         });
-        $('#annuel').click(function() { plot2.resetZoom() });
+
 
 
 
