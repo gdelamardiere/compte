@@ -59,7 +59,12 @@
 	line-height: 1em;
 }
 
-
+.coche_categorie{
+	padding-right:10px;
+}
+.coche_categorie label{
+	display: inline;
+}
 
 @media all and (max-width: 950px) and (min-width: 1px) {
 	

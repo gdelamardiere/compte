@@ -112,6 +112,48 @@ class reports{
 		return $resultat;
 	}
 
+
+
+
+
+
+	function listeCategories(){
+		$requete=$this->pdo->prepare("SELECT id_cat,libelle
+										from liste_cat");
+		$requete->execute();
+		$resultat=array();
+		while($result=$requete->fetch(PDO::FETCH_ASSOC)){
+			$resultat[$result['id_cat']]=$result['libelle'];
+		}
+		return $resultat;
+	}
+
+
+
+
+	function listeReleve(){
+		$requete=$this->pdo->prepare("SELECT id as id_releve,concat(mois_releve,'-',annee_releve) as date
+										from releve ORDER BY annee_releve, mois_releve DESC");
+		$requete->execute();
+		$resultat=$requete->fetchall(PDO::FETCH_ASSOC);
+		return $resultat;
+	}
+
+	function getListeIdAnnee($id_releve){
+		$requete=$this->pdo->prepare("SELECT id_cat,libelle
+										from liste_cat");
+		$requete->execute();
+		$resultat=array();
+		while($result=$requete->fetch(PDO::FETCH_ASSOC)){
+			$resultat[$result['id_cat']]=$result['libelle'];
+		}
+		return '2,3';
+	}
+
+
+
+
+
 }
 
 

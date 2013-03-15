@@ -74,7 +74,7 @@ if(isset($_GET['id_releve'])){
 
 	$stmt = $pdo->prepare('SELECT * from operations');	
 	$stmt->execute();
-	$select="";
+	
 	$aOperations=$stmt->fetchAll(PDO::FETCH_ASSOC);
 
 
@@ -84,7 +84,7 @@ if(isset($_GET['id_releve'])){
 	$total=$aGlobalReleve['total_debit']+$aGlobalReleve['total_credit'];
 	require_once ('header.html');
 	?>
-	<link href="css/pages/reports.css" rel="stylesheet">
+	
 	<div class="widget big-stats-container">
 	      			
 	      			<div class="widget-content">
