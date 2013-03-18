@@ -5,15 +5,22 @@ header('Content-Type: text/html; charset=utf-8');
 
 $reports=new reports();
 $liste_cat=$reports->listeCategories();
+$liste_operations=$reports->listeOperations();
 $liste_releve=$reports->listeReleve();
 $liste_id_cat=array();
 foreach($liste_cat as $id_cat=>$libelle){
 	$liste_id_cat[]=$id_cat;
 }
+$liste_id_operations=array();
+foreach($liste_operations as $id_operations=>$libelle){
+	$liste_id_operations[]=$id_operations;
+}
 $select_releve="";
 $id_selected=(isset($_POST['id_releve']))?$_POST['id_releve']:$liste_releve[0]['id_releve'];
 $liste_coche_categorie=(isset($_POST['coche_categorie']))?$_POST['coche_categorie']:$liste_id_cat;
-var_dump($liste_id_cat);
+$reports->setFiltersCategorie($liste_coche_categorie);
+$liste_coche_operations=(isset($_POST['coche_operations']))?$_POST['coche_operations']:$liste_id_operations;
+$reports->setFiltersOperations($liste_coche_operations);
 foreach($liste_releve as $value){		
 	$select_releve.="<option value='".$value['id_releve']."' ".(($value['id_releve']==$id_selected)?'selected="selected"':'').">".$value['date']."</option>";
 }
@@ -42,9 +49,28 @@ require_once ('header.html');
 						<p><?php $i=1; foreach($liste_cat as $id_cat=>$libelle){
 							$libelle=($libelle=="")?"non défini":$libelle;
 							?>
-							<span class="coche_categorie">
-								<input type="checkbox" name="coche_categorie[]" id="coche_cat_<?php echo $id_cat;?>" checked="checked"/>
+							<span class="coche_reports">
+								<input type="checkbox" name="coche_categorie[]" value="<?php echo $id_cat; ?>" id="coche_cat_<?php echo $id_cat;?>" 
+								<?php if(in_array($id_cat,$liste_coche_categorie)){echo 'checked="checked"';}?>/>
 								<label for="coche_cat_<?php echo $id_cat;?>"><?php echo $libelle;?></label>
+							</span>
+						<?php 
+						if($i==12){$i=0;echo"<br/>";}
+							$i++;
+						}
+						?>
+						</p>
+					</div>
+
+					<div>
+						<h3>Liste des Opérations à afficher</h3>
+						<p><?php $i=1; foreach($liste_operations as $id_operations=>$libelle){
+							$libelle=($libelle=="")?"non défini":$libelle;
+							?>
+							<span class="coche_reports">
+								<input type="checkbox" name="coche_operations[]" value="<?php echo $id_operations; ?>" id="coche_operations_<?php echo $id_operations;?>" 
+								<?php if(in_array($id_operations,$liste_coche_operations)){echo 'checked="checked"';}?>/>
+								<label for="coche_operations_<?php echo $id_operations;?>"><?php echo $libelle;?></label>
 							</span>
 						<?php 
 						if($i==12){$i=0;echo"<br/>";}
@@ -55,8 +81,6 @@ require_once ('header.html');
 					</div>
 					<input type="submit" value="Envoyer">  
 				</form>
-
-
 
 			</div> <!-- /widget-content -->
 
@@ -255,7 +279,7 @@ $(document).ready(function(){
 
 	var getByCategorie = [
 	<?php 
-	$data=$reports->getByCategorie($id_selected,"AND type='DEBIT'");
+	$data=$reports->getByCategorie($id_selected,"DEBIT");
 	foreach($data as $key => $value){
 		if($key=="")$key="non défini";
 		echo "['".$key."', ".abs($value)."],";
@@ -283,7 +307,12 @@ $(document).ready(function(){
         animate: true,
         // Will animate plot on calls to plot1.replot({resetAxes:true})
         animateReplot: true,
-		series:[{renderer:$.jqplot.BarRenderer}],
+		series:[{
+			renderer:$.jqplot.BarRenderer,
+			rendererOptions: {
+                varyBarColor: true
+            }
+		}],
 		axesDefaults: {
 			tickRenderer: $.jqplot.CanvasAxisTickRenderer ,
 			tickOptions: {
@@ -304,8 +333,9 @@ $(document).ready(function(){
 		highlighter: {
             show: true, 
             showLabel: true, 
-            tooltipAxes: 'y',
-            sizeAdjust: 7.5 , tooltipLocation : 'ne'
+            tooltipAxes: 'both',
+            sizeAdjust: 5 , 
+            tooltipLocation : 'n'
         }
 	});
 	$('#ByCategorie').click(function() { line1.resetZoom() });
@@ -313,7 +343,7 @@ $(document).ready(function(){
 
 	var getByOperations = [
 	<?php 
-	$data=$reports->getByOperations($id_selected,"AND type='DEBIT'");
+	$data=$reports->getByOperations($id_selected,"DEBIT");
 	foreach($data as $key => $value){
 		if($key=="")$key="non défini";
 		echo "['".$key."', ".abs($value)."],";
@@ -341,7 +371,10 @@ $(document).ready(function(){
 			pointLabels: {
                 show: true
             },
-			renderer:$.jqplot.BarRenderer
+			renderer:$.jqplot.BarRenderer,
+			rendererOptions: {
+                varyBarColor: true
+            }
 		}],
 		axesDefaults: {
 			tickRenderer: $.jqplot.CanvasAxisTickRenderer ,
@@ -375,7 +408,7 @@ $(document).ready(function(){
 		
 <?php
 
-$data=$reports->CompareByCategorie($reports->getListeIdAnnee($id_selected),"AND type='DEBIT'");
+$data=$reports->CompareByCategorie($reports->getListeIdAnnee($id_selected),"DEBIT");
 
 $aLibelle=array();
 foreach($data as $id_releve=>$value){
@@ -388,6 +421,7 @@ foreach($data as $id_releve=>$value){
 }
 
 $aSeries=array();
+$aLabelSeries=array("s1","s2");
 $max=0;
 foreach($data as $id_releve=>$value){
 	$temp=array();
@@ -412,7 +446,18 @@ echo "var ticks = ['".implode("','",$aLibelle)."']; ";
 		
          
         plot2 = $.jqplot('plot2', [<?php echo implode(",",$aSeries);?>], {
-            seriesDefaults: {
+            series:[
+            	<?php foreach($aLabelSeries as $label){?>
+            		{
+		               	highlighter:{
+		            		formatString:'<?php echo $label;?> - %s €' ,
+		            		tooltipLocation : 'n'
+		            	}
+		            },
+            	<?php }?>
+               
+           ], 
+           seriesDefaults: {
                 renderer:$.jqplot.BarRenderer,
                 pointLabels: { 
                 	show: true 
@@ -455,7 +500,7 @@ echo "var ticks = ['".implode("','",$aLibelle)."']; ";
             show: true, 
             showLabel: true, 
             tooltipAxes: 'y',
-            sizeAdjust: 7.5 , tooltipLocation : 'ne'
+            sizeAdjust: 7.5 , 
         }
         });
         $('#annuel').click(function() { plot2.resetZoom() });
