@@ -2,8 +2,19 @@
 require_once('conf.php'); 
 require_once(ROOT.'classes/reports.class.php');
 header('Content-Type: text/html; charset=utf-8');
+$page="reports";
 
 $reports=new reports();
+$liste_graphes=array("type"=>"Découpage par type",
+					"categorie"=>"Découpage par catégorie",
+					"operations"=>"Découpage par opérations",
+					"comparatif_sur_annee"=>"Comparatif sur un an",
+					"comparatif_2ans"=>"Comparatif entre 2 années",
+					"comparatif_perso"=>"Comparatif personalisés");
+
+$liste_graphes_default=array("type","categorie","operations","comparatif_sur_annee");
+$liste_graphes_retenus=(isset($_POST['liste_graphe']))?$_POST['liste_graphe']:$liste_graphes_default;
+
 $liste_cat=$reports->listeCategories();
 $liste_operations=$reports->listeOperations();
 $liste_releve=$reports->listeReleve();
@@ -50,9 +61,11 @@ require_once ('header.html');
 							$libelle=($libelle=="")?"non défini":$libelle;
 							?>
 							<span class="coche_reports">
-								<input type="checkbox" name="coche_categorie[]" value="<?php echo $id_cat; ?>" id="coche_cat_<?php echo $id_cat;?>" 
+								<input class="checboxFiltre" type="checkbox" name="coche_categorie[]" value="<?php echo $id_cat; ?>" id="coche_cat_<?php echo $id_cat;?>" 
 								<?php if(in_array($id_cat,$liste_coche_categorie)){echo 'checked="checked"';}?>/>
-								<label for="coche_cat_<?php echo $id_cat;?>"><?php echo $libelle;?></label>
+								<label for="coche_cat_<?php echo $id_cat;?>" <?php if(!in_array($id_cat,$liste_coche_categorie)){echo 'class="deselected"';}?> id="label_coche_cat_<?php echo $id_cat;?>">
+									<?php echo $libelle;?>
+								</label>
 							</span>
 						<?php 
 						if($i==12){$i=0;echo"<br/>";}
@@ -68,9 +81,27 @@ require_once ('header.html');
 							$libelle=($libelle=="")?"non défini":$libelle;
 							?>
 							<span class="coche_reports">
-								<input type="checkbox" name="coche_operations[]" value="<?php echo $id_operations; ?>" id="coche_operations_<?php echo $id_operations;?>" 
+								<input class="checboxFiltre" type="checkbox" name="coche_operations[]" value="<?php echo $id_operations; ?>" id="coche_operations_<?php echo $id_operations;?>" 
 								<?php if(in_array($id_operations,$liste_coche_operations)){echo 'checked="checked"';}?>/>
-								<label for="coche_operations_<?php echo $id_operations;?>"><?php echo $libelle;?></label>
+								<label for="coche_operations_<?php echo $id_operations;?>" <?php if(!in_array($id_operations,$liste_coche_operations)){echo 'class="deselected"';}?> id="label_coche_operations_<?php echo $id_operations;?>">
+									<?php echo $libelle;?></label>
+							</span>
+						<?php 
+						if($i==12){$i=0;echo"<br/>";}
+							$i++;
+						}
+						?>
+						</p>
+					</div>
+
+					<div>
+						<h3>Liste des Graphes à afficher</h3>
+						<p><?php $i=1; foreach($liste_graphes as $key=>$libelle){?>
+							<span class="coche_reports">
+								<input class="checboxFiltre" type="checkbox" name="liste_graphe[]" value="<?php echo $key; ?>" id="coche_graphe_<?php echo $key;?>" 
+								<?php if(in_array($id_operations,$liste_graphes_retenus)){echo 'checked="checked"';}?>/>
+								<label for="coche_graphe_<?php echo $key;?>" <?php if(!in_array($key,$liste_graphes_retenus)){echo 'class="deselected"';}?> id="label_coche_graphe_<?php echo $key;?>">
+									<?php echo $libelle;?></label>
 							</span>
 						<?php 
 						if($i==12){$i=0;echo"<br/>";}
@@ -236,506 +267,7 @@ require_once ('header.html');
 
 
 <?php
-require_once ('footer.html');
+require_once ('footer.php');
 ?>
 
 
-<script type="text/javascript">
-function save(){
-//$("#percentByCategorie").print();
-	var canvasData = $('#percentByCategorie').jqplotToImageStr();
-	var ajax = new XMLHttpRequest();
-	ajax.open("POST",'test.php',false);
-	ajax.setRequestHeader('Content-Type', 'application/upload');
-	ajax.send(canvasData ); 
-}
-
- 
-
-$(document).ready(function(){
-	var getByType = [
-	<?php 
-	$data=$reports->getByType($id_selected);
-	foreach($data as $key => $value){
-		if($key=="")$key="non défini";
-		echo "['".$key."', ".abs($value)."],";
-	}
-	?>
-	];
-	var pie1 = jQuery.jqplot ('percentByType', [getByType], 
-	{ 
-		seriesDefaults: {
-        // Make this a pie chart.
-        renderer: jQuery.jqplot.PieRenderer, 
-        rendererOptions: {
-          // Put data labels on the pie slices.
-          // By default, labels show the percentage of the slice.
-          showDataLabels: true
-      }
-  }, 
-  legend: { show:true, location: 'e' }
-}
-);
-
-	var getByCategorie = [
-	<?php 
-	$data=$reports->getByCategorie($id_selected,"DEBIT");
-	foreach($data as $key => $value){
-		if($key=="")$key="non défini";
-		echo "['".$key."', ".abs($value)."],";
-	}
-	?>
-	];
-	var pie1 = jQuery.jqplot ('percentByCategorie', [getByCategorie], 
-	{ 
-		seriesDefaults: {
-        // Make this a pie chart.
-        renderer: jQuery.jqplot.PieRenderer, 
-        rendererOptions: {
-          // Put data labels on the pie slices.
-          // By default, labels show the percentage of the slice.
-          showDataLabels: true
-      }
-  }, 
-  legend: { show:true, location: 'e' }
-}
-);
-
-
-	var line1 = $.jqplot('prixByCategorie', [getByCategorie], {
-		// Turns on animatino for all series in this plot.
-        animate: true,
-        // Will animate plot on calls to plot1.replot({resetAxes:true})
-        animateReplot: true,
-		series:[{
-			renderer:$.jqplot.BarRenderer,
-			rendererOptions: {
-                varyBarColor: true
-            }
-		}],
-		axesDefaults: {
-			tickRenderer: $.jqplot.CanvasAxisTickRenderer ,
-			tickOptions: {
-				angle: -30,
-				fontSize: '10pt'
-			}
-		},
-		axes: {
-			xaxis: {
-				renderer: $.jqplot.CategoryAxisRenderer
-			}
-		}, 
-		cursor:{ 
-			show: true,
-			zoom:true, 
-			showTooltip:false
-		} ,
-		highlighter: {
-            show: true, 
-            showLabel: true, 
-            tooltipAxes: 'both',
-            sizeAdjust: 5 , 
-            tooltipLocation : 'n'
-        }
-	});
-	$('#ByCategorie').click(function() { line1.resetZoom() });
-
-
-	var getByOperations = [
-	<?php 
-	$data=$reports->getByOperations($id_selected,"DEBIT");
-	foreach($data as $key => $value){
-		if($key=="")$key="non défini";
-		echo "['".$key."', ".abs($value)."],";
-	}
-	?>
-	];
-	var pie1 = jQuery.jqplot ('percentByOperations', [getByOperations], 
-	{ 
-		seriesDefaults: {
-        // Make this a pie chart.
-        renderer: jQuery.jqplot.PieRenderer, 
-        rendererOptions: {
-          // Put data labels on the pie slices.
-          // By default, labels show the percentage of the slice.
-          showDataLabels: true
-      }
-  }, 
-  legend: { show:true, location: 'e' }
-}
-);
-
-
-	var line1 = $.jqplot('prixByOperations', [getByOperations], {
-		series:[{
-			pointLabels: {
-                show: true
-            },
-			renderer:$.jqplot.BarRenderer,
-			rendererOptions: {
-                varyBarColor: true
-            }
-		}],
-		axesDefaults: {
-			tickRenderer: $.jqplot.CanvasAxisTickRenderer ,
-			showHighlight: false,
-			tickOptions: {
-				angle: -30,
-				fontSize: '10pt'
-			}
-		},
-		axes: {
-			xaxis: {
-				renderer: $.jqplot.CategoryAxisRenderer
-			}
-			,yaxis: {
-                tickOptions: {
-                    formatString: "%'d €"
-                },
-                rendererOptions: {
-                    forceTickAt0: true
-                }
-            }
-		}, 
-		cursor:{ 
-			show: true,
-			zoom:true, 
-			showTooltip:false
-		} 
-	});
-	$('#ByOperations').click(function() { line1.resetZoom() });
-
-		
-<?php
-
-$data=$reports->CompareByCategorie($reports->getListeIdAnnee($id_selected),"DEBIT");
-
-$aLibelle=array();
-foreach($data as $id_releve=>$value){
-	//var_dump($value);
-	foreach($value as $libelle => $montant){		
-		if(!in_array($libelle, $aLibelle)){
-			$aLibelle[]=$libelle;
-		}
-	}	
-}
-
-$aSeries=array();
-$aLabelSeries=array("s1","s2");
-$max=0;
-foreach($data as $id_releve=>$value){
-	$temp=array();
-	foreach($aLibelle as &$libelle){
-		$montant=(!empty($value[$libelle]))?abs($value[$libelle]):0;
-		$temp[]=$montant;
-		$max=($max>$montant)?$max:$montant;
-		if($libelle=="" || $libelle == null){
-			$libelle="Non défini";
-		}
-	}
-	echo "var s".$id_releve." = ['".implode("','",$temp)."']; ";
-	$aSeries[]="s".$id_releve;
-}
-
-echo "var ticks = ['".implode("','",$aLibelle)."']; ";
-	
-	
-
-
-?>
-		
-         
-        plot2 = $.jqplot('plot2', [<?php echo implode(",",$aSeries);?>], {
-            series:[
-            	<?php foreach($aLabelSeries as $label){?>
-            		{
-		               	highlighter:{
-		            		formatString:'<?php echo $label;?> - %s €' ,
-		            		tooltipLocation : 'n'
-		            	}
-		            },
-            	<?php }?>
-               
-           ], 
-           seriesDefaults: {
-                renderer:$.jqplot.BarRenderer,
-                pointLabels: { 
-                	show: true 
-                }
-            },
-            axesDefaults: {
-			tickRenderer: $.jqplot.CanvasAxisTickRenderer ,
-			showHighlight: false,
-			tickOptions: {
-				angle: -30,
-				fontSize: '10pt'
-			}
-		},
-            axes: {
-                xaxis: {
-                    renderer: $.jqplot.CategoryAxisRenderer,
-                    ticks: ticks
-                }
-                ,yaxis: {
-	                tickOptions: {
-	                    formatString: "%'d €"
-	                },
-	                rendererOptions: {
-	                    forceTickAt0: true
-	                },
-	                min:0, 
-	                max: <?php echo $max*1.1;?>//, 
-	                // numberTicks: 20
-	            }
-            }, 
-			cursor:{ 
-				show: true,
-				zoom:true, 
-				showTooltip:false
-			} ,
-			pointLabels: {
-                    show: true
-                },
-			highlighter: {
-            show: true, 
-            showLabel: true, 
-            tooltipAxes: 'y',
-            sizeAdjust: 7.5 , 
-        }
-        });
-        $('#annuel').click(function() { plot2.resetZoom() });
-
-
-
-
-
-	   
-    // var line1 = $.jqplot("prixByOperations", [getByOperations], {
-    //     // Turns on animatino for all series in this plot.
-    //     animate: true,
-    //     // Will animate plot on calls to plot1.replot({resetAxes:true})
-    //     animateReplot: true,
-    //     cursor: {
-    //         show: true,
-    //         zoom: true,
-    //         looseZoom: true,
-    //         showTooltip: false
-    //     },
-    //     series:[
-    //         {
-    //             pointLabels: {
-    //                 show: true
-    //             },
-    //             renderer: $.jqplot.BarRenderer,
-    //             showHighlight: false,
-    //             yaxis: 'y2axis',
-    //             rendererOptions: {
-    //                 // Speed up the animation a little bit.
-    //                 // This is a number of milliseconds.  
-    //                 // Default for bar series is 3000.  
-    //                 animation: {
-    //                     speed: 2500
-    //                 },
-    //                 barWidth: 15,
-    //                 barPadding: -15,
-    //                 barMargin: 0,
-    //                 highlightMouseOver: false
-    //             }
-    //         }
-    //     ],
-    //     axesDefaults: {
-    //         pad: 0
-    //     },
-    //     axes: {
-    //         // These options will set up the x axis like a category axis.
-    //         xaxis: {
-    //             tickInterval: 1,
-    //             drawMajorGridlines: false,
-    //             drawMinorGridlines: true,
-    //             drawMajorTickMarks: false,
-    //             rendererOptions: {
-    //             tickInset: 0.5,
-    //             minorTicks: 1
-    //         }
-    //         },
-    //         yaxis: {
-    //             tickOptions: {
-    //                 formatString: "$%'d"
-    //             },
-    //             rendererOptions: {
-    //                 forceTickAt0: true
-    //             }
-    //         },
-    //         y2axis: {
-    //             tickOptions: {
-    //                 formatString: "$%'d"
-    //             },
-    //             rendererOptions: {
-    //                 // align the ticks on the y2 axis with the y axis.
-    //                 alignTicks: true,
-    //                 forceTickAt0: true
-    //             }
-    //         }
-    //     },
-    //     highlighter: {
-    //         show: true, 
-    //         showLabel: true, 
-    //         tooltipAxes: 'y',
-    //         sizeAdjust: 7.5 , tooltipLocation : 'ne'
-    //     }
-    // });
-   
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-});
-
-
-// Create a jquery plugin that prints the given element.
-jQuery.fn.print = function(){
-	// NOTE: We are trimming the jQuery collection down to the
-	// first element in the collection.
-	if (this.size() > 1){
-		this.eq( 0 ).print();
-		return;
-	} else if (!this.size()){
-		return;
-	}
-var imgData = $('#percentByCategorie').jqplotToImageStr(); 
-   // var chart = $(this).closest('div.quintile-outer-container').find('div.jqplot-target');
-    // var imgelem = chart.jqplotToImageElem();
- //   var imageElemStr = chart.jqplotToImageElemStr();
-    // var statsrows = $(this).closest('div.quintile-outer-container').find('table.stats-table tr');
-    // var statsTable = $('<div></div>').append($(this).closest('div.quintile-outer-container').find('table.stats-table').clone());alert('3');
-    // var rowstyles = window.getComputedStyle(statsrows.get(0), '');
-
-	// ASSERT: At this point, we know that the current jQuery
-	// collection (as defined by THIS), contains only one
-	// printable element.
- 
-	// Create a random name for the print frame.
-	var strFrameName = ("printer-" + (new Date()).getTime());
- 
-	// Create an iFrame with the new name.
-	var jFrame = $( "<iframe name='" + strFrameName + "'>" );
- 
-	// Hide the frame (sort of) and attach to the body.
-	jFrame
-		.css( "width", "1px" )
-		.css( "height", "1px" )
-		.css( "position", "absolute" )
-		.css( "left", "-9999px" )
-		.appendTo( $( "body:first" ) )
-	;
- 
-	// Get a FRAMES reference to the new frame.
-	var objFrame = window.frames[ strFrameName ];
- 
-	// Get a reference to the DOM in the new frame.
-	var objDoc = objFrame.document;
- 
-	// Grab all the style tags and copy to the new
-	// document so that we capture look and feel of
-	// the current document.
- 
-	// Create a temp document DIV to hold the style tags.
-	// This is the only way I could find to get the style
-	// tags into IE.
-	var jStyleDiv = $( "<div>" ).append(
-		$( "style" ).clone()
-		);
- 
-	// Write the HTML for the document. In this, we will
-	// write out the HTML of the current element.
-	objDoc.open();
-	objDoc.write( "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">" );
-	objDoc.write( "<html>" );
-	objDoc.write( "<body>" );
-	objDoc.write( "<head>" );
-	objDoc.write( "<title>" );
-	objDoc.write( document.title );
-	objDoc.write( "</title>" );
-	objDoc.write( jStyleDiv.html() );
-	objDoc.write( "</head>" );
-
-	// Typically, would just write out the html.	
-	// objDoc.write( this.html() );
-
-	// We need to do specific manipulation for kcp quintiles.
-	objDoc.write( '<div class="quintile-outer-container ui-widget ui-corner-all"> \
-    <div class="quintile-content ui-widget-content ui-corner-bottom"> \
-		<table class="quintile-display"> \
-            <tr> \
-                <td class="chart-cell">');
-
-    objDoc.write(imgData);
-    
-    objDoc.write('</td> <td class="stats-cell">');
-
-    // objDoc.write(statsTable.html());
-
-    objDoc.write('</td></tr></table></div></div>');
-
-	objDoc.write( "</body>" );
-	objDoc.write( "</html>" );
-	objDoc.close();
-
-
-// objDoc.write( this.html() );
-// objDoc.write( "</body>" );
-// objDoc.write( "</html>" );
-// objDoc.close();
- 
- 	// 
-	// When the iframe is completely loaded, print it.
-	// This seemed worked in IE 9, but caused problems in FF.
-	//
-	// $(objFrame).load(function() {
-	// 	objFrame.focus();
-	// 	objFrame.print();
-	// });
-
-	//
-	// This works in all supported browsers.
-	// Note, might have to adjust time.
-	//
-	setTimeout(
-		function() {
-			objFrame.focus();
-			objFrame.print();
-		}, 750);
- 
-
-	// Have the frame remove itself in about a minute so that
-	// we don't build up too many of these frames.
-	setTimeout(
-		function(){
-			jFrame.empty();
-			jFrame.remove();
-		},
-		(60 * 1000)
-		);
-}
-
-
-
-</script>

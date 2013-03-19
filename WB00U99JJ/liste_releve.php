@@ -68,5 +68,5 @@ $stmt = $pdo->prepare("SELECT r.`id`,r.mois_releve,r.annee_releve,
 		</table>
 	</div>
 <?php
-	require_once ('footer.html');
+	require_once ('footer.php');
 ?>

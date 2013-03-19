@@ -298,6 +298,6 @@ if(isset($_GET['id_releve'])){
 	</div>
 <?php
 	}
-	require_once ('footer.html');
+	require_once ('footer.php');
 }
 ?>

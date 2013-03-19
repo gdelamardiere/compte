@@ -63,7 +63,7 @@ require_once(ROOT.'classes/database.php');
 
 
 <?php
-  require_once ('footer.html');
+  require_once ('footer.php');
   ?>
     
     
