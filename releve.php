@@ -171,19 +171,20 @@ if(isset($id_selected)){
 					<th>Type</th>
 					<th>Catégorie</th>
 					<th>Pointage</th>
+					<th>Suppression</th>
 				</tr>
 			</thead>
 			<tbody>
 			<?php foreach($aReleve as $value){
 				switch($value['pointe']){
 					case '1':
-						$img="<img width='10' id='pointage_".$value['id']."' src='img/valider.png' alt ='valide'/>";
+						$img="<img width='20' id='pointage_".$value['id']."' src='img/valider.png' alt ='valide'/>";
 						break;
 					case '-1':
-						$img="<img width='10' id='pointage_".$value['id']."' src='img/erreur.gif' alt ='erreur'/>";
+						$img="<img width='20' id='pointage_".$value['id']."' src='img/erreur.gif' alt ='erreur'/>";
 						break;
 					default :
-						$img="<img width='10' id='pointage_".$value['id']."' src='' alt ='aucun' style='display:none'/>";
+						$img="<img width='20' id='pointage_".$value['id']."' src='' alt ='aucun' style='display:none'/>";
 						break;
 
 				}
@@ -196,7 +197,7 @@ if(isset($id_selected)){
 						break;
 				}
 
-				echo "<tr>
+				echo "<tr id='ligne_".$value['id']."'>
 				<td>n°".$value['id_releve']." du ".$value['mois_releve']."/".$value['annee_releve']."</td>
 				<td>".$value['date']."</td>
 				<td>".$value['libelle']."</td>
@@ -218,6 +219,12 @@ if(isset($id_selected)){
 					echo "<option value='".$key."' ".(($key==$value['pointe'])?'selected="selected"':'').">".$pointage."</option>";
 				}
 				echo "</SELECT></td>
+				<td>
+					<a href='#' onclick='supprimer_ligne_releve(".$value['id'].")'>
+						<img width='20' id='delete_".$value['id']."' src='img/erreur.gif' alt ='supprimer'/>
+					</a>
+					
+				</td> 
 				</tr>";
 			}?>  
 			</tbody>

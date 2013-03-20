@@ -38,7 +38,8 @@ $stmt = $pdo->prepare("SELECT r.`id`,r.mois_releve,r.annee_releve,
 					<th>Nb opé pointé</th>
 					<th>Nb opé non pointé</th>
 					<th>Nb opé pointé en erreur</th>
-					<th>Action</th>
+					<th>Editer</th>
+					<th>Supprimer</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -57,9 +58,14 @@ $stmt = $pdo->prepare("SELECT r.`id`,r.mois_releve,r.annee_releve,
 				<td >".$value['nb_operations_pointe_erreur']."</td>
 				<td>
 					<a href='releve.php?id_releve=".$value['id']."'>
-						<img width='10' id='editer".$value['id']."' src='img/erreur.gif' alt ='éditer'/>
+						<img width='20' id='editer".$value['id']."' src='img/editer.jpg' alt ='éditer'/>
 					</a>
-					<img width='10' id='delete_".$value['id']."' src='img/erreur.gif' alt ='supprimer'/>
+				</td>
+				<td>
+					<a href='#' onclick='supprimer_releve(".$value['id'].")'>
+						<img width='20' id='delete_".$value['id']."' src='img/erreur.gif' alt ='supprimer'/>
+					</a>
+					
 				</td> 				
 				</tr>";
 			}?>  

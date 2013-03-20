@@ -17,4 +17,18 @@ if(isset($_POST['update_pointage']) && isset($_POST['id']) && isset($_POST['poin
 	$stmt = $pdo->prepare("UPDATE  `releve_detail` set pointe=:pointe, trouve='1' where id=:id");
 	$stmt->execute(array("pointe"=>$_POST['pointe'],"id"=>$_POST['id']));
 }
+
+if(isset($_POST['supprimer_releve']) && isset($_POST['id_releve'])){
+	$stmt = $pdo->prepare("DELETE  FROM `releve` where id=:id_releve");
+	echo "DELETE  FROM `releve` where id=:id_releve";
+	$stmt->execute(array("id_releve"=>$_POST['id_releve']));
+}
+
+if(isset($_POST['supprimer_ligne_releve']) && isset($_POST['id_ligne_releve'])){
+	$stmt = $pdo->prepare("DELETE  FROM `releve_detail` where id=:id_ligne_releve");
+	$stmt->execute(array("id_ligne_releve"=>$_POST['id_ligne_releve']));
+}
+
+
+
 ?>

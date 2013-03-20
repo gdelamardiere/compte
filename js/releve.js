@@ -65,6 +65,32 @@ function update_pointage(id,sel){
 	});
 }
 
+
+function supprimer_releve(id_releve){
+	if (confirm("Voulez-vous Vraiment effacet cet import ?\n ATTENTION cette action est irréversible")) {
+		$.ajax({
+			type: "POST",
+			url: "lib/releve.ajax.php",
+			data: { 'supprimer_releve': "true", 'id_releve': id_releve }
+			}).done(function( msg ) {
+				actualiser();
+		});
+	}
+}
+
+function supprimer_ligne_releve(id_ligne_releve){
+	if (confirm("Voulez-vous Vraiment effacet cet ligne ?\n ATTENTION cette action est irréversible")) {
+		$.ajax({
+			type: "POST",
+			url: "lib/releve.ajax.php",
+			data: { 'supprimer_ligne_releve': "true", 'id_ligne_releve': id_ligne_releve}
+			}).done(function( msg ) {
+				actualiser();
+		});
+	}
+}
+
+
 function actualiser(){
 	location.reload();
 }

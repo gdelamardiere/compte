@@ -3,12 +3,11 @@ compte
 
 TODO
 
-comparatif 1an contre 1an
-comparatif x mois contre x mois
+
 sauvegarder un filtre
 
 
-supprimer un import
+
 
 importer avec la date
 
@@ -28,6 +27,6 @@ imprimer un rapport
 
 archiver des rapports avec titre liés au mois au format pdf
 
-filtre n'afficher que certains graphes
+cacher des graphes
 
 + drag and drop graphe et suppression + ajout
