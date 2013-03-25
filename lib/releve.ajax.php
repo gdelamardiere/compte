@@ -29,6 +29,13 @@ if(isset($_POST['supprimer_ligne_releve']) && isset($_POST['id_ligne_releve'])){
 	$stmt->execute(array("id_ligne_releve"=>$_POST['id_ligne_releve']));
 }
 
+if(isset($_POST['verif_insert_releve']) && isset($_POST['mois_releve'])  && isset($_POST['annee_releve'])){
+	$stmt = $pdo->prepare("SELECT id  FROM `releve`  WHERE mois_releve=:mois_releve AND annee_releve=:annee_releve limit 1");
+	$stmt->execute(array("mois_releve"=>$_POST['mois_releve'],"annee_releve"=>$_POST['annee_releve'])) ;
+	$ret=$stmt->fetch(PDO::FETCH_ASSOC);
+	echo (empty($ret))?0:$ret['id'];
+}
+
 
 
 ?>

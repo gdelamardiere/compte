@@ -4,65 +4,53 @@ require_once(ROOT.'classes/database.php');
 require_once(ROOT.'lib/file.lib.php');
 
 $pdo=database::getInstance();
-if(isset($_FILES['fichier_import'])){
+$erreur=1;
+if(isset($_FILES['fichier_import']) 
+	&& !empty($_POST['mois_import'])
+	&& !empty($_POST['annee_import'])
+	&& isset($_POST['modifier'])
+	){
 	$fichier=ROOT."fichiers_importes/".$_FILES['fichier_import']['name'];
-	//recuperation du fichier a analyser
-	/*$stmt = $pdo->prepare("SELECT id FROM releve where fichier=:fichier");
-	$stmt->execute(array("fichier"=>$fichier));
-
-	$select=mysql_fetch_assoc($select_req);   
-	if(mysql_num_rows($select_req)>0 ){
-		if(isset($_POST['remplacer']) && $_POST['remplacer']=='true' ){
-			mysql_query("DELETE FROM releve WHERE id=".$select['id']);
-		}
-		else{
-			echo "ce relevé a déjà été importé<br><br>Cliquez <a href='".$_SERVER['REQUEST_URI']."&remplacer=true'>ici</a>" ;
-			die();
-		}  
-	}*/
-
-
-
-
+	$stmt = $pdo->prepare("SELECT id  FROM `releve`  WHERE mois_releve=:mois_releve AND annee_releve=:annee_releve limit 1");
+	$stmt->execute(array("mois_releve"=>$_POST['mois_import'],"annee_releve"=>$_POST['annee_import'])) ;
+	$ret=$stmt->fetch(PDO::FETCH_ASSOC);
+	$id_releve = (empty($ret))?0:$ret['id'];
+	$modifier=($_POST['modifier']==1)?1:0;
 
 
 	if (move_uploaded_file($_FILES['fichier_import']['tmp_name'], $fichier)) {
 		// on crée la requête SQL
 		$stmt = $pdo->prepare('SELECT * FROM regex_replace where TYPE is not null order by ordre ');
 		$stmt->execute();
-		/*$aRegex_find=array();
-		while($assoc_keywords2=$stmt->fetch(PDO::FETCH_ASSOC)){
-			$aRegex_find[]=$assoc_keywords2;
-		}*/
 		$aRegex_find=$stmt->fetchAll(PDO::FETCH_ASSOC);
-//todo cf si fetchall
-		
-
 
 		$aContenuFichier=parse_csv_file($fichier,0,4);
-
 		$date_deb="";
 		$date_fin="";
-		$stmt = $pdo->prepare("INSERT INTO  `releve` (
-			mois_releve,annee_releve,date_debut,date_fin,montant_debut,montant_fin,fichier
-			)
-		VALUES (:mois_releve,:annee_releve,:date_debut,:date_fin,:montant_debut,:montant_fin,:fichier)"
-		);
-		$stmt->execute(array(
-			"mois_releve"=>'1',
-			"annee_releve"=>'2013',
-			"date_debut"=>'2013-01-01',
-			"date_fin"=>'2013-01-01',
-			"montant_debut"=>0,
-			"montant_fin"=>0,
-			"fichier"=>$fichier
-			));
-		$id_releve=$pdo->lastInsertId();
 
+		if(!$modifier || $id_releve==0){
+			if($id_releve>0){
+				$stmt = $pdo->prepare("delete  FROM `releve`  WHERE id=:id");
+				$stmt->execute(array("id"=>$id_releve)) ;
+			}
+			$stmt = $pdo->prepare("INSERT INTO  `releve` (
+								mois_releve,annee_releve,date_debut,date_fin,montant_debut,montant_fin,fichier
+								)
+								VALUES (:mois_releve,:annee_releve,:date_debut,:date_fin,:montant_debut,:montant_fin,:fichier)"
+			);
+			$stmt->execute(array(
+				"mois_releve"=>$_POST['mois_import'],
+				"annee_releve"=>$_POST['annee_import'],
+				"date_debut"=>'2013-01-01',
+				"date_fin"=>'2013-01-01',
+				"montant_debut"=>0,
+				"montant_fin"=>0,
+				"fichier"=>$fichier
+				));
+			$id_releve=$pdo->lastInsertId();
+		}
 
-
-
-	//	$insert_releve="INSERT INTO releve(mois_releve,annee_releve,date_debut,date_fin,montant_debut,montant_fin,fichier) VALUES ('".substr($result['date_final'],3,2)."','".substr($result['date_final'],6,4)."','".$date_deb."','".$date_fin."','".str_replace(",",".",$result['solde_init'])."','".str_replace(",",".",$result['solde_final'])."','".str_replace("txt","pdf",$name)."')";
+		
 
 		$stmt = $pdo->prepare("INSERT INTO  `releve_detail` (
 			id_operations,type,libelle,id_releve,montant,date
@@ -93,22 +81,20 @@ if(isset($_FILES['fichier_import'])){
 				$stmt->execute($val);
 			}
 		}
-
-
-
-
-
-header('Location: releve.php?id_releve='.$id_releve); 
-
-
-
-
-
-
-
-
+		$erreur=0;
+	}
+	else{
+		$erreur=2;
 	}
 }
+if($erreur){
+
+		header('Location: index.php?erreur='.$erreur);
+}
+else{
+	header('Location: releve.php?id_releve='.$id_releve);  
+}
+
 
 
 ?>

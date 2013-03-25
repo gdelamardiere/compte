@@ -1,8 +1,25 @@
 <?php
 header('Content-Type: text/html; charset=utf-8');
 require_once('conf.php'); 
-require_once(ROOT.'classes/database.php');
+require_once(ROOT.'classes/reports.class.php');
 $page="home";
+$reports=new reports();
+$liste_graphes_retenus=array();
+$liste_releve=$reports->listeReleve();
+if(!empty($liste_releve)){
+	$id_selected=$liste_releve[0]['id_releve'];
+	$liste_graphes_retenus[]="categorie";
+}
+$erreur=0;
+if(!empty($_GET['erreur'])){
+	switch ($_GET['erreur']){
+		case 1:$erreur="tous les champs sont obligatoires";
+		break;
+		case 2:$erreur="erreur lors de l'upload du fichier";
+		break;
+	}
+}
+
   require_once ('header.html');
   ?>
     
@@ -18,11 +35,18 @@ $page="home";
 						
 					<div class="widget-header">
 						<i class="icon-signal"></i>
-						<h3>Chart</h3>
+						<?php if(!empty($liste_releve)){?>
+						<h3>Prix par catégories pour le relevé du <?php echo $liste_releve[0]['date'];?></h3>
+						<?php }?>
 					</div> <!-- /widget-header -->
 					
-					<div class="widget-content">					
-						<div id="area-chart" class="chart-holder"></div>					
+					<div class="widget-content">	
+						<?php if(!empty($liste_releve)){?>				
+						<div id="prixByCategorie" style="height:400px;width:500px; "></div>
+						<div style="margin-top: 10px; float: right;"><input type="button" id="ByCategorie" value="reset du zoom"/></div>					
+						<?php }else{?>	
+						Aucun relevé en base !!
+						<?php }?>	
 					</div> <!-- /widget-content -->
 				
 				</div> <!-- /widget -->
@@ -41,11 +65,40 @@ $page="home";
 					</div> <!-- /widget-header -->
 					
 					<div class="widget-content">
-						
+						<?php if(!empty($erreur)){?>
+						<div class="erreur_import">
+							<?php echo $erreur;?>
+						</div>
+						<?php }?>
 						<form id="import_fichier" action="import.php" enctype='multipart/form-data' method="POST">
-							<label for="fichier">test</label>
-							<input type="file" name="fichier_import">    
-          					<input type="submit" value="Envoyer">  
+							<div id="saisie_form">
+								<label for="fichier_import">Fichier à importer (format csv)</label>
+								<input type="file" required  name="fichier_import" id="fichier_import"> 
+								 <div class="control-group">
+									<label class="control-label">Mois de l'import (ex: 01)</label>
+									<div class="controls">
+										<input type="text" required  name="mois_import" id="mois_import"
+										data-validation-regex-regex="[0-1][1-9]"
+										data-validation-regex-message="le mois doit être sur 2 chiffres (ex: 01)" />
+										<p class="help-block"></p>
+									</div>
+								</div>  
+								<div class="control-group">
+									<label class="control-label">Année de l'import (ex: 2013)</label>
+									<div class="controls">
+										<input type="number" required  name="annee_import" id="annee_import"
+										min="1960" max="2013" />
+										<p class="help-block">L'année doit être sur 4 chiffres entre 1960 et 2013</p>
+									</div>
+								</div>
+							</div>
+							<input type="hidden" id="verif_submit" name="verif_submit" value="1"/>
+							<input type="hidden" id="modifier" name="modifier" value="0"/>
+							<input type="hidden" id="id_releve" name="id_releve" value="0"/>
+							<div style="margin-top: 10px; float: right;">
+								<input type="submit"  value="Envoyer"/> 
+							</div>  
+
 						</form>
 					
 					</div> <!-- /widget-content -->   		
@@ -57,7 +110,10 @@ $page="home";
 	      	
 	      </div> <!-- /row -->
 	
-
+<div id="confirmation" title="confirmation">
+	Attention, vous avez déjà inséré un relevé pour cette date.<br>
+	Voulez-vous 
+</div>
     
 
     

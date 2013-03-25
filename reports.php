@@ -17,6 +17,9 @@ $liste_graphes_retenus=(isset($_POST['liste_graphe']))?$_POST['liste_graphe']:$l
 $liste_cat=$reports->listeCategories();
 $liste_operations=$reports->listeOperations();
 $liste_releve=$reports->listeReleve();
+if(empty($liste_releve)){
+	header('Location: reports_vide.php');
+}
 $liste_id_cat=array();
 foreach($liste_cat as $id_cat=>$libelle){
 	$liste_id_cat[]=$id_cat;
@@ -149,6 +152,7 @@ require_once ('header.html');
 			</div> <!-- /span6 -->
 </div> <!-- /row -->
 
+<?php if(in_array("type",$liste_graphes_retenus)){?>
 <div class="row">
 
 	<div class="span6" style="margin-left: 25%;">
@@ -169,7 +173,7 @@ require_once ('header.html');
 		</div> <!-- /widget -->	
 			</div> <!-- /span6 -->
 </div> <!-- /row -->
-
+<?php }if(in_array("categorie",$liste_graphes_retenus)){?>
 <div class="row">
 
 	<div class="span6">
@@ -217,7 +221,7 @@ require_once ('header.html');
 
 	
 </div> <!-- /row -->
-
+<?php } if(in_array("operations",$liste_graphes_retenus)){?>
 <div class="row">
 
 	<div class="span6">
@@ -265,7 +269,7 @@ require_once ('header.html');
 	
 		
 </div> <!-- /row -->
-
+<?php } if(in_array("comparatif_sur_annee",$liste_graphes_retenus)){?>
 <div class="row">
 
 	<div class="span12" >
@@ -288,8 +292,7 @@ require_once ('header.html');
 </div> <!-- /row -->
 
 
-<?php
-if($id_filtre_annee1!=0 && $id_filtre_annee2!=0){?>
+<?php } if($id_filtre_annee1!=0 && $id_filtre_annee2!=0){?>
 <div class="row">
 
 	<div class="span12" >

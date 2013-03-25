@@ -1,4 +1,11 @@
+.erreur_import{
+	color: red;
+	font-weight: bold;
+}
 
+#confirmation{
+	height:100px;
+}
 
 #big_stats 
 { 
