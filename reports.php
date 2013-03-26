@@ -60,7 +60,7 @@ foreach($liste_annee as $value){
 
 	
 ?>
-<div class="row">
+<div class="row" id="filtre">
 
 	<div class="span12" >
 
@@ -69,10 +69,14 @@ foreach($liste_annee as $value){
 			<div class="widget-header">
 				<i class="icon-star"></i>
 				<h3>Filtres</h3>
+				<span class="reduction">
+					<i class="icon-resize-full"></i>
+				</span>
 			</div> <!-- /widget-header -->
 
-			<div class="widget-content">
-				<form id="import_fichier" action="reports.php" method="POST">
+			<div class="widget-content" id="content_filtre">
+
+				<form id="reports" action="reports.php" method="POST">
 					<div>
 						<h3 style="display:inline;">Relevé à prendre en compte :</h3>
 						<SELECT name='id_releve[]' multiple size="5"><?php echo $select_releve;?></SELECT>
@@ -141,7 +145,10 @@ foreach($liste_annee as $value){
 							</div>
 						</div>
 					</div>
-					<input type="submit" value="Envoyer">  
+					<div onclick="$('#reports').submit();" class="widget-header" style="width:130px; cursor:pointer;float:right; margin-right:20px;">
+						<i class="icon-refresh" ></i> <span style="padding-left:20px">Calculer </span>
+					</div> 
+					
 				</form>
 
 			</div> <!-- /widget-content -->
@@ -151,7 +158,7 @@ foreach($liste_annee as $value){
 </div> <!-- /row -->
 
 <?php if(in_array("type",$liste_graphes_retenus)){?>
-<div class="row">
+<div class="row" id="graphe_type">
 
 	<div class="span6" style="margin-left: 25%;">
 
@@ -160,9 +167,12 @@ foreach($liste_annee as $value){
 			<div class="widget-header">
 				<i class="icon-star"></i>
 				<h3>Débit / Crédit</h3>
+				<span class="reduction">
+					<i class="icon-resize-full"></i>
+				</span>
 			</div> <!-- /widget-header -->
 
-			<div class="widget-content">
+			<div class="widget-content" id="content_type">
 
 				<div id="percentByType" style="height:400px;width:500px; "></div>
 
@@ -172,7 +182,7 @@ foreach($liste_annee as $value){
 			</div> <!-- /span6 -->
 </div> <!-- /row -->
 <?php }if(in_array("categorie",$liste_graphes_retenus)){?>
-<div class="row">
+<div class="row" id="graphe_categorie">
 
 	<div class="span6">
 
@@ -181,9 +191,12 @@ foreach($liste_annee as $value){
 			<div class="widget-header">
 				<i class="icon-star"></i>
 				<h3>Découpage en catégorie</h3>
+				<span class="reduction">
+					<i class="icon-resize-full"></i>
+				</span>
 			</div> <!-- /widget-header -->
 
-			<div class="widget-content">
+			<div class="widget-content" id="content_cat1">
 
 				<div id="percentByCategorie" style="height:400px;width:500px; "></div>
 
@@ -204,12 +217,18 @@ foreach($liste_annee as $value){
 			<div class="widget-header">
 				<i class="icon-list-alt"></i>
 				<h3>Prix par catégorie</h3>
+				<span class="reduction">
+					<i class="icon-resize-full"></i>
+				</span>
 			</div> <!-- /widget-header -->
 
-			<div class="widget-content">
+			<div class="widget-content" id="content_cat2">
 
 				<div id="prixByCategorie" style="height:400px;width:500px; "></div>
-				<div style="margin-top: 10px; float: right;"><input type="button" id="ByCategorie" value="reset du zoom"/></div>	
+				<div class="widget-header" id="ByCategorie" style="width:130px; cursor:pointer;float:right; margin-right:20px;margin-top: 10px;">
+					<i class="icon-zoom-out" ></i>
+					<span style="padding-left:20px">reset du zoom </span>
+				</div>	
 
 			</div> <!-- /widget-content -->
 
@@ -220,7 +239,7 @@ foreach($liste_annee as $value){
 	
 </div> <!-- /row -->
 <?php } if(in_array("operations",$liste_graphes_retenus)){?>
-<div class="row">
+<div class="row" id="graphe_operations">
 
 	<div class="span6">
 
@@ -229,9 +248,12 @@ foreach($liste_annee as $value){
 			<div class="widget-header">
 				<i class="icon-star"></i>
 				<h3>Découpage en opérations</h3>
+				<span class="reduction">
+					<i class="icon-resize-full"></i>
+				</span>
 			</div> <!-- /widget-header -->
 
-			<div class="widget-content">
+			<div class="widget-content" id="content_op1">
 
 				<div id="percentByOperations" style="height:400px;width:500px; "></div>
 
@@ -252,12 +274,18 @@ foreach($liste_annee as $value){
 			<div class="widget-header">
 				<i class="icon-list-alt"></i>
 				<h3>Prix par opérations</h3>
+				<span class="reduction">
+					<i class="icon-resize-full"></i>
+				</span>
 			</div> <!-- /widget-header -->
 
-			<div class="widget-content">
+			<div class="widget-content" id="op2">
 
 				<div id="prixByOperations" style="height:400px;width:500px; "></div>
-				<div style="margin-top: 10px; float: right;"><input type="button" id="ByOperations" value="reset du zoom"/></div>
+				<div class="widget-header" id="ByOperations" style="width:130px; cursor:pointer;float:right; margin-right:20px;margin-top: 10px;">
+					<i class="icon-zoom-out" ></i>
+					<span style="padding-left:20px" >reset du zoom </span>
+				</div>	
 
 			</div> <!-- /widget-content -->
 
@@ -268,7 +296,7 @@ foreach($liste_annee as $value){
 		
 </div> <!-- /row -->
 <?php } if(in_array("comparatif_sur_annee",$liste_graphes_retenus)){?>
-<div class="row">
+<div class="row" id="graphe_annee">
 
 	<div class="span12" >
 
@@ -277,12 +305,18 @@ foreach($liste_annee as $value){
 			<div class="widget-header">
 				<i class="icon-star"></i>
 				<h3>Comparatif des derniers mois</h3>
+				<span class="reduction">
+					<i class="icon-resize-full"></i>
+				</span>
 			</div> <!-- /widget-header -->
 
 			<div class="widget-content">
 
 				<div id="plot2" style="height:700px;width:1000px; "></div>
-				<div style="margin-top: 10px; float: right;"><input type="button" id="annuel" value="reset du zoom"/></div>
+				<div class="widget-header" id="annuel" style="width:130px; cursor:pointer;float:right; margin-right:20px;margin-top: 10px;">
+					<i class="icon-zoom-out" ></i>
+					<span style="padding-left:20px">reset du zoom </span>
+				</div>	
 			</div> <!-- /widget-content -->
 
 		</div> <!-- /widget -->	
@@ -291,7 +325,7 @@ foreach($liste_annee as $value){
 
 
 <?php } if($id_filtre_annee1!=0 && $id_filtre_annee2!=0){?>
-<div class="row">
+<div class="row" id="graphe_2annees">
 
 	<div class="span12" >
 
@@ -300,12 +334,18 @@ foreach($liste_annee as $value){
 			<div class="widget-header">
 				<i class="icon-star"></i>
 				<h3>Comparatif entre <?php echo $id_filtre_annee1;?> et <?php echo $id_filtre_annee2;?></h3>
+				<span class="reduction">
+					<i class="icon-resize-full"></i>
+				</span>
 			</div> <!-- /widget-header -->
 
 			<div class="widget-content">
 
 				<div id="comparatif_annees" style="height:700px;width:1000px; "></div>
-				<div style="margin-top: 10px; float: right;"><input type="button" id="reset_comparatif_annees" value="reset du zoom"/></div>
+				<div class="widget-header" id="reset_comparatif_annees" style="width:130px; cursor:pointer;float:right; margin-right:20px;margin-top: 10px;">
+					<i class="icon-zoom-out" ></i>
+					<span style="padding-left:20px">reset du zoom </span>
+				</div>	
 			</div> <!-- /widget-content -->
 
 		</div> <!-- /widget -->	
@@ -316,7 +356,7 @@ foreach($liste_annee as $value){
 
 <?php
 if(!empty($id_filtre_perso1) && !empty($id_filtre_perso2)){?>
-<div class="row">
+<div class="row" id="graphe_perso">
 
 	<div class="span12" >
 
@@ -325,12 +365,18 @@ if(!empty($id_filtre_perso1) && !empty($id_filtre_perso2)){?>
 			<div class="widget-header">
 				<i class="icon-star"></i>
 				<h3>Comparatif personalisé</h3>
+				<span class="reduction">
+					<i class="icon-resize-full"></i>
+				</span>
 			</div> <!-- /widget-header -->
 
 			<div class="widget-content">
 
 				<div id="comparatif_perso" style="height:700px;width:1000px; "></div>
-				<div style="margin-top: 10px; float: right;"><input type="button" id="reset_comparatif_perso" value="reset du zoom"/></div>
+				<div class="widget-header" id="reset_comparatif_perso" style="width:130px; cursor:pointer;float:right; margin-right:20px;margin-top: 10px;">
+					<i class="icon-zoom-out" ></i>
+					<span style="padding-left:20px">reset du zoom </span>
+				</div>	
 			</div> <!-- /widget-content -->
 
 		</div> <!-- /widget -->	
@@ -342,7 +388,7 @@ if(!empty($id_filtre_perso1) && !empty($id_filtre_perso2)){?>
 
 
 
-<input type="button" value="test" onclick="save()">
+
 
 
 

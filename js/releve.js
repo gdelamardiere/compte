@@ -13,8 +13,9 @@ function update_categorie(id,sel){
 		type: "POST",
 		url: "lib/releve.ajax.php",
 		data: { 'update_categorie': "true", 'id': id, 'id_categorie': sel.value }
-		}).done(function( msg ) {
-		//alert( "Data Saved: " + msg );
+		}).done(function( msg ) {	
+			$('#cat_'+id).html($("option:selected", sel).text());
+			$('#detail_releve').tableFilterRefresh();
 	});
 }
 
@@ -23,8 +24,8 @@ function update_operations(id,sel){
 		type: "POST",
 		url: "lib/releve.ajax.php",
 		data: { 'update_operations': "true", 'id': id, 'id_operations': sel.value }
-		}).done(function( msg ) {
-		//alert( "Data Saved: " + msg );
+		}).done(function( msg ) {		
+			$('#detail_releve').tableFilterRefresh();
 	});
 }
 
@@ -62,6 +63,7 @@ function update_pointage(id,sel){
 			else{
 				$('#pointage_'+id).hide();
 			}
+			$('#detail_releve').tableFilterRefresh();
 	});
 }
 
@@ -94,3 +96,82 @@ function supprimer_ligne_releve(id_ligne_releve){
 function actualiser(){
 	location.reload();
 }
+
+
+if($('.tri_good').length){
+	$('.tri_good').click(function() {
+		$('.tri_good').find('i').hide();
+		icone=$(this).find('i');
+		class_icone=icone.attr("class");
+		if(class_icone=="icon-arrow-up"){
+			icone.attr("class","icon-arrow-down");			
+			tri($(this).attr('id'),"ASC","good");
+		}
+		else{
+			icone.attr("class","icon-arrow-up");
+			tri($(this).attr('id'),"DESC","good");
+		}		
+		icone.show();
+	});
+}
+if($('.tri_bad').length){
+	$('.tri_bad').click(function() {
+		$('.tri_bad').find('i').hide();
+		icone=$(this).find('i');
+		class_icone=icone.attr("class");
+		if(class_icone=="icon-arrow-up"){
+			icone.attr("class","icon-arrow-down");			
+			tri($(this).attr('id'),"ASC","bad");
+		}
+		else{
+			icone.attr("class","icon-arrow-up");
+			tri($(this).attr('id'),"DESC","bad");
+		}		
+		icone.show();
+	});
+}
+
+function tri(val,sens,tab){	
+	fonct='get_detail_releve_'+tab;
+	$.ajax({
+			type: "POST",
+			url: "lib/releve.ajax.php",
+			data: { fonction : fonct, 'tri' : val, 'sens': sens, 'id_releve': $('#id_releve').val()}
+			}).done(function( msg ) {
+				$('#detail_releve_'+tab).html(msg);				
+				$('#detail_releve').tableFilterRefresh();
+		});
+}
+
+$(document).ready(function() {
+	// Initialise Plugin
+            // var options1 = {
+            // 	clearFiltersControls: [$('#clearFilter')]
+            //     // additionalFilterTriggers: [$('#onlyyes'), $('#onlyno'), $('#quickfind')],
+            //     // clearFiltersControls: [$('#clearFilter')],
+            //     // matchingRow: function(state, tr, textTokens) {
+            //     //   if (!state || !state.id) {
+            //     //     return true;
+            //     //   }
+            //     //   var child = tr.children('td:eq(2)');
+            //     //   if (!child) return true;
+            //     //   var val = child.text();
+            //     //   switch (state.id) {
+            //     //   case 'onlyyes':
+            //     //     return state.value !== true || val === 'yes';
+            //     //   case 'onlyno':
+            //     //     return state.value !== true || val === 'no';
+            //     //   default:
+            //     //     return true;
+            //     //   }
+            //     // }
+            // };
+
+            // $('#detail_releve').tableFilter(options1);
+
+            // Initialise Plugin
+			var options = {
+				clearFiltersControls: [$('#clearFilter')],            
+			};
+			$('#detail_releve').tableFilter(options);
+});

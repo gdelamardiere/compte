@@ -53,7 +53,7 @@ if(in_array("categorie",$liste_graphes_retenus)){?>
 	];
 	if($('#percentByCategorie').length){
 		//graphe pourcent par categorie	
-		var pie1 = jQuery.jqplot ('percentByCategorie', [getByCategorie], 
+		var percentByCategorie = jQuery.jqplot ('percentByCategorie', [getByCategorie], 
 			{ 
 				seriesDefaults: {
 			        // Make this a pie chart.
@@ -71,7 +71,7 @@ if(in_array("categorie",$liste_graphes_retenus)){?>
 
 	//graphe prix par categorie	
 	if($('#prixByCategorie').length){
-		var line1 = $.jqplot('prixByCategorie', [getByCategorie], {
+		var prixByCategorie = $.jqplot('prixByCategorie', [getByCategorie], {
 			// Turns on animatino for all series in this plot.
 			animate: true,
 	        // Will animate plot on calls to plot1.replot({resetAxes:true})
@@ -111,7 +111,7 @@ if(in_array("categorie",$liste_graphes_retenus)){?>
 
     //bouton rezet zoom prix par categorie
     if($('#ByCategorie').length){
-		$('#ByCategorie').click(function() { line1.resetZoom() });
+		$('#ByCategorie').click(function() { prixByCategorie.resetZoom() });
 	}
 
 <?php } 
@@ -131,7 +131,7 @@ if(in_array("operations",$liste_graphes_retenus)){?>
 
 		//graphe pourcent par operations
 		if($('#percentByCategorie').length){
-			var pie1 = jQuery.jqplot ('percentByOperations', [getByOperations], 
+			var percentByOperations = jQuery.jqplot ('percentByOperations', [getByOperations], 
 				{ 
 					seriesDefaults: {
 				        // Make this a pie chart.
@@ -149,7 +149,7 @@ if(in_array("operations",$liste_graphes_retenus)){?>
 
 		//graphe prix par operations
 		if($('#prixByOperations').length){
-			var line1 = $.jqplot('prixByOperations', [getByOperations], {
+			var prixByOperations = $.jqplot('prixByOperations', [getByOperations], {
 					series:[{
 						pointLabels: {
 							show: true
@@ -191,7 +191,7 @@ if(in_array("operations",$liste_graphes_retenus)){?>
 
 		//bouton rezet zoom prix par operations
 		if($('#ByOperations').length){
-			$('#ByOperations').click(function() { line1.resetZoom() });
+			$('#ByOperations').click(function() { prixByOperations.resetZoom() });
 		}
 
 <?php }
@@ -339,7 +339,7 @@ $('#annuel').click(function() { plot2.resetZoom() });
 	?>
 
 
-	plot2 = $.jqplot('comparatif_annees', [<?php echo implode(",",$aSeries);?>], {
+	comparatif_annees = $.jqplot('comparatif_annees', [<?php echo implode(",",$aSeries);?>], {
 		series:[
 		<?php foreach($aLabelSeries as $label){?>
 			{
@@ -398,7 +398,7 @@ $('#annuel').click(function() { plot2.resetZoom() });
 	        }
 	    });
 
-$('#reset_comparatif_annees').click(function() { plot2.resetZoom() });
+$('#reset_comparatif_annees').click(function() { comparatif_annees.resetZoom() });
 
 
 
@@ -444,7 +444,7 @@ if(isset($id_filtre_perso1) && isset($id_filtre_perso2) && !empty($id_filtre_per
 	?>
 
 
-	plot2 = $.jqplot('comparatif_perso', [<?php echo implode(",",$aSeries);?>], {
+	comparatif_perso = $.jqplot('comparatif_perso', [<?php echo implode(",",$aSeries);?>], {
 		series:[
 		<?php foreach($aLabelSeries as $label){?>
 			{
@@ -503,7 +503,7 @@ if(isset($id_filtre_perso1) && isset($id_filtre_perso2) && !empty($id_filtre_per
 	        }
 	    });
 
-$('#reset_comparatif_perso').click(function() { plot2.resetZoom() });
+$('#reset_comparatif_perso').click(function() { comparatif_perso.resetZoom() });
 <?php }?>
 
 
@@ -532,54 +532,67 @@ if($('#import_fichier').length){
 
 
 
-
-
- $( "#confirmation" ).dialog({
-autoOpen: false,
-height: 300,
-width: 350,
-modal: true,
-buttons: {
-"le remplacer": function() {
+if($('#import_fichier').length){
+	 $( "#confirmation" ).dialog({
+	autoOpen: false,
+	height: 300,
+	width: 350,
+	modal: true,
+	buttons: {
+	"le remplacer": function() {
+		$( this ).dialog( "close" );
+		$('#modifier').val(0);
+		$('#verif_submit').val(0);
+		$('#import_fichier').submit();
+	},
+	"le modifier": function() {
+		$( this ).dialog( "close" );
+		$('#modifier').val(1);
+		$('#verif_submit').val(0);
+		$('#import_fichier').submit();
+	},
+	Annuller: function() {
 	$( this ).dialog( "close" );
-	$('#modifier').val(0);
-	$('#verif_submit').val(0);
-	$('#import_fichier').submit();
-},
-"le modifier": function() {
+	}
+	},
+	close: function() {
 	$( this ).dialog( "close" );
-	$('#modifier').val(1);
-	$('#verif_submit').val(0);
-	$('#import_fichier').submit();
-},
-Annuller: function() {
-$( this ).dialog( "close" );
-}
-},
-close: function() {
-$( this ).dialog( "close" );
-}
-});
-
-
-
-
-
-$('#import_fichier').submit(function() {
-	mois=$('#mois_import').val();
-	annee=$('#annee_import').val();
-	verif_submit=$('#verif_submit').val();
-	if(verif_submit == '1'){
-		existeReleve();
-	    return false;		
 	}
-	else{
-		return true;
-	}
-});
+	});
+}
 
 
 
+if($('#import_fichier').length){
+	$('#import_fichier').submit(function() {
+		mois=$('#mois_import').val();
+		annee=$('#annee_import').val();
+		verif_submit=$('#verif_submit').val();
+		if(verif_submit == '1'){
+			existeReleve();
+		    return false;		
+		}
+		else{
+			return true;
+		}
+	});
+}
+
+if($('.widget-header').length){
+	$('.widget-header').click(function() {
+		var parent=$(this).parent();
+		var content = parent.find(".widget-content");
+		var icone = parent.find(".reduction").find("i");
+		if(content.is(':visible')){
+			content.slideUp("slow");			
+			icone.attr("class","icon-resize-full");
+		}
+		else{
+			content.slideDown("slow");			
+			icone.attr("class","icon-resize-small");
+		}
+	});
+}
 
 });
 

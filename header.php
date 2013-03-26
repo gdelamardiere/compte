@@ -52,7 +52,7 @@ $reports=new reports();
 				<span class="icon-bar"></span>
 			</a>
 			
-			<a class="brand" href="index.html">
+			<a class="brand" href="index.php">
 				Gestionaire de Comptes				
 			</a>		
 			
@@ -60,18 +60,20 @@ $reports=new reports();
 				<ul class="nav pull-right">
 					<li class="dropdown">
 						
+						<a href="#" class="dropdown-toggle" onclick="window.print()"><i class="icon-print"></i>
+							Imprimer
+						</a>
+					</li>
+					<li class="dropdown">	
+
 						<a  href="#" class="dropdown-toggle" data-toggle="modal" data-target="#myModal">
 							<i class="icon-cog"></i>
 							Settings
 							<b class="caret"></b>
-						</a>
-						
+						</a>						
 					</li>
-				</ul>
-			
-				<form class="navbar-search pull-right">
-					<input type="text" class="search-query" placeholder="Search">
-				</form>
+
+				</ul>			
 				
 			</div><!--/.nav-collapse -->	
 	

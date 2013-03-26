@@ -37,6 +37,85 @@ if(isset($_POST['verif_insert_releve']) && isset($_POST['mois_releve'])  && isse
 }
 
 
+if(isset($_POST['fonction']) && $_POST['fonction']=="get_detail_releve_good" && isset($_POST['id_releve']) && isset($_POST['sens']) && isset($_POST['tri'])){
+	if(in_array($_POST['tri'],array("rd.date",
+									"rd.libelle",
+									"operations",
+									"rd.montant",
+									"rd.type",
+									"categorie",
+									"pointe")
+	) && in_array($_POST['sens'],array("ASC","DESC"))
+	){
+		$stmt = $pdo->prepare("SELECT rd.*,o.nom_operations as operations, lc.libelle as categorie
+			from releve_detail rd
+			inner join operations o on o.id_operations=rd.id_operations 
+			left join liste_cat lc on rd.id_cat=lc.id_cat
+			where rd.id_releve=:id_releve
+			AND trouve='1'
+			ORDER BY ".$_POST['tri']." ".$_POST['sens']." ");
+		$debit=0;
+		$credit=0;
+		$stmt->execute(array("id_releve"=>$_POST['id_releve']));
+		$aReleve=$stmt->fetchAll(PDO::FETCH_ASSOC);
+
+		$stmt = $pdo->prepare('SELECT * from liste_cat');	
+		$stmt->execute();
+		$select="";
+		$aCat=array();
+		while($assoc_cat=$stmt->fetch(PDO::FETCH_ASSOC)){
+			$aCat[]= $assoc_cat;
+			$select.="<option value='".$assoc_cat['id_cat']."'>".$assoc_cat['libelle']."</option>";
+		}
+
+
+		$aPointage=array("0"=>"","-1"=>"en erreur","1"=>"ok");
+		require_once(ROOT."tpl_good_detail_releve.php");
+	}
+	
+}
+
+
+if(isset($_POST['fonction']) && $_POST['fonction']=="get_detail_releve_bad" && isset($_POST['id_releve']) && isset($_POST['sens']) && isset($_POST['tri'])){
+	$_POST['tri']=str_replace("bad_","",$_POST['tri']);
+	if(in_array($_POST['tri'],array("rd.date",
+									"rd.libelle",
+									"rd.montant",
+									"rd.type",
+									"pointe")
+	) && in_array($_POST['sens'],array("ASC","DESC"))
+	){
+		$stmt = $pdo->prepare("SELECT rd.*
+			from releve_detail rd
+			where rd.id_releve=:id_releve		
+			AND trouve='0'
+			ORDER BY ".$_POST['tri']." ".$_POST['sens']." ");
+		$debit=0;
+		$credit=0;
+		$stmt->execute(array("id_releve"=>$_POST['id_releve']));
+		$aReleveErreur=$stmt->fetchAll(PDO::FETCH_ASSOC);
+
+		$stmt = $pdo->prepare('SELECT * from liste_cat');	
+		$stmt->execute();
+		$select="";
+		$aCat=array();
+		while($assoc_cat=$stmt->fetch(PDO::FETCH_ASSOC)){
+			$aCat[]= $assoc_cat;
+			$select.="<option value='".$assoc_cat['id_cat']."'>".$assoc_cat['libelle']."</option>";
+		}
+
+		$stmt = $pdo->prepare('SELECT * from operations');	
+		$stmt->execute();
+		
+		$aOperations=$stmt->fetchAll(PDO::FETCH_ASSOC);
+
+		$aPointage=array("0"=>"","-1"=>"en erreur","1"=>"ok");
+		require_once(ROOT."tpl_bad_detail_releve.php");
+	}
+	
+}
+
+
 
 
 if(isset($_POST['update_table']) && isset($_POST['update_champ']) && isset($_POST['id']) && isset($_POST['valeur'])){

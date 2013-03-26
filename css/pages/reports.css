@@ -6,7 +6,10 @@
 #confirmation{
 	height:100px;
 }
-
+.reduction{
+	float:right;
+	margin-right:30px;
+}
 #big_stats 
 { 
 	width: 100%; 
@@ -104,4 +107,9 @@
 	#big_stats .stat .value {
 		font-size: 40px;
 	}
+}
+
+@media print{
+  .navbar,.subnavbar {display:none;}
+  /* #graphe_operations,#graphe_annee,#graphe_2annees{page-break-before:always}*/
 }

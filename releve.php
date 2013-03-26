@@ -3,6 +3,9 @@ $page="releve";
 require_once ('header.php');
 
 $liste_releve=$reports->listeReleve();
+if(empty($liste_releve)){
+	header('Location: reports_vide.php');
+}
 $id_selected=(isset($_GET['id_releve']))?$_GET['id_releve']:$liste_releve[0]['id_releve'];
 if(isset($id_selected)){
 
@@ -39,9 +42,8 @@ if(isset($id_selected)){
 
 
 
-	$stmt = $pdo->prepare("SELECT rd.*,r.mois_releve,r.annee_releve,o.nom_operations as operations, lc.libelle as categorie
+	$stmt = $pdo->prepare("SELECT rd.*,o.nom_operations as operations, lc.libelle as categorie
 		from releve_detail rd
-		inner join releve r on rd.id_releve=r.id
 		inner join operations o on o.id_operations=rd.id_operations 
 		left join liste_cat lc on rd.id_cat=lc.id_cat
 		where rd.id_releve=:id_releve
@@ -52,9 +54,8 @@ if(isset($id_selected)){
 	$aReleve=$stmt->fetchAll(PDO::FETCH_ASSOC);
 
 
-	$stmt = $pdo->prepare("SELECT rd.*,r.mois_releve,r.annee_releve
+	$stmt = $pdo->prepare("SELECT rd.*
 		from releve_detail rd
-		inner join releve r on rd.id_releve=r.id
 		where rd.id_releve=:id_releve		
 		AND trouve='0'
 		ORDER BY rd.date,rd.id_operations,rd.type");
@@ -84,7 +85,7 @@ if(isset($id_selected)){
 	$total=$aGlobalReleve['total_debit']+$aGlobalReleve['total_credit'];
 	
 	?>
-	
+	<input type="hidden" id="id_releve" value="<?php echo $id_selected;?>"/>
 	<div class="widget big-stats-container">
 	      			
 	      			<div class="widget-content">
@@ -154,75 +155,31 @@ if(isset($id_selected)){
 			<input type="submit" name="button_keywords" value="Ajouter">
 		</div>
 	</form> 
-
+	<div class="widget-header" id="clearFilter" style="float:right;width:100px;margin-bottom: 10px;padding-left:20px;margin-right:30px;">
+						Vider le filtre 
+	</div> 
+	<div class="widget-header" style="width:140px;margin-bottom: 10px;padding-left:20px;">
+						Relevé n°<?php echo $aGlobalReleve['id'];?> du 
+						<?php echo $aGlobalReleve['mois_releve'];?> /<?php echo $aGlobalReleve['annee_releve'];?>  
+	</div> 
 	<div class="detail_releve">
-		<table>
+		<table id="detail_releve"> 
 			<thead>
 				<tr>
-					<th>Relevé</th>
-					<th>Date Transaction</th>
-					<th>Libellé</th>
-					<th>Opérations</th>
-					<th>Montant</th>
-					<th>Type</th>
-					<th>Catégorie</th>
-					<th>Pointage</th>
-					<th>Suppression</th>
+					<th class="tri_good" id="rd.date"><i class="icon-arrow-up"></i> Date Transaction </th>
+					<th class="tri_good" id="rd.libelle"><i style="display:none"></i> Libellé</th>
+					<th class="tri_good" id="operations" filter-type='ddl'><i style="display:none"></i> Opérations</th>					
+					<th class="tri_good" id="rd.montant"><i style="display:none"></i> Montant</th>
+					<th class="tri_good" id="rd.type" filter-type='ddl'><i style="display:none"></i> Type</th>
+					<th class="tri_good" id="categorie"  filter-type='ddl'><i style="display:none"></i> Catégorie</th>
+					<th style="display:none"  filter='false'></th>
+					<th class="tri_good" id="pointe"  filter='false'><i style="display:none"></i> Pointage</th>
+					<th style="display:none"  filter='false'></th>
+					<th filter='false'>Suppression</th>
 				</tr>
 			</thead>
-			<tbody>
-			<?php foreach($aReleve as $value){
-				switch($value['pointe']){
-					case '1':
-						$img="<img width='20' id='pointage_".$value['id']."' src='img/valider.png' alt ='valide'/>";
-						break;
-					case '-1':
-						$img="<img width='20' id='pointage_".$value['id']."' src='img/erreur.gif' alt ='erreur'/>";
-						break;
-					default :
-						$img="<img width='20' id='pointage_".$value['id']."' src='' alt ='aucun' style='display:none'/>";
-						break;
-
-				}
-				switch($value['type']){
-					case 'DEBIT':
-						$debit+=$value['montant'];
-						break;
-					case 'CREDIT':
-						$credit+=$value['montant'];
-						break;
-				}
-
-				echo "<tr id='ligne_".$value['id']."'>
-				<td>n°".$value['id_releve']." du ".$value['mois_releve']."/".$value['annee_releve']."</td>
-				<td>".$value['date']."</td>
-				<td>".$value['libelle']."</td>
-				<td>".$value['operations']."</td>
-				<td class='odd'>".$value['montant']." &euro;</td>
-				<td>".$value['type']."</td> 
-
-				<td class='lecture'>".$value['categorie']."</td> 
-				<td class='edition'><SELECT onchange=\"update_categorie('".$value['id']."',this);\" >";
-				foreach($aCat as $categorie){
-					echo "<option value='".$categorie['id_cat']."' ".(($categorie['id_cat']==$value['id_cat'])?'selected="selected"':'').">"
-					.$categorie['libelle']."</option>";
-				}
-				echo "</SELECT></td>
-
-				<td class='lecture'>".$img."</td> 
-				<td class='edition'><SELECT onchange=\"update_pointage('".$value['id']."',this);\" >";
-				foreach($aPointage as $key=>$pointage){
-					echo "<option value='".$key."' ".(($key==$value['pointe'])?'selected="selected"':'').">".$pointage."</option>";
-				}
-				echo "</SELECT></td>
-				<td>
-					<a href='#' onclick='supprimer_ligne_releve(".$value['id'].")'>
-						<img width='20' id='delete_".$value['id']."' src='img/erreur.gif' alt ='supprimer'/>
-					</a>
-					
-				</td> 
-				</tr>";
-			}?>  
+			<tbody id="detail_releve_good">
+			<?php require_once("tpl_good_detail_releve.php");?>
 			</tbody>
 
 			<tfoot>
@@ -244,53 +201,19 @@ if(isset($id_selected)){
 		<table>
 			<thead>
 				<tr>
-					<th>Relevé</th>
-					<th>Date Transaction</th>
-					<th>Libellé</th>
+					<th class="tri_bad" id="bad_rd.date"><i class="icon-arrow-up"></i> Date Transaction </th>
+					<th class="tri_bad" id="bad_rd.libelle"><i style="display:none"></i> Libellé</th>
 					<th>Opérations</th>
-					<th>Montant</th>
-					<th>Type</th>
-					<th>Catégorie</th>
-					<th>Pointage</th>
+					<th class="tri_bad" id="bad_rd.montant"><i style="display:none"></i> Montant</th>
+					<th class="tri_bad" id="bad_rd.type"><i style="display:none"></i> Type</th>
+					<th> Catégorie</th>
+					<th class="tri_bad" id="bad_pointe"><i style="display:none"></i> Pointage</th>
+					<th>Suppression</th>
 				</tr>
 			</thead>
-			<tbody>
-			<?php foreach($aReleveErreur as $value){
-				switch($value['type']){
-					case 'DEBIT':
-						$debit+=$value['montant'];
-						break;
-					case 'CREDIT':
-						$credit+=$value['montant'];
-						break;
-				}
-				echo "<tr>
-				<td>n°".$value['id_releve']." du ".$value['mois_releve']."/".$value['annee_releve']."</td>
-				<td>".$value['date']."</td>
-				<td>".$value['libelle']."</td>
-				<td><SELECT id='".$value['id']."' onchange=\"update_operations('".$value['id']."',this);\" >";
-				echo "<option value=''></option>";
-				foreach($aOperations as $operations){
-					echo "<option value='".$operations['id_operations']."'>".$operations['nom_operations']."</option>";
-				}
-				echo "</SELECT></td>
-				<td class='odd'>".$value['montant']."</td>
-				<td>".$value['type']."</td> 
-				<td><SELECT id='".$value['id']."' onchange=\"update_categorie('".$value['id']."',this);\" >";
-				foreach($aCat as $categorie){
-					echo "<option value='".$categorie['id_cat']."' ".(($categorie['id_cat']==$value['id_cat'])?'selected="selected"':'').">"
-					.$categorie['libelle']."</option>";
-				}
-				echo "</SELECT></td>
-				
-				<td class='lecture'>".$img."</td> 
-				<td class='edition'><SELECT onchange=\"update_pointage('".$value['id']."',this);\" >";
-				foreach($aPointage as $key=>$pointage){
-					echo "<option value='".$key."' ".(($key==$value['pointe'])?'selected="selected"':'').">".$pointage."</option>";
-				}
-				echo "</SELECT></td>
-				</tr>";
-			}?>  
+			<tbody id="detail_releve_bad">
+			<?php require_once("tpl_bad_detail_releve.php");?>	
+			
 			</tbody>
 			<tfoot>
 				<tr>

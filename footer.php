@@ -24,11 +24,11 @@
     
 
 
-
 <script language="javascript" type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
 <script language="javascript"  type="text/javascript" src="js/bootstrap.js"></script>
-<script src="js/releve.js"></script>
+
 <?php if($page=="reports" || $page="home"){?>
+
 <script language="javascript" type="text/javascript" src="js/api/jquery.jqplot.min.js"></script>
 <link rel="stylesheet" type="text/css" href="js/api/jquery.jqplot.css" />
 <script type="text/javascript" src="js/api/plugins/jqplot.pieRenderer.min.js"></script>
@@ -45,8 +45,12 @@
 <?php 
 require_once("js/reports_js.php");
 }
+if($page=="releve"){?>
+<script type='text/javascript' src='js/picnet.table.filter.min.js'></script> 
+<?php }
 
 ?>
+<script src="js/releve.js"></script>
 
   </body>
 
