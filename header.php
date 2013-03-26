@@ -1,3 +1,12 @@
+<?php
+require_once('conf.php'); 
+require_once(ROOT.'classes/reports.class.php');
+header('Content-Type: text/html; charset=utf-8');
+
+$pdo=database::getInstance();
+$reports=new reports();
+?>
+
 <!DOCTYPE html>
 <html lang="fr">
   
@@ -51,15 +60,11 @@
 				<ul class="nav pull-right">
 					<li class="dropdown">
 						
-						<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+						<a  href="#" class="dropdown-toggle" data-toggle="modal" data-target="#myModal">
 							<i class="icon-cog"></i>
 							Settings
 							<b class="caret"></b>
 						</a>
-						
-						<ul class="dropdown-menu">
-							<li><a href="javascript:;">Account Settings</a></li>
-						</ul>
 						
 					</li>
 				</ul>
@@ -129,3 +134,9 @@
 	<div class="main-inner">
 
 	    <div class="container">
+
+
+
+<?php require_once('settings.php');?>
+
+

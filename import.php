@@ -2,8 +2,11 @@
 require_once('conf.php'); 
 require_once(ROOT.'classes/database.php');
 require_once(ROOT.'lib/file.lib.php');
+require_once(ROOT.'classes/reports.class.php');
 
 $pdo=database::getInstance();
+$reports=new reports();
+$liste_Excel=$reports->listeExcel();
 $erreur=1;
 if(isset($_FILES['fichier_import']) 
 	&& !empty($_POST['mois_import'])
@@ -63,13 +66,16 @@ if(isset($_FILES['fichier_import'])
 			)
 		VALUES (:trouve,:type,:libelle,:id_releve,:montant,:date)"
 		);
+		foreach($liste_Excel as $id=>$tab){
+			${'pos_'.$tab['libelle']}=$tab['position']-1;
+		}
 
 		foreach($aContenuFichier as $key=> $value){
 			$j=0;
-			$montant=number_format(floatval(str_replace(",",".",$value[3])) , 2,',','' );
-			$date=preg_replace("#([0-9]{2})/([0-9]{2})/([0-9]{4})#","$3-$2-$1",$value[0]);							
+			$montant=number_format(floatval(str_replace(",",".",$value[$pos_montant])) , 2,',','' );
+			$date=preg_replace("#([0-9]{2})/([0-9]{2})/([0-9]{4})#","$3-$2-$1",$value[$pos_date]);							
 			$type=($montant<0)?"DEBIT":"CREDIT";	
-			while($j<sizeof($aRegex_find) && !preg_match($aRegex_find[$j]['regex'],$value[1])){
+			while($j<sizeof($aRegex_find) && !preg_match($aRegex_find[$j]['regex'],$value[$pos_libelle])){
 				$j++;
 			}
 			if($j>=sizeof($aRegex_find)){

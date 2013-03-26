@@ -1,11 +1,7 @@
 <?php
-require_once('conf.php'); 
-require_once(ROOT.'classes/reports.class.php');
-header('Content-Type: text/html; charset=utf-8');
-
-$pdo=database::getInstance();
 $page="releve";
-$reports=new reports();
+require_once ('header.php');
+
 $liste_releve=$reports->listeReleve();
 $id_selected=(isset($_GET['id_releve']))?$_GET['id_releve']:$liste_releve[0]['id_releve'];
 if(isset($id_selected)){
@@ -86,7 +82,7 @@ if(isset($id_selected)){
 	$debit=0;
 	$credit=0;
 	$total=$aGlobalReleve['total_debit']+$aGlobalReleve['total_credit'];
-	require_once ('header.html');
+	
 	?>
 	
 	<div class="widget big-stats-container">

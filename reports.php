@@ -1,9 +1,7 @@
 <?php
-require_once('conf.php'); 
-require_once(ROOT.'classes/reports.class.php');
-header('Content-Type: text/html; charset=utf-8');
 $page="reports";
-$reports=new reports();
+require_once ('header.php');
+
 $liste_graphes=array("type"=>"Découpage par type",
 					"categorie"=>"Découpage par catégorie",
 					"operations"=>"Découpage par opérations",
@@ -59,7 +57,7 @@ foreach($liste_annee as $value){
 }
 
 
-require_once ('header.html');
+
 	
 ?>
 <div class="row">

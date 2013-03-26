@@ -38,4 +38,74 @@ if(isset($_POST['verif_insert_releve']) && isset($_POST['mois_releve'])  && isse
 
 
 
+
+if(isset($_POST['update_table']) && isset($_POST['update_champ']) && isset($_POST['id']) && isset($_POST['valeur'])){
+	$ok=false;
+	switch($_POST['update_table']){
+		case 'categories':
+				if($_POST['update_champ']=="libelle"){
+					$stmt = $pdo->prepare("Update `liste_cat` SET libelle:valeur WHERE id_cat=:id");
+					$ok=true;
+				}
+			break;
+
+		case 'operations':
+				if($_POST['update_champ']=="libelle"){
+					$stmt = $pdo->prepare("Update `operations` SET nom_operations:valeur WHERE id_operations=:id");
+					$ok=true;
+				}
+			break;
+
+		case 'excel':
+				if($_POST['update_champ']=="position"){
+					$stmt = $pdo->prepare("Update `import_excel` SET position:valeur WHERE id_excel=:id");
+					$ok=true;
+				}
+			break;
+
+		case 'keywords':
+				if($_POST['update_champ']=="value"){
+					$stmt = $pdo->prepare("Update `keywords` SET value:valeur WHERE id_keywords=:id");
+					$ok=true;
+				}
+				if($_POST['update_champ']=="id_cat"){
+					$stmt = $pdo->prepare("Update `keywords` SET id_cat:valeur WHERE id_keywords=:id");
+					$ok=true;
+				}
+			break;
+
+		case 'regex':
+				if($_POST['update_champ']=="regex"){
+					$stmt = $pdo->prepare("Update `regex_replace` SET regex:valeur WHERE id_keywords=:id");
+					$ok=true;
+				}
+				if($_POST['update_champ']=="replace"){
+					$stmt = $pdo->prepare("Update `regex_replace` SET replace:valeur WHERE id_keywords=:id");
+					$ok=true;
+				}
+				if($_POST['update_champ']=="ordre"){
+					$stmt = $pdo->prepare("Update `regex_replace` SET ordre:valeur WHERE id_keywords=:id");
+					$ok=true;
+				}
+				if($_POST['update_champ']=="id_operations"){
+					$stmt = $pdo->prepare("Update `regex_replace` SET id_operations:valeur WHERE id_keywords=:id");
+					$ok=true;
+				}
+			break;
+
+	}
+	if($ok){
+		$stmt->execute(array("valeur"=>$_POST['valeur'],"id"=>$_POST['id'])) ;
+	}
+}
+
+
+
+
+
+
+
+
+
+
 ?>

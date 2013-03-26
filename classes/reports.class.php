@@ -9,6 +9,9 @@ class reports{
 	public $resultat=array();
 	public $listeCategorie=array(); 
 	public $listeOperations=array(); 
+	public $listeKeywords = array();
+	public $listeRegex = array();
+	public $listeExcel=array();
 	public $sFilterCategorie="";
 	public $sFilterOperations="";
 	private $aAllowedTypes=array("DEBIT","CREDIT");
@@ -199,6 +202,21 @@ class reports{
 	}
 
 
+	function listeExcel(){
+		if(empty($this->listeExcel)){
+			$requete=$this->pdo->prepare("SELECT id_excel,libelle,position
+										from import_excel");
+			$requete->execute();
+			$resultat=array();
+			while($result=$requete->fetch(PDO::FETCH_ASSOC)){
+				$resultat[$result['id_excel']]=$result;
+			}
+			$this->listeExcel= $resultat;
+		}
+		return $this->listeExcel;		
+	}
+
+
 
 
 	function listeReleve(){
@@ -279,6 +297,52 @@ function listeAnnee(){
 	}
 
 
+
+	function listeKeywords(){
+		if(empty($this->listeKeywords)){
+			$requete=$this->pdo->prepare("SELECT *
+										from keywords");
+			$requete->execute();
+			$resultat=array();
+			while($result=$requete->fetch(PDO::FETCH_ASSOC)){
+				$resultat[$result['id_keywords']]=array("value"=>$result['value'],"id_cat"=>$result['id_cat']);
+			}
+			$this->listeKeywords= $resultat;
+		}
+		return $this->listeKeywords;
+	}
+
+	function getSelectCategorie($id_selected=0){
+		$select="";
+		$liste_cat=$this->listeCategories();
+		foreach($liste_cat as $id=>$value){
+			$select.="<option value='".$id."' ".(($id_selected==$id)?"selected='selected'":"").">".$value."</option>";
+		}
+		return $select;
+	}
+
+	function getSelectOperations($id_selected=0){
+		$select="";
+		$liste_op=$this->listeOperations();
+		foreach($liste_op as $id=>$value){
+			$select.="<option value='".$id."' ".(($id_selected==$id)?"selected='selected'":"").">".$value."</option>";
+		}
+		return $select;
+	}
+
+	function listeRegex(){
+		if(empty($this->listeRegex)){
+			$requete=$this->pdo->prepare("SELECT *
+										from regex_replace");
+			$requete->execute();
+			$resultat=array();
+			while($result=$requete->fetch(PDO::FETCH_ASSOC)){
+				$resultat[$result['id_keywords']]=$result;
+			}
+			$this->listeRegex= $resultat;
+		}
+		return $this->listeRegex;
+	}
 
 
 

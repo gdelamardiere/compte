@@ -408,6 +408,25 @@ DELIMITER ;
 
 -- --------------------------------------------------------
 
+--
+-- Structure de la table `import_excel`
+--
+
+CREATE TABLE IF NOT EXISTS `import_excel` (
+  `id_excel` int(11) NOT NULL AUTO_INCREMENT,
+  `libelle` varchar(20) NOT NULL,
+  `position` int(11) NOT NULL,
+  PRIMARY KEY (`id_excel`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
+
+--
+-- Contenu de la table `import_excel`
+--
+
+INSERT INTO `import_excel` (`id_excel`, `libelle`, `position`) VALUES
+(1, 'montant', 4),
+(2, 'date', 1),
+(3, 'libelle', 2);
 
 
 --

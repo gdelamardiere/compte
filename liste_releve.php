@@ -1,9 +1,7 @@
 <?php
-require_once('conf.php'); 
-require_once(ROOT.'classes/database.php');
-header('Content-Type: text/html; charset=utf-8');
-$page="liste_releve";
-$pdo=database::getInstance();
+
+$page="liste_releve";	
+require_once ('header.php');
 
 $stmt = $pdo->prepare("SELECT r.`id`,r.mois_releve,r.annee_releve,
 							(SELECT SUM(montant) from releve_detail where id_releve=r.id AND type='DEBIT') as total_debit,
@@ -21,7 +19,7 @@ $stmt = $pdo->prepare("SELECT r.`id`,r.mois_releve,r.annee_releve,
 	$aListeReleve=$stmt->fetchAll(PDO::FETCH_ASSOC);
 
 
-	require_once ('header.html');?>
+?>
 	
 
 	<div class="detail_releve">

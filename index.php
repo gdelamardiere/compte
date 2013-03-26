@@ -1,9 +1,7 @@
 <?php
-header('Content-Type: text/html; charset=utf-8');
-require_once('conf.php'); 
-require_once(ROOT.'classes/reports.class.php');
 $page="home";
-$reports=new reports();
+require_once ('header.php');
+
 $liste_graphes_retenus=array();
 $liste_releve=$reports->listeReleve();
 if(!empty($liste_releve)){
@@ -20,7 +18,7 @@ if(!empty($_GET['erreur'])){
 	}
 }
 
-  require_once ('header.html');
+ 
   ?>
     
 	
