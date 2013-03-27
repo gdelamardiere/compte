@@ -1,34 +1,95 @@
 $(document).ready(function(){
 
-	/*categorie*/
-	$('.settings_categories_libelle').change(function() { update_settings("categories","libelle",$(this).attr('id').replace('settings_categories_libelle_',''),$(this).val()));
+	$('#myModal').on('hidden', function () {
+		if($('#modif_settings').val()=='1'){
+			actualiser();
+		}   		
+    })
 
-	/*operations*/
-	$('.settings_operations_libelle').change(function() { update_settings("operations","libelle",$(this).attr('id').replace('settings_operations_libelle_',''),$(this).val()));
-
-	/*keywords*/
-	$('.settings_keywords_value').change(function() { update_settings("keywords","value",$(this).attr('id').replace('settings_keywords_value_',''),$(this).val()));
-	$('.settings_keywords_cat').change(function() { update_settings("keywords","id_cat",$(this).attr('id').replace('settings_keywords_cat_',''),$(this).val()));
-
-	/*regex*/
-	$('.settings_regex_regex').change(function() { update_settings("regex","regex",$(this).attr('id').replace('settings_regex_regex_',''),$(this).val()));
-	$('.settings_regex_replace').change(function() { update_settings("regex","replace",$(this).attr('id').replace('settings_regex_replace_',''),$(this).val()));
-	$('.settings_regex_ordre').change(function() { update_settings("regex","ordre",$(this).attr('id').replace('settings_regex_ordre_',''),$(this).val()));
-	$('.settings_regex_operations').change(function() { update_settings("regex","id_operations",$(this).attr('id').replace('settings_regex_operations_',''),$(this).val()));
-
-
-	/*excel*/
-	$('.settings_excel_position').change(function() { update_settings("excel","position",$(this).attr('id').replace('settings_excel_position_',''),$(this).val()));
+    $('a[data-toggle="tab"]').click(function (e) {
+    	change_onglet($(this).attr('id').replace('tab_settings_','') );
+    })
 
 });
 
-function update_settings(table,champ,id,valeur){
-	alert(valeur);
+function update_settings(table,champ,id,valeur){	
 	$.ajax({
 		type: "POST",
 		url: "lib/releve.ajax.php",
 		data: { 'update_table': table,'update_champ': champ, 'id': id, 'valeur': valeur }
 		}).done(function( msg ) {
-			alert(msg);
+			$('#modif_settings').val('1');
 	});
 }
+
+
+function change_onglet(onglet){	
+	$.ajax({
+		type: "POST",
+		url: "lib/releve.ajax.php",
+		data: { 'onglet': onglet}
+		}).done(function( msg ) {
+			$('#settings_'+onglet).html(msg);
+	});
+}
+
+function ajout_cat(){	
+	$.ajax({
+		type: "POST",
+		url: "lib/releve.ajax.php",
+		data: { 'new_cat': $('#new_cat').val() }
+		}).done(function( msg ) {
+			$('#modif_settings').val('1');
+			change_onglet('categories');
+	});
+}
+
+function ajout_operations(){	
+	$.ajax({
+		type: "POST",
+		url: "lib/releve.ajax.php",
+		data: { 'new_operations': $('#new_operations').val() }
+		}).done(function( msg ) {
+			$('#modif_settings').val('1');
+			change_onglet('operations');
+	});
+}
+
+
+function ajout_keywords(){	
+	$.ajax({
+		type: "POST",
+		url: "lib/releve.ajax.php",
+		data: { 'new_keywords': $('#new_keywords').val() ,'keywords_cat': $('#keywords_cat').val() }
+		}).done(function( msg ) {
+			$('#modif_settings').val('1');
+			change_onglet('keywords');
+	});
+}
+
+function ajout_regex(){	
+	$.ajax({
+		type: "POST",
+		url: "lib/releve.ajax.php",
+		data: { 'new_regex': $('#new_regex').val() ,'regex_operations': $('#regex_operations').val(),'regex_type': $('#regex_type').val() }
+		}).done(function( msg ) {
+			$('#modif_settings').val('1');
+			change_onglet('regex');
+	});
+}
+
+function supprimer_settings_keywords(id){
+	if (confirm("Voulez-vous Vraiment effacet ce mot-clé ?")) {
+		$.ajax({
+			type: "POST",
+			url: "lib/releve.ajax.php",
+			data: { 'supprimer_keywords': "true", 'id_keywords': id }
+			}).done(function( msg ) {
+				$('#modif_settings').val('1');
+				change_onglet('keywords');
+		});
+	}
+}
+
+
+

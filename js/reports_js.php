@@ -203,7 +203,9 @@ if(in_array("comparatif_sur_annee",$liste_graphes_retenus)){
 	$data=$reports->CompareByCategorie($reports->getListeIdAnnee($id_selected),"DEBIT");
 
 	$aLibelle=array();
+	$aLabelSeries=array();
 	foreach($data as $id_releve=>$value){
+		$aLabelSeries[]=$reports->getDateIdReleve($id_releve);
 		foreach($value as $libelle => $montant){		
 			if(!in_array($libelle, $aLibelle)){
 				$aLibelle[]=$libelle;
@@ -212,7 +214,7 @@ if(in_array("comparatif_sur_annee",$liste_graphes_retenus)){
 	}
 
 	$aSeries=array();
-	$aLabelSeries=array("s1","s2");
+	
 	$max=0;
 	foreach($data as $id_releve=>$value){
 		$temp=array();
@@ -299,7 +301,10 @@ $('#annuel').click(function() { plot2.resetZoom() });
 <?php }?>
 
 <?php if(isset($id_filtre_annee1) && isset($id_filtre_annee2) && $id_filtre_annee1!=0 && $id_filtre_annee2!=0){
-
+	$id_anne2=max($id_filtre_annee1,$id_filtre_annee2);
+	$id_anne1=min($id_filtre_annee1,$id_filtre_annee2);
+	$id_filtre_annee1=$id_anne1;
+	$id_filtre_annee2=$id_anne2;
 	$data=$reports->CompareByCategorieAnnee($id_filtre_annee1,$id_filtre_annee2,"DEBIT");
 
 	$aLibelle=array();
@@ -416,7 +421,7 @@ if(isset($id_filtre_perso1) && isset($id_filtre_perso2) && !empty($id_filtre_per
 	}
 
 	$aSeries=array();
-	$aLabelSeries=array($id_filtre_annee1,$id_filtre_annee2);
+	$aLabelSeries=array("serie 1","serie 2");
 	$max=0;
 	foreach($data as $id_releve=>$value){
 		$temp=array();

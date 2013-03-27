@@ -117,9 +117,11 @@ class reports{
 		$requete=$this->pdo->prepare("SELECT id_releve,c.libelle, SUM(montant) as montant 
 										from releve_detail rd
 										left join liste_cat c on rd.id_cat=c.id_cat
+										left join releve r on rd.id_releve=r.id
 										where id_releve in(".$sListeReleve.") 
 										".$this->sFilterOperations.$this->sFilterCategorie.$filtre_type." 
-										Group by id_releve,rd.id_cat");
+										Group by id_releve,rd.id_cat
+										order by annee_releve, mois_releve ASC");
 		$requete->execute();
 		$resultat=array();
 		while($result=$requete->fetch(PDO::FETCH_ASSOC)){
@@ -242,7 +244,7 @@ function listeAnnee(){
 												AND mois_releve <= (SELECT mois_releve from releve where id = :id))
 										OR (annee_releve = (SELECT annee_releve from releve where id = :id) -1
 												AND mois_releve >= (SELECT mois_releve from releve where id = :id))
-												");
+												ORDER BY annee_releve DESC,mois_releve DESC");
 		$requete->execute(array("id"=>$id_releve));
 		$resultat="";
 		while($result=$requete->fetch(PDO::FETCH_ASSOC)){
@@ -342,6 +344,15 @@ function listeAnnee(){
 			$this->listeRegex= $resultat;
 		}
 		return $this->listeRegex;
+	}
+
+
+	function getDateIdReleve($id_releve){
+		$requete=$this->pdo->prepare("SELECT concat(mois_releve,'/',annee_releve) as date_releve
+										from releve WHERE id=:id");
+		$requete->execute(array('id'=>$id_releve));
+		$resultat=$requete->fetch(PDO::FETCH_ASSOC);
+		return $resultat['date_releve'];
 	}
 
 

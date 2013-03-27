@@ -23,7 +23,13 @@
 				echo "<tr id='ligne_".$value['id']."'>				
 				<td>".$value['date']."</td>
 				<td>".$value['libelle']."</td>
-				<td>".$value['operations']."</td>
+				<td class='lecture' id='operations_".$value['id']."'>".$value['operations']."</td>
+				<td class='edition' >
+					<SELECT id='".$value['id']."' onchange=\"update_operations('".$value['id']."',this);\" >";
+						echo "<option value=''></option>";
+						echo $reports->getSelectOperations($value['id_operations']);
+					echo "</SELECT>
+				</td>
 				<td class='odd'>".$value['montant']." &euro;</td>
 				<td>".$value['type']."</td> 
 
@@ -47,5 +53,6 @@
 					</a>
 					
 				</td> 
+				<td style='display:none'></td>
 				</tr>";
 			}?>  

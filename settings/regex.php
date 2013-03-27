@@ -10,8 +10,13 @@ $select_Operations=$reports->getSelectOperations();
 
 <div class="form_settings">
 	<div class="ajout_settings">
-		<input type='text' name="new_keywords"/> <SELECT name='keywords_cat' ><?php echo $select_Operations;?></SELECT>
-			<input type="submit" name="button_keywords" value="Ajouter">
+		<input type='text' name="new_regex" id="new_regex"/> 
+		<SELECT name='regex_operations' id='regex_operations' ><?php echo $select_Operations;?></SELECT>
+		<SELECT name='regex_type' id='regex_type' >
+			<option value='DEBIT' selected='selected'>DEBIT</option>
+			<option value='CREDIT'>CREDIT</option>
+		</SELECT>
+			<input type="submit" name="button_regex" value="Ajouter" onclick='ajout_regex()' >
 	</div>
 	<div class="modif_settings">
 		<table>
@@ -19,21 +24,21 @@ $select_Operations=$reports->getSelectOperations();
 			<?php foreach($liste_regex as $id=>$tab){?>
 			<tr>
 				<td>
-					<input type="text" name="settings_regex_regex" id="settings_regex_regex_<?php echo $id;?>" value="<?php echo $tab['regex'];?>"/>
+					<input type="text" onchange='update_settings("regex","regex",<?php echo $id;?>,$(this).val())' value="<?php echo $tab['regex'];?>"/>
 				</td>
 				<td>
-					<input type="text" name="settings_regex_replace" id="settings_regex_replace_<?php echo $id;?>" value="<?php echo $tab['replace'];?>"/>
+					<input type="text" onchange='update_settings("regex","replace",<?php echo $id;?>,$(this).val())' value="<?php echo $tab['replace'];?>"/>
 				</td>
 				<td>
-					<input type="text" name="settings_regex_ordre" id="settings_regex_ordre_<?php echo $id;?>" value="<?php echo $tab['ordre'];?>"/>
+					<input type="text" onchange='update_settings("regex","ordre",<?php echo $id;?>,$(this).val())' value="<?php echo $tab['ordre'];?>"/>
 				</td>				
 				<td>
-					<SELECT name="settings_regex_operations" id="settings_regex_operations_<?php echo $id;?>" >
+					<SELECT onchange='update_settings("regex","id_operations",<?php echo $id;?>,$(this).val())' >
 						<?php echo $reports->getSelectOperations($tab['id_operations']);?>
 					</SELECT>
 				</td>
 				<td>
-					<SELECT name="settings_regex_type" id="settings_regex_type_<?php echo $id;?>" >
+					<SELECT onchange='update_settings("regex","type",<?php echo $id;?>,$(this).val())' >
 						<option value='DEBIT' <?php echo ($tab['id_operations']=="DEBIT")?"selected='selected'":"";?> >DEBIT</option>
 						<option value='CREDIT' <?php echo ($tab['id_operations']=="CREDIT")?"selected='selected'":"";?> >CREDIT</option>
 					</SELECT>

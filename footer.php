@@ -27,7 +27,7 @@
 <script language="javascript" type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
 <script language="javascript"  type="text/javascript" src="js/bootstrap.js"></script>
 
-<?php if($page=="reports" || $page="home"){?>
+<?php if($page=="reports" || $page=="home"){?>
 
 <script language="javascript" type="text/javascript" src="js/api/jquery.jqplot.min.js"></script>
 <link rel="stylesheet" type="text/css" href="js/api/jquery.jqplot.css" />
@@ -51,6 +51,7 @@ if($page=="releve"){?>
 
 ?>
 <script src="js/releve.js"></script>
+<script src="js/settings.js"></script>
 
   </body>
 

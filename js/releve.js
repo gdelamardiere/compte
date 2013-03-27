@@ -24,7 +24,8 @@ function update_operations(id,sel){
 		type: "POST",
 		url: "lib/releve.ajax.php",
 		data: { 'update_operations': "true", 'id': id, 'id_operations': sel.value }
-		}).done(function( msg ) {		
+		}).done(function( msg ) {	
+			$('#operations_'+id).html($("option:selected", sel).text());	
 			$('#detail_releve').tableFilterRefresh();
 	});
 }
@@ -143,35 +144,12 @@ function tri(val,sens,tab){
 		});
 }
 
-$(document).ready(function() {
-	// Initialise Plugin
-            // var options1 = {
-            // 	clearFiltersControls: [$('#clearFilter')]
-            //     // additionalFilterTriggers: [$('#onlyyes'), $('#onlyno'), $('#quickfind')],
-            //     // clearFiltersControls: [$('#clearFilter')],
-            //     // matchingRow: function(state, tr, textTokens) {
-            //     //   if (!state || !state.id) {
-            //     //     return true;
-            //     //   }
-            //     //   var child = tr.children('td:eq(2)');
-            //     //   if (!child) return true;
-            //     //   var val = child.text();
-            //     //   switch (state.id) {
-            //     //   case 'onlyyes':
-            //     //     return state.value !== true || val === 'yes';
-            //     //   case 'onlyno':
-            //     //     return state.value !== true || val === 'no';
-            //     //   default:
-            //     //     return true;
-            //     //   }
-            //     // }
-            // };
-
-            // $('#detail_releve').tableFilter(options1);
-
-            // Initialise Plugin
-			var options = {
-				clearFiltersControls: [$('#clearFilter')],            
-			};
-			$('#detail_releve').tableFilter(options);
+$(document).ready(function() {	
+	if($('#detail_releve').length){
+		var options = {
+			clearFiltersControls: [$('#clearFilter')],   
+			        
+		};
+		$('#detail_releve').tableFilter(options);
+	}
 });

@@ -7,18 +7,18 @@ $liste_Excel=$reports->listeExcel();
 ?>
 
 <!-- Modal -->
-<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="width:1000px;">
+<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="width:1000px;left:36%;top:40%">
 	<div class="modal-header">
 		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-		<h3 id="myModalLabel">Modal header</h3>
+		<h3 id="myModalLabel">Configuration de l'application</h3>
 	</div>
-	<div class="modal-body">
+	<div class="modal-body" style="max-height:600px;">
 		 <ul class="nav nav-tabs">
-		    <li><a href="#settings_categories" data-toggle="tab">Catégories</a></li>
-		    <li><a href="#settings_operations" data-toggle="tab">Opérations</a></li>
-		    <li><a href="#settings_keywords" data-toggle="tab">Keywords</a></li>
-		    <li><a href="#settings_regex" data-toggle="tab">Regex</a></li>
-		    <li><a href="#settings_import" data-toggle="tab">import</a></li>
+		    <li  class="active"><a href="#settings_categories" id="tab_settings_categories" data-toggle="tab">Catégories</a></li>
+		    <li><a href="#settings_operations" id="tab_settings_operations" data-toggle="tab">Opérations</a></li>
+		    <li><a href="#settings_keywords" id="tab_settings_keywords" data-toggle="tab">Keywords</a></li>
+		    <li><a href="#settings_regex" id="tab_settings_regex" data-toggle="tab">Regex</a></li>
+		    <li><a href="#settings_import" id="tab_settings_import" data-toggle="tab">import</a></li>
     	</ul>
     	<div id="myTabContent" class="tab-content">
 			<div id="settings_categories" class="tab-pane fade active in">

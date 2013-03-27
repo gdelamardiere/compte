@@ -1,6 +1,7 @@
 <?php
 require_once('../conf.php'); 
-require_once(ROOT.'classes/database.php');
+require_once(ROOT.'classes/reports.class.php');
+
 
 $pdo=database::getInstance();
 if(isset($_POST['update_categorie']) && isset($_POST['id']) && isset($_POST['id_categorie'])){
@@ -20,7 +21,6 @@ if(isset($_POST['update_pointage']) && isset($_POST['id']) && isset($_POST['poin
 
 if(isset($_POST['supprimer_releve']) && isset($_POST['id_releve'])){
 	$stmt = $pdo->prepare("DELETE  FROM `releve` where id=:id_releve");
-	echo "DELETE  FROM `releve` where id=:id_releve";
 	$stmt->execute(array("id_releve"=>$_POST['id_releve']));
 }
 
@@ -117,57 +117,70 @@ if(isset($_POST['fonction']) && $_POST['fonction']=="get_detail_releve_bad" && i
 
 
 
+if(isset($_POST['onglet']) && file_exists(ROOT."settings/".$_POST['onglet'].".php")){
+		$reports=new reports();
+		$liste_cat=$reports->listeCategories();
+		$liste_keywords=$reports->listeKeywords();
+		$liste_regex=$reports->listeRegex();
+		$liste_operations=$reports->listeOperations();
+		$liste_Excel=$reports->listeExcel();
+		require_once(ROOT."settings/".$_POST['onglet'].".php");
+	
+	
+}
+
+
 
 if(isset($_POST['update_table']) && isset($_POST['update_champ']) && isset($_POST['id']) && isset($_POST['valeur'])){
 	$ok=false;
 	switch($_POST['update_table']){
 		case 'categories':
 				if($_POST['update_champ']=="libelle"){
-					$stmt = $pdo->prepare("Update `liste_cat` SET libelle:valeur WHERE id_cat=:id");
+					$stmt = $pdo->prepare("Update `liste_cat` SET libelle = :valeur WHERE id_cat=:id");
 					$ok=true;
 				}
 			break;
 
 		case 'operations':
 				if($_POST['update_champ']=="libelle"){
-					$stmt = $pdo->prepare("Update `operations` SET nom_operations:valeur WHERE id_operations=:id");
+					$stmt = $pdo->prepare("Update `operations` SET nom_operations = :valeur WHERE id_operations=:id");
 					$ok=true;
 				}
 			break;
 
 		case 'excel':
 				if($_POST['update_champ']=="position"){
-					$stmt = $pdo->prepare("Update `import_excel` SET position:valeur WHERE id_excel=:id");
+					$stmt = $pdo->prepare("Update `import_excel` SET position = :valeur WHERE id_excel=:id");
 					$ok=true;
 				}
 			break;
 
 		case 'keywords':
 				if($_POST['update_champ']=="value"){
-					$stmt = $pdo->prepare("Update `keywords` SET value:valeur WHERE id_keywords=:id");
+					$stmt = $pdo->prepare("Update `keywords` SET value = :valeur WHERE id_keywords=:id");
 					$ok=true;
 				}
 				if($_POST['update_champ']=="id_cat"){
-					$stmt = $pdo->prepare("Update `keywords` SET id_cat:valeur WHERE id_keywords=:id");
+					$stmt = $pdo->prepare("Update `keywords` SET id_cat = :valeur WHERE id_keywords=:id");
 					$ok=true;
 				}
 			break;
 
 		case 'regex':
 				if($_POST['update_champ']=="regex"){
-					$stmt = $pdo->prepare("Update `regex_replace` SET regex:valeur WHERE id_keywords=:id");
+					$stmt = $pdo->prepare("Update `regex_replace` SET regex = :valeur WHERE id_keywords=:id");
 					$ok=true;
 				}
 				if($_POST['update_champ']=="replace"){
-					$stmt = $pdo->prepare("Update `regex_replace` SET replace:valeur WHERE id_keywords=:id");
+					$stmt = $pdo->prepare("Update `regex_replace` SET replace = :valeur WHERE id_keywords=:id");
 					$ok=true;
 				}
 				if($_POST['update_champ']=="ordre"){
-					$stmt = $pdo->prepare("Update `regex_replace` SET ordre:valeur WHERE id_keywords=:id");
+					$stmt = $pdo->prepare("Update `regex_replace` SET ordre = :valeur WHERE id_keywords=:id");
 					$ok=true;
 				}
 				if($_POST['update_champ']=="id_operations"){
-					$stmt = $pdo->prepare("Update `regex_replace` SET id_operations:valeur WHERE id_keywords=:id");
+					$stmt = $pdo->prepare("Update `regex_replace` SET id_operations = :valeur WHERE id_keywords=:id");
 					$ok=true;
 				}
 			break;
@@ -176,6 +189,46 @@ if(isset($_POST['update_table']) && isset($_POST['update_champ']) && isset($_POS
 	if($ok){
 		$stmt->execute(array("valeur"=>$_POST['valeur'],"id"=>$_POST['id'])) ;
 	}
+}
+
+
+
+
+
+
+	if(isset($_POST['new_cat']) && $_POST['new_cat']!=''){
+		$stmt = $pdo->prepare("INSERT INTO liste_cat(libelle) VALUE(:libelle)");
+		$stmt->execute(array("libelle"=>$_POST['new_cat']));
+		$stmt = $pdo->prepare("call update_releve_detail()");
+		$stmt->execute();
+	}
+
+	if(isset($_POST['new_operations']) && $_POST['new_operations']!=''){
+		$stmt = $pdo->prepare("INSERT INTO operations(nom_operations) VALUE(:libelle)");
+		$stmt->execute(array("libelle"=>$_POST['new_operations']));
+		$stmt = $pdo->prepare("call update_releve_detail()");
+		$stmt->execute();
+	}
+
+	if(isset($_POST['new_keywords']) && $_POST['new_keywords']!='' ){
+		$stmt = $pdo->prepare("INSERT INTO keywords(id_cat,value) VALUE(:id_cat,:value)");
+		$stmt->execute(array("id_cat"=>$_POST['keywords_cat'],"value"=>$_POST['new_keywords']));
+		$stmt = $pdo->prepare("call update_releve_detail()");
+		$stmt->execute();
+	}
+
+	if(isset($_POST['new_regex']) && $_POST['new_regex']!='' ){
+		$stmt = $pdo->prepare("INSERT INTO regex_replace(regex,`replace`,ordre,id_operations,type) VALUE(:regex,'/explode/$1',(SELECT MAX(r.ordre)+1 from regex_replace r),:id_operations,:type)");
+		$stmt->execute(array("type"=>$_POST['regex_type'],"id_operations"=>$_POST['regex_operations'],"regex"=>$_POST['new_regex']));
+		$stmt = $pdo->prepare("call update_releve_detail()");
+		$stmt->execute();
+	}
+
+
+
+if(isset($_POST['supprimer_keywords']) && isset($_POST['id_keywords'])){
+	$stmt = $pdo->prepare("DELETE  FROM `keywords` where id_keywords=:id_keywords");
+	$stmt->execute(array("id_keywords"=>$_POST['id_keywords']));
 }
 
 

@@ -147,13 +147,7 @@ if(isset($id_selected)){
 			<input type="button" onclick="edition();" class="lecture" value="Passer en mode édition">
 			<input type="button" onclick="lecture();" class="edition" value="Passer en mode lecture">
 		</div>
-		<div class="edition">
-			Nouvelle catégorie:  <input type='text' name="new_cat"/>
-			<input type="submit" name="button_cat" value="Ajouter">
-			<br><br>
-			Nouveau Keywords:  <input type='text' name="new_keywords"/> <SELECT name='keywords_cat' ><?php echo $select;?></SELECT>
-			<input type="submit" name="button_keywords" value="Ajouter">
-		</div>
+		
 	</form> 
 	<div class="widget-header" id="clearFilter" style="float:right;width:100px;margin-bottom: 10px;padding-left:20px;margin-right:30px;">
 						Vider le filtre 
@@ -168,8 +162,10 @@ if(isset($id_selected)){
 				<tr>
 					<th class="tri_good" id="rd.date"><i class="icon-arrow-up"></i> Date Transaction </th>
 					<th class="tri_good" id="rd.libelle"><i style="display:none"></i> Libellé</th>
-					<th class="tri_good" id="operations" filter-type='ddl'><i style="display:none"></i> Opérations</th>					
+					<th class="tri_good" id="operations" filter-type='ddl'><i style="display:none"></i> Opérations</th>		
+					<th width="0" filter='false' style="display:none">fais chier</th>			
 					<th class="tri_good" id="rd.montant"><i style="display:none"></i> Montant</th>
+
 					<th class="tri_good" id="rd.type" filter-type='ddl'><i style="display:none"></i> Type</th>
 					<th class="tri_good" id="categorie"  filter-type='ddl'><i style="display:none"></i> Catégorie</th>
 					<th style="display:none"  filter='false'></th>
