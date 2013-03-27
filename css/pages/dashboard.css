@@ -276,6 +276,11 @@
 		border-bottom: dotted 1px #333;
 }
 
+.detail_releve tbody td {
+		height:30px;
+		font-size: 11px;
+}
+
 .detail_releve tbody th {
 		white-space: nowrap;
 }
@@ -285,6 +290,8 @@
 }
 
 .detail_releve .odd {color:red;}
+
+.detail_releve .green {color:green;}
 
 .detail_releve tbody tr:hover {
 		background:#fafafa
@@ -296,7 +303,9 @@
 
 
 
-
+.tri_good,.tri_bad{
+	cursor:pointer;
+}
 
 
 

@@ -25,20 +25,22 @@ if(empty($aListeReleve)){
 	
 
 	<div class="detail_releve">
-		<table>
+		<table style="text-align:center;width:1000px;">
 			<thead>
 				<tr>
-					<th>Relevé</th>
+					<th>Relevé<br/>du mois de</th>
 					<th>Total Débit</th>
-					<th>Total Créit</th>
+					<th>Total Crédit</th>
 					<th>Total</th>
-					<th>Nb Opé</th>
-					<th>Nb Opé non trouvé</th>
-					<th>Nb Opé sans catégorie</th>
-					<th>Nb opé pointé</th>
-					<th>Nb opé non pointé</th>
-					<th>Nb opé pointé en erreur</th>
-					<th>Editer</th>
+					<th>Nb opérations</th>
+					<th>Nb opérations <br/>non trouvé</th>
+					<th>Nb opérations <br/>sans catégorie</th>
+					<th>Nb opérations <br/>pointé</th>
+					<th>Nb opérations <br/>non pointé</th>
+					<th>Nb opérations pointé<br/> en erreur</th>
+					<th>Edition</th>
+					<th>Export</th>
+					<th>Export annuel</th>
 					<th>Supprimer</th>
 				</tr>
 			</thead>
@@ -46,7 +48,7 @@ if(empty($aListeReleve)){
 			<?php foreach($aListeReleve as $value){
 				$total=$value['total_debit']+$value['total_credit'];
 				echo "<tr>
-				<td>n°".$value['id']." du ".$value['mois_releve']."/".$value['annee_releve']."</td>
+				<td>".$value['mois_releve']."/".$value['annee_releve']."</td>
 				<td>".$value['total_debit']." &euro;</td>
 				<td>".$value['total_credit']." &euro;</td>
 				<td>".$total."  &euro;</td>
@@ -60,6 +62,18 @@ if(empty($aListeReleve)){
 					<a href='releve.php?id_releve=".$value['id']."'>
 						<img width='20' id='editer".$value['id']."' src='img/editer.jpg' alt ='éditer'/>
 					</a>
+				</td>
+				<td>
+					<a href='export.php?id_releve=".$value['id']."&date_releve=".$value['mois_releve']."_".$value['annee_releve']."'>
+						<img width='20' src='img/excel.jpg' alt ='excel'/>
+					</a>
+					
+				</td> 
+				<td>
+					<a href='export.php?annuel=".$value['annee_releve']."&id_releve=".$value['id']."&date_releve=".$value['mois_releve']."_".$value['annee_releve']."'>
+						<img width='20' src='img/excel.jpg' alt ='excel'/>
+					</a>
+					
 				</td>
 				<td>
 					<a href='#' onclick='supprimer_releve(".$value['id'].")'>

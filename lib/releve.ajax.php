@@ -1,7 +1,7 @@
 <?php
 require_once('../conf.php'); 
 require_once(ROOT.'classes/reports.class.php');
-
+$reports=new reports();
 
 $pdo=database::getInstance();
 if(isset($_POST['update_categorie']) && isset($_POST['id']) && isset($_POST['id_categorie'])){
@@ -47,13 +47,16 @@ if(isset($_POST['fonction']) && $_POST['fonction']=="get_detail_releve_good" && 
 									"pointe")
 	) && in_array($_POST['sens'],array("ASC","DESC"))
 	){
-		$stmt = $pdo->prepare("SELECT rd.*,o.nom_operations as operations, lc.libelle as categorie
+		$stmt = $pdo->prepare("SELECT rd.id,rd.libelle,rd.montant,rd.type,rd.id_operations,rd.id_cat,
+									DATE_FORMAT(rd.date, '%e/%m/%Y') as date,rd.id_releve,rd.trouve,rd.pointe,o.nom_operations as operations, lc.libelle as categorie
 			from releve_detail rd
 			inner join operations o on o.id_operations=rd.id_operations 
 			left join liste_cat lc on rd.id_cat=lc.id_cat
 			where rd.id_releve=:id_releve
 			AND trouve='1'
 			ORDER BY ".$_POST['tri']." ".$_POST['sens']." ");
+
+
 		$debit=0;
 		$credit=0;
 		$stmt->execute(array("id_releve"=>$_POST['id_releve']));
@@ -85,7 +88,8 @@ if(isset($_POST['fonction']) && $_POST['fonction']=="get_detail_releve_bad" && i
 									"pointe")
 	) && in_array($_POST['sens'],array("ASC","DESC"))
 	){
-		$stmt = $pdo->prepare("SELECT rd.*
+		$stmt = $pdo->prepare("SELECT rd.id,rd.libelle,rd.montant,rd.type,rd.id_operations,rd.id_cat,
+									DATE_FORMAT(rd.date, '%e/%m/%Y') as date,rd.id_releve,rd.trouve,rd.pointe
 			from releve_detail rd
 			where rd.id_releve=:id_releve		
 			AND trouve='0'
@@ -118,7 +122,6 @@ if(isset($_POST['fonction']) && $_POST['fonction']=="get_detail_releve_bad" && i
 
 
 if(isset($_POST['onglet']) && file_exists(ROOT."settings/".$_POST['onglet'].".php")){
-		$reports=new reports();
 		$liste_cat=$reports->listeCategories();
 		$liste_keywords=$reports->listeKeywords();
 		$liste_regex=$reports->listeRegex();

@@ -42,7 +42,9 @@ if(isset($id_selected)){
 
 
 
-	$stmt = $pdo->prepare("SELECT rd.*,o.nom_operations as operations, lc.libelle as categorie
+	$stmt = $pdo->prepare("SELECT rd.id,rd.libelle,rd.montant,rd.type,rd.id_operations,rd.id_cat,
+									DATE_FORMAT(rd.date, '%e/%m/%Y') as date,rd.id_releve,rd.trouve,rd.pointe,
+									o.nom_operations as operations, lc.libelle as categorie
 		from releve_detail rd
 		inner join operations o on o.id_operations=rd.id_operations 
 		left join liste_cat lc on rd.id_cat=lc.id_cat
@@ -54,7 +56,8 @@ if(isset($id_selected)){
 	$aReleve=$stmt->fetchAll(PDO::FETCH_ASSOC);
 
 
-	$stmt = $pdo->prepare("SELECT rd.*
+	$stmt = $pdo->prepare("SELECT rd.id,rd.libelle,rd.montant,rd.type,rd.id_operations,rd.id_cat,
+									DATE_FORMAT(rd.date, '%e/%m/%Y') as date,rd.id_releve,rd.trouve,rd.pointe
 		from releve_detail rd
 		where rd.id_releve=:id_releve		
 		AND trouve='0'
@@ -142,36 +145,38 @@ if(isset($id_selected)){
 				</div> <!-- /widget -->
 
 
-	<form method="post" action="#">
-		<div class="bouton_edition">
-			<input type="button" onclick="edition();" class="lecture" value="Passer en mode édition">
-			<input type="button" onclick="lecture();" class="edition" value="Passer en mode lecture">
-		</div>
+	
 		
-	</form> 
-	<div class="widget-header" id="clearFilter" style="float:right;width:100px;margin-bottom: 10px;padding-left:20px;margin-right:30px;">
+		
+	
+	<div class="widget-header" id="clearFilter" style="cursor:pointer;float:right;width:100px;margin-bottom: 10px;padding-left:20px;margin-right:30px;">
 						Vider le filtre 
 	</div> 
+	<div class="widget-header" style="float:right;width:140px;margin-bottom: 10px;padding-left:20px;margin-right:30px;">
+			<span style="cursor:pointer;" onclick="edition();" class="lecture" >Passer en mode édition</span>
+			<span style="cursor:pointer;" onclick="lecture();" class="edition" >Passer en mode lecture</span>   
+	</div> 
 	<div class="widget-header" style="width:140px;margin-bottom: 10px;padding-left:20px;">
-						Relevé n°<?php echo $aGlobalReleve['id'];?> du 
-						<?php echo $aGlobalReleve['mois_releve'];?> /<?php echo $aGlobalReleve['annee_releve'];?>  
+		Relevé du mois 
+						<?php echo $aGlobalReleve['mois_releve'];?> /<?php echo $aGlobalReleve['annee_releve'];?>
 	</div> 
 	<div class="detail_releve">
 		<table id="detail_releve"> 
 			<thead>
 				<tr>
-					<th class="tri_good" id="rd.date"><i class="icon-arrow-up"></i> Date Transaction </th>
-					<th class="tri_good" id="rd.libelle"><i style="display:none"></i> Libellé</th>
-					<th class="tri_good" id="operations" filter-type='ddl'><i style="display:none"></i> Opérations</th>		
-					<th width="0" filter='false' style="display:none">fais chier</th>			
-					<th class="tri_good" id="rd.montant"><i style="display:none"></i> Montant</th>
-
-					<th class="tri_good" id="rd.type" filter-type='ddl'><i style="display:none"></i> Type</th>
-					<th class="tri_good" id="categorie"  filter-type='ddl'><i style="display:none"></i> Catégorie</th>
-					<th style="display:none"  filter='false'></th>
-					<th class="tri_good" id="pointe"  filter='false'><i style="display:none"></i> Pointage</th>
-					<th style="display:none"  filter='false'></th>
-					<th filter='false'>Suppression</th>
+					<th width="80" class="tri_good" id="rd.date"><i class="icon-arrow-down"></i> Date Transaction </th>
+					<th width="400" class="tri_good" id="rd.libelle"><i style="display:none"></i> Libellé</th>
+					<th width="80" class="tri_good" id="rd.montant"><i style="display:none"></i> Montant</th>
+					<th width="80" class="tri_good" id="rd.type" filter-type='ddl'><i style="display:none"></i> Type</th>
+					<th width="150" class="tri_good" id="operations" filter-type='ddl'><i style="display:none"></i> Opérations</th>		
+							
+					<th width="200" class="tri_good" id="categorie"  filter-type='ddl'><i style="display:none"></i> Catégorie</th>
+					<th width="0" style="display:none"  filter='false'></th>
+					<th width="50" class="tri_good" id="pointe"  filter='false'><i style="display:none"></i> Pointage</th>
+					<th width="0" style="display:none"  filter='false'></th>
+					<th width="0" style="display:none"  filter='false'></th>
+					<th width="0" style="display:none"  filter='false'></th>
+					<th width="80" filter='false'>Suppression</th>
 				</tr>
 			</thead>
 			<tbody id="detail_releve_good">
@@ -197,14 +202,14 @@ if(isset($id_selected)){
 		<table>
 			<thead>
 				<tr>
-					<th class="tri_bad" id="bad_rd.date"><i class="icon-arrow-up"></i> Date Transaction </th>
-					<th class="tri_bad" id="bad_rd.libelle"><i style="display:none"></i> Libellé</th>
-					<th>Opérations</th>
-					<th class="tri_bad" id="bad_rd.montant"><i style="display:none"></i> Montant</th>
-					<th class="tri_bad" id="bad_rd.type"><i style="display:none"></i> Type</th>
-					<th> Catégorie</th>
-					<th class="tri_bad" id="bad_pointe"><i style="display:none"></i> Pointage</th>
-					<th>Suppression</th>
+					<th width="80" class="tri_bad" id="bad_rd.date"><i class="icon-arrow-down"></i> Date Transaction </th>
+					<th width="400" class="tri_bad" id="bad_rd.libelle"><i style="display:none"></i> Libellé</th>
+					<th width="80">Opérations</th>
+					<th width="80" class="tri_bad" id="bad_rd.montant"><i style="display:none"></i> Montant</th>
+					<th width="150" class="tri_bad" id="bad_rd.type"><i style="display:none"></i> Type</th>
+					<th width="200"> Catégorie</th>
+					<th width="50">Pointage</th>
+					<th width="80">Suppression</th>
 				</tr>
 			</thead>
 			<tbody id="detail_releve_bad">

@@ -15,6 +15,8 @@ if(!empty($_GET['erreur'])){
 		break;
 		case 2:$erreur="erreur lors de l'upload du fichier";
 		break;
+		case 3:$erreur="l'extension n'est pas valide";
+		break;
 	}
 }
 
@@ -70,7 +72,7 @@ if(!empty($_GET['erreur'])){
 						<?php }?>
 						<form id="import_fichier" action="import.php" enctype='multipart/form-data' method="POST">
 							<div id="saisie_form">
-								<label for="fichier_import">Fichier à importer (format csv)</label>
+								<label for="fichier_import">Fichier à importer (format xlsx, xls ou csv)</label>
 								<input type="file" required  name="fichier_import" id="fichier_import"> 
 								 <div class="control-group">
 									<label class="control-label">Mois de l'import (ex: 01)</label>

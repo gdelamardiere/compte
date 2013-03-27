@@ -15,6 +15,7 @@ function update_categorie(id,sel){
 		data: { 'update_categorie': "true", 'id': id, 'id_categorie': sel.value }
 		}).done(function( msg ) {	
 			$('#cat_'+id).html($("option:selected", sel).text());
+			$('#cat2_'+id).html($("option:selected", sel).text());
 			$('#detail_releve').tableFilterRefresh();
 	});
 }
@@ -148,7 +149,7 @@ $(document).ready(function() {
 	if($('#detail_releve').length){
 		var options = {
 			clearFiltersControls: [$('#clearFilter')],   
-			        
+			enableCookies : false,        
 		};
 		$('#detail_releve').tableFilter(options);
 	}
