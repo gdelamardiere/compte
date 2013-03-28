@@ -18,9 +18,7 @@ $stmt = $pdo->prepare("SELECT r.`id`,r.mois_releve,r.annee_releve,
 
 	$stmt->execute();
 	$aListeReleve=$stmt->fetchAll(PDO::FETCH_ASSOC);
-if(empty($aListeReleve)){
-	header('Location: reports_vide.php');
-}
+
 
 ?>
 	

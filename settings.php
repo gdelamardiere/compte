@@ -1,12 +1,3 @@
-<?php 
-$liste_cat=$reports->listeCategories();
-$liste_keywords=$reports->listeKeywords();
-$liste_regex=$reports->listeRegex();
-$liste_operations=$reports->listeOperations();
-$liste_Excel=$reports->listeExcel();
-$liste_filtre=$reports->get_liste_filtre();
-?>
-
 <!-- Modal -->
 <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="width:1000px;left:36%;top:40%">
 	<div class="modal-header">

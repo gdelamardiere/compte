@@ -1,23 +1,39 @@
 <?php
-require_once('conf.php'); 
-require_once(ROOT.'classes/reports.class.php');
-header('Content-Type: text/html; charset=utf-8');
+if(defined('HOSTNAME_BASE')){
 
-$pdo=database::getInstance();
-$reports=new reports();
-$liste_cat=$reports->listeCategories();
-$liste_keywords=$reports->listeKeywords();
-$liste_regex=$reports->listeRegex();
-$liste_operations=$reports->listeOperations();
-$liste_Excel=$reports->listeExcel();
-$liste_filtre=$reports->get_liste_filtre();
-$liste_releve=$reports->listeReleve();
-if(empty($liste_releve) && $page!="home"){ 
-	header('Location: index.php');
-}
+	$con=mysqli_connect(HOSTNAME_BASE,USERNAME_BASE,PASSWORD_BASE);
+	
+	// Check connection
+	if (mysqli_connect_errno())
+	{
+		echo "Failed to connect to MySQL: " . mysqli_connect_error();
+	}
+	
+	
+	$sql=file_get_contents(ROOT."install_sql.sql");
+	
+	if (!mysqli_multi_query($con,$sql)) 
+	{
+		echo "Error creating database: " . mysqli_error();die();
+	}
+	else{
 
-?>
+		$mysqli = new mysqli(HOSTNAME_BASE,USERNAME_BASE,PASSWORD_BASE,DATABASE_BASE);
+		if (!$mysqli->query("DROP PROCEDURE IF EXISTS `update_releve_detail`") ||
+			!$mysqli->query("CREATE PROCEDURE `update_releve_detail`() BEGIN
+				update releve_detail rd  set rd.id_cat=
+					(select k.id_cat
+						from keywords k 
+						where rd.libelle REGEXP k.value
+						limit 1)
+			where rd.id_cat is null ; 
+			END; ")) {
+			echo "Echec lors de la création de la procédure stockée :(" . $mysqli->errno . ") " . $mysqli->error;
+	}
 
+	 	
+
+}?>
 <!DOCTYPE html>
 <html lang="fr">
   
@@ -148,8 +164,44 @@ if(empty($liste_releve) && $page!="home"){
 
 	    <div class="container">
 
+la création de la base de données est effectué Vous pouvez recharger la page
+
+	    		    </div> <!-- /container -->
+	    
+	</div> <!-- /main-inner -->
+</div><!-- /main -->
+<div class="footer">
+	
+	<div class="footer-inner">
+		
+		<div class="container">
+			
+			<div class="row">
+				
+    			<div class="span12">
+    				&copy; 2012 <a href="http://bootstrapadmin.com/">Base Admin</a>.
+    			</div> <!-- /span12 -->
+    			
+    		</div> <!-- /row -->
+    		
+		</div> <!-- /container -->
+		
+	</div> <!-- /footer-inner -->
+	
+</div> <!-- /footer -->
 
 
-<?php require_once('settings.php');?>
 
 
+
+
+
+
+
+<?php
+
+}
+
+else{header('Location: index.php');}
+
+?>

@@ -241,7 +241,7 @@ if(isset($_POST['supprimer_keywords']) && isset($_POST['id_keywords'])){
 	$stmt->execute(array("id_keywords"=>$_POST['id_keywords']));
 }
 
-if(isset($_POST['supprimer_categories']) && isset($_POST['id_categories'])){
+if(isset($_POST['supprimer_categories']) && isset($_POST['id_categories']) && $_POST['id_categories']!=1){
 	$stmt = $pdo->prepare("DELETE  FROM `liste_cat` where id_cat=:id_categories");
 	$stmt->execute(array("id_categories"=>$_POST['id_categories']));
 }

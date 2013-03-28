@@ -2,10 +2,8 @@
 $page="releve";
 require_once ('header.php');
 
-$liste_releve=$reports->listeReleve();
-if(empty($liste_releve)){
-	header('Location: reports_vide.php');
-}
+
+
 $id_selected=(isset($_GET['id_releve']))?$_GET['id_releve']:$liste_releve[0]['id_releve'];
 if(isset($id_selected)){
 

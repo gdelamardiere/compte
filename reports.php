@@ -22,11 +22,9 @@ $liste_graphes_default=array("type","categorie","operations","comparatif_sur_ann
 $liste_graphes_retenus=(isset($_POST['liste_graphe']))?$_POST['liste_graphe']:$liste_graphes_default;
 
 
-$liste_releve=$reports->listeReleve();
 
-if(empty($liste_releve)){
-	header('Location: reports_vide.php');
-}
+
+
 $liste_id_cat=array();
 foreach($liste_cat as $id_cat=>$libelle){
 	$liste_id_cat[]=$id_cat;

@@ -37,7 +37,13 @@ class database extends PDO {
 		}
 		catch(Exception $e)
 		{
-			trigger_error($e->getMessage(), E_USER_ERROR);
+			if($e->getCode()=="1049" && file_exists(ROOT."install.php") && file_exists(ROOT."install_sql.sql")) {
+				require_once(ROOT."install.php");
+			}
+			else{
+				trigger_error($e->getCode(), E_USER_ERROR);
+
+			}
 		} 
 	}
 

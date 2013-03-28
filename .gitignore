@@ -3,4 +3,6 @@ conf.php
 
 fichiers_importes/*.csv
 
-.DS_Store
+*.DS_Store
+
+fichiers_importes/*.xlsx
