@@ -178,7 +178,7 @@ class reports{
 	function listeCategories(){
 		if(empty($this->listeCategorie)){
 			$requete=$this->pdo->prepare("SELECT id_cat,libelle
-										from liste_cat");
+										from liste_cat ORDER BY libelle");
 			$requete->execute();
 			$resultat=array();
 			while($result=$requete->fetch(PDO::FETCH_ASSOC)){
@@ -192,7 +192,7 @@ class reports{
 	function listeOperations(){
 		if(empty($this->listeOperations)){
 			$requete=$this->pdo->prepare("SELECT id_operations,nom_operations
-										from operations");
+										from operations  ORDER BY nom_operations");
 			$requete->execute();
 			$resultat=array();
 			while($result=$requete->fetch(PDO::FETCH_ASSOC)){
@@ -304,7 +304,7 @@ function listeAnnee(){
 	function listeKeywords(){
 		if(empty($this->listeKeywords)){
 			$requete=$this->pdo->prepare("SELECT *
-										from keywords");
+										from keywords ORDER BY value");
 			$requete->execute();
 			$resultat=array();
 			while($result=$requete->fetch(PDO::FETCH_ASSOC)){
@@ -399,7 +399,7 @@ function listeAnnee(){
 	}
 
 	function get_liste_filtre(){
-		$requete=$this->pdo->prepare("SELECT id_filtre,nom_filtre from filtres ");
+		$requete=$this->pdo->prepare("SELECT id_filtre,nom_filtre from filtres ORDER BY nom_filtre");
 		$resultat=array();
 		$requete->execute();
 		while($result=$requete->fetch(PDO::FETCH_ASSOC)){

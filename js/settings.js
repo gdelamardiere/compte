@@ -19,6 +19,7 @@ function update_settings(table,champ,id,valeur){
 		data: { 'update_table': table,'update_champ': champ, 'id': id, 'valeur': valeur }
 		}).done(function( msg ) {
 			$('#modif_settings').val('1');
+			change_onglet(table);
 	});
 }
 
@@ -79,7 +80,7 @@ function ajout_regex(){
 }
 
 function supprimer_settings_keywords(id){
-	if (confirm("Voulez-vous Vraiment effacet ce mot-clé ?")) {
+	if (confirm("Voulez-vous Vraiment effacer ce mot-clé ?")) {
 		$.ajax({
 			type: "POST",
 			url: "lib/releve.ajax.php",
@@ -90,6 +91,35 @@ function supprimer_settings_keywords(id){
 		});
 	}
 }
+
+function supprimer_settings_categories(id){
+	if (confirm("Voulez-vous Vraiment effacer cette catégorie ?\n Attention cette action est irréversible\nToutes les lignes associés n'auront plus de catégorie")) {
+		$.ajax({
+			type: "POST",
+			url: "lib/releve.ajax.php",
+			data: { 'supprimer_categories': "true", 'id_categories': id }
+			}).done(function( msg ) {
+				$('#modif_settings').val('1');
+				change_onglet('categories');
+		});
+	}
+}
+
+function supprimer_settings_filtres(id){
+	if (confirm("Voulez-vous Vraiment effacer ce filtre ?")) {
+		$.ajax({
+			type: "POST",
+			url: "lib/releve.ajax.php",
+			data: { 'supprimer_filtre': "true", 'id_filtre': id }
+			}).done(function( msg ) {
+				$('#modif_settings').val('1');
+				change_onglet('filtres');
+		});
+	}
+}
+
+
+
 
 
 

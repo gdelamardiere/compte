@@ -12,7 +12,8 @@ $stmt = $pdo->prepare("SELECT r.`id`,r.mois_releve,r.annee_releve,
 							(SELECT count(*)  from releve_detail where id_releve=r.id AND pointe='0') as nb_operations_non_pointe,
 							(SELECT count(*)  from releve_detail where id_releve=r.id AND pointe='-1') as nb_operations_pointe_erreur,
 							(SELECT count(*)  from releve_detail where id_releve=r.id AND pointe='1') as nb_operations_pointe_ok
-						FROM `releve` r "
+						FROM `releve` r 
+						ORDER BY annee_releve DESC, mois_releve DESC"
 						);
 
 	$stmt->execute();
@@ -25,7 +26,7 @@ if(empty($aListeReleve)){
 	
 
 	<div class="detail_releve">
-		<table style="text-align:center;width:1000px;">
+		<table style="text-align:center;width:1000px;"  id="detail_releve">
 			<thead>
 				<tr>
 					<th>Relevé<br/>du mois de</th>
@@ -38,10 +39,10 @@ if(empty($aListeReleve)){
 					<th>Nb opérations <br/>pointé</th>
 					<th>Nb opérations <br/>non pointé</th>
 					<th>Nb opérations pointé<br/> en erreur</th>
-					<th>Edition</th>
-					<th>Export</th>
-					<th>Export annuel</th>
-					<th>Supprimer</th>
+					<th filter='false'>Edition</th>
+					<th filter='false'>Export</th>
+					<th filter='false'>Export annuel</th>
+					<th filter='false'>Supprimer</th>
 				</tr>
 			</thead>
 			<tbody>

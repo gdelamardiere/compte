@@ -21,10 +21,9 @@ $liste_graphes_perso=array("comparatif_2ans"=>"",
 $liste_graphes_default=array("type","categorie","operations","comparatif_sur_annee");
 $liste_graphes_retenus=(isset($_POST['liste_graphe']))?$_POST['liste_graphe']:$liste_graphes_default;
 
-$liste_cat=$reports->listeCategories();
-$liste_operations=$reports->listeOperations();
+
 $liste_releve=$reports->listeReleve();
-$liste_filtre=$reports->get_liste_filtre();
+
 if(empty($liste_releve)){
 	header('Location: reports_vide.php');
 }

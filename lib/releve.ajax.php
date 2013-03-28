@@ -127,6 +127,7 @@ if(isset($_POST['onglet']) && file_exists(ROOT."settings/".$_POST['onglet'].".ph
 		$liste_regex=$reports->listeRegex();
 		$liste_operations=$reports->listeOperations();
 		$liste_Excel=$reports->listeExcel();
+		$liste_filtre=$reports->get_liste_filtre();
 		require_once(ROOT."settings/".$_POST['onglet'].".php");
 	
 	
@@ -187,6 +188,12 @@ if(isset($_POST['update_table']) && isset($_POST['update_champ']) && isset($_POS
 					$ok=true;
 				}
 			break;
+		case 'filtres':
+				if($_POST['update_champ']=="nom_filtre"){
+					$stmt = $pdo->prepare("Update `filtres` SET nom_filtre = :valeur WHERE id_filtres=:id");
+					$ok=true;
+				}
+			break;
 
 	}
 	if($ok){
@@ -233,6 +240,18 @@ if(isset($_POST['supprimer_keywords']) && isset($_POST['id_keywords'])){
 	$stmt = $pdo->prepare("DELETE  FROM `keywords` where id_keywords=:id_keywords");
 	$stmt->execute(array("id_keywords"=>$_POST['id_keywords']));
 }
+
+if(isset($_POST['supprimer_categories']) && isset($_POST['id_categories'])){
+	$stmt = $pdo->prepare("DELETE  FROM `liste_cat` where id_cat=:id_categories");
+	$stmt->execute(array("id_categories"=>$_POST['id_categories']));
+}
+
+if(isset($_POST['supprimer_filtre']) && isset($_POST['id_filtre'])){
+	$stmt = $pdo->prepare("DELETE  FROM `filtres` where id_filtre=:id_filtre");
+	$stmt->execute(array("id_filtre"=>$_POST['id_filtre']));
+}
+
+
 
 
 

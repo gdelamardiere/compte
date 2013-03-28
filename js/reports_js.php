@@ -93,6 +93,14 @@ if(in_array("categorie",$liste_graphes_retenus)){?>
 	        	xaxis: {
 	        		renderer: $.jqplot.CategoryAxisRenderer
 	        	}
+	        	,yaxis: {
+					tickOptions: {
+						formatString: "%'d €"
+					},
+					rendererOptions: {
+						forceTickAt0: true
+					}
+				}
 	        }, 
 	        cursor:{ 
 	        	show: true,
@@ -102,7 +110,7 @@ if(in_array("categorie",$liste_graphes_retenus)){?>
 	        highlighter: {
 	        	show: true, 
 	        	showLabel: true, 
-	        	tooltipAxes: 'both',
+	        	tooltipAxes: 'y',
 	        	sizeAdjust: 5 , 
 	        	tooltipLocation : 'n'
 	        }
@@ -184,7 +192,14 @@ if(in_array("operations",$liste_graphes_retenus)){?>
 						show: true,
 						zoom:true, 
 						showTooltip:false
-					} 
+					} ,
+			        highlighter: {
+			        	show: true, 
+			        	showLabel: true, 
+			        	tooltipAxes: 'y',
+			        	sizeAdjust: 5 , 
+			        	tooltipLocation : 'n'
+			        }
 				}
 			);
 		}

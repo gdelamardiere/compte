@@ -45,7 +45,7 @@
 <?php 
 require_once("js/reports_js.php");
 }
-if($page=="releve"){?>
+if($page=="releve" || $page=="liste_releve"){?>
 <script type='text/javascript' src='js/picnet.table.filter.min.js'></script> 
 <?php }
 

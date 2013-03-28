@@ -4,6 +4,7 @@ $liste_keywords=$reports->listeKeywords();
 $liste_regex=$reports->listeRegex();
 $liste_operations=$reports->listeOperations();
 $liste_Excel=$reports->listeExcel();
+$liste_filtre=$reports->get_liste_filtre();
 ?>
 
 <!-- Modal -->
@@ -19,6 +20,7 @@ $liste_Excel=$reports->listeExcel();
 		    <li><a href="#settings_keywords" id="tab_settings_keywords" data-toggle="tab">Keywords</a></li>
 		    <li><a href="#settings_regex" id="tab_settings_regex" data-toggle="tab">Regex</a></li>
 		    <li><a href="#settings_import" id="tab_settings_import" data-toggle="tab">import</a></li>
+		    <li><a href="#settings_filtres" id="tab_settings_filtres" data-toggle="tab">filtres</a></li>
     	</ul>
     	<div id="myTabContent" class="tab-content">
 			<div id="settings_categories" class="tab-pane fade active in">
@@ -36,11 +38,13 @@ $liste_Excel=$reports->listeExcel();
 			<div id="settings_import" class="tab-pane fade">
 				<?php require_once(ROOT.'settings/import.php');?>
 			</div>
+			<div id="settings_filtres" class="tab-pane fade">
+				<?php require_once(ROOT.'settings/filtres.php');?>
+			</div>
 		</div>
 	</div>
 	<div class="modal-footer">
 		<input type="hidden" name="modif_settings" id="modif_settings" value='0'/>
 		<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-		<button class="btn btn-primary">Save changes</button>
 	</div>
 </div>

@@ -1,2 +1,6 @@
 
 conf.php
+
+fichiers_importes/*.csv
+
+.DS_Store
