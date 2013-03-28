@@ -256,7 +256,8 @@ function listeAnnee(){
 	function getListeIdForYear($annee){
 		$requete=$this->pdo->prepare("SELECT id
 										from releve
-										WHERE annee_releve = :annee");
+										WHERE annee_releve = :annee
+										ORDER BY mois_releve ASC");
 		$requete->execute(array("annee"=>$annee));
 		$resultat="";
 		while($result=$requete->fetch(PDO::FETCH_ASSOC)){
@@ -353,6 +354,58 @@ function listeAnnee(){
 		$requete->execute(array('id'=>$id_releve));
 		$resultat=$requete->fetch(PDO::FETCH_ASSOC);
 		return $resultat['date_releve'];
+	}
+
+
+	function save_filtre($aData){
+		$listeFiltre=array("nom_filtre","id_releve","coche_operations","coche_categorie","liste_graphe","filtre_annee_1","filtre_annee_2","filtre_perso_1","filtre_perso_2");
+		$valueFiltre=array();
+		foreach($listeFiltre as $key){
+			if(isset($aData[$key])){
+				if(is_array($aData[$key])){
+					$val=implode(",",$aData[$key]);
+				}
+				else{
+					$val=$aData[$key];
+				}
+				$valueFiltre[$key]=$val;
+			}
+			else{
+				$valueFiltre[$key]='';
+			}
+		}
+		$requete=$this->pdo->prepare('INSERT INTO filtres(nom_filtre,id_releve,coche_operations,coche_categorie,liste_graphe,filtre_annee_1,filtre_annee_2,filtre_perso_1,filtre_perso_2) 
+										VALUE(:nom_filtre,:id_releve,:coche_operations,:coche_categorie,:liste_graphe,:filtre_annee_1,:filtre_annee_2,:filtre_perso_1,:filtre_perso_2)
+										');
+		$requete->execute($valueFiltre);
+	}
+
+	function get_filtre($id_filtre){
+		$requete=$this->pdo->prepare("SELECT *
+										from filtres where id_filtre=:id_filtre");
+		$listeFiltreArray=array("nom_filtre","id_releve","coche_operations","coche_categorie","liste_graphe","filtre_perso_1","filtre_perso_2");
+		$requete->execute(array("id_filtre"=>$id_filtre));
+		$resultat=array();
+		$result=$requete->fetch(PDO::FETCH_ASSOC);
+		foreach($result as $key=>$val){
+			if(in_array($key, $listeFiltreArray)){
+				$resultat[$key]=explode(",",$val);
+			}
+			else{
+				$resultat[$key]=$val;
+			}
+		}
+		return $resultat;
+	}
+
+	function get_liste_filtre(){
+		$requete=$this->pdo->prepare("SELECT id_filtre,nom_filtre from filtres ");
+		$resultat=array();
+		$requete->execute();
+		while($result=$requete->fetch(PDO::FETCH_ASSOC)){
+			$resultat[$result['id_filtre']]=$result['nom_filtre'];
+		}
+		return $resultat;
 	}
 
 

@@ -2,6 +2,15 @@
 $page="reports";
 require_once ('header.php');
 
+if(isset($_POST['nom_filtre']) && $_POST['nom_filtre']!=""){
+	$reports->save_filtre($_POST);
+}
+$get_filtre=0;
+if(isset($_POST['get_filtre']) && $_POST['get_filtre']!=0){
+	$_POST=$reports->get_filtre($_POST['get_filtre']);
+	$get_filtre==$_POST['get_filtre'];
+}
+
 $liste_graphes=array("type"=>"Découpage par type",
 					"categorie"=>"Découpage par catégorie",
 					"operations"=>"Découpage par opérations",
@@ -15,6 +24,7 @@ $liste_graphes_retenus=(isset($_POST['liste_graphe']))?$_POST['liste_graphe']:$l
 $liste_cat=$reports->listeCategories();
 $liste_operations=$reports->listeOperations();
 $liste_releve=$reports->listeReleve();
+$liste_filtre=$reports->get_liste_filtre();
 if(empty($liste_releve)){
 	header('Location: reports_vide.php');
 }
@@ -55,6 +65,13 @@ foreach($liste_annee as $value){
 	$select_filtre_annee1.="<option value='".$value['annee_releve']."' ".(($value['annee_releve']==$id_filtre_annee1)?'selected="selected"':'').">".$value['annee_releve']."</option>";
 	$select_filtre_annee2.="<option value='".$value['annee_releve']."' ".(($value['annee_releve']==$id_filtre_annee2)?'selected="selected"':'').">".$value['annee_releve']."</option>";
 }
+
+$select_filtre="<option value=''></option>";
+
+foreach($liste_filtre as $key=>$value){		
+	$select_filtre.="<option value='".$key."' ".(($key==$get_filtre)?'selected="selected"':'').">".$value."</option>";
+}
+
 
 
 
@@ -145,9 +162,17 @@ foreach($liste_annee as $value){
 							</div>
 						</div>
 					</div>
-					<div onclick="$('#reports').submit();" class="widget-header" style="width:130px; cursor:pointer;float:right; margin-right:20px;">
-						<i class="icon-refresh" ></i> <span style="padding-left:20px">Calculer </span>
-					</div> 
+					<div class="widget-header" style="height:60px;padding-top: 15px;" >
+						<div onclick="$('#reports').submit();" class="widget-header" style="width:130px; cursor:pointer;float:right; margin-right:20px;">
+							<i class="icon-refresh" ></i> <span style="padding-left:20px">Calculer </span>
+						</div> 
+						<div style="width:494px;float:left;margin-left:10px;">
+								<span>Charger un filtre existant : <SELECT onchange="$('#reports').submit();" name='get_filtre' ><?php echo $select_filtre;?></SELECT></span>
+						</div>	
+					
+						<span>Enregistrer ce filtre: <input type="text" name="nom_filtre" id="nom_filtre" value=""/></span>
+					</div>
+					
 					
 				</form>
 
