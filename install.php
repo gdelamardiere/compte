@@ -22,11 +22,13 @@ if(defined('HOSTNAME_BASE')){
 		if (!$mysqli->query("DROP PROCEDURE IF EXISTS `update_releve_detail`") ||
 			!$mysqli->query("CREATE PROCEDURE `update_releve_detail`() BEGIN
 				update releve_detail rd  set rd.id_cat=
-					(select k.id_cat
+					ifnull((select k.id_cat
 						from keywords k 
 						where rd.libelle REGEXP k.value
-						limit 1)
-			where rd.id_cat is null ; 
+						limit 1),1)
+			where rd.bcat = 0 ; 
+			update releve_detail rd  set rd.bcat=1
+			where rd.id_cat != 1 ; 
 			END; ")) {
 			echo "Echec lors de la création de la procédure stockée :(" . $mysqli->errno . ") " . $mysqli->error;
 	}

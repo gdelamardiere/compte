@@ -11,44 +11,58 @@ if(isset($_POST['get_filtre']) && $_POST['get_filtre']!=0){
 	$get_filtre==$_POST['get_filtre'];
 }
 
+
+
+
+//liste des graphes a afficher
 $liste_graphes=array("type"=>"Découpage par type",
+					"regroupement"=>"Découpage par regroupement",
 					"categorie"=>"Découpage par catégorie",
-					"operations"=>"Découpage par opérations",
 					"comparatif_sur_annee"=>"Comparatif sur un an");
 $liste_graphes_perso=array("comparatif_2ans"=>"",
 					"comparatif_perso"=>"Comparatif personalisés");
 
-$liste_graphes_default=array("type","categorie","operations","comparatif_sur_annee");
+$liste_graphes_default=array("type","regroupement","comparatif_sur_annee");
 $liste_graphes_retenus=(isset($_POST['liste_graphe']))?$_POST['liste_graphe']:$liste_graphes_default;
 
-
-
-
-
+//selection des id a afficher
 $liste_id_cat=array();
 foreach($liste_cat as $id_cat=>$libelle){
 	$liste_id_cat[]=$id_cat;
 }
-$liste_id_operations=array();
-foreach($liste_operations as $id_operations=>$libelle){
-	$liste_id_operations[]=$id_operations;
-}
 $select_releve="";
 $Liste_id_selected=(isset($_POST['id_releve']))?$_POST['id_releve']:array($liste_releve[0]['id_releve']);
-$liste_coche_categorie=(isset($_POST['coche_categorie']))?$_POST['coche_categorie']:$liste_id_cat;
-$reports->setFiltersCategorie($liste_coche_categorie);
-$liste_coche_operations=(isset($_POST['coche_operations']))?$_POST['coche_operations']:$liste_id_operations;
-$reports->setFiltersOperations($liste_coche_operations);
 foreach($liste_releve as $value){		
 	$select_releve.="<option value='".$value['id_releve']."' ".((in_array($value['id_releve'],$Liste_id_selected))?'selected="selected"':'').">".$value['date']."</option>";
 }
 $id_selected=implode(",",$Liste_id_selected);
 
+
+//selection des regroupements a afficher
+$liste_id_regroupements=array();
+foreach($liste_regroupements as $id_regroupements=>$libelle){
+	$liste_id_regroupements[]=$id_regroupements;
+}
+$liste_coche_regroupements=(isset($_POST['coche_regroupements']))?$_POST['coche_regroupements']:$liste_id_regroupements;
+$reports->setFiltersRegroupements($liste_coche_regroupements);
+
+//selection des regroupements detailles
+$liste_details=(isset($_POST['coche_regroupements_detail']))?$_POST['coche_regroupements_detail']:array();
+
+
+//selection des categories a afficher
+$liste_coche_categorie=(isset($_POST['coche_categorie']))?$_POST['coche_categorie']:$liste_id_cat;
+$reports->setFiltersCategorie($liste_coche_categorie);
+
+
+//selection filtre anne1 vs anne2
 $liste_annee=$reports->listeAnnee();
 $id_filtre_annee1=(isset($_POST['filtre_annee_1']))?$_POST['filtre_annee_1']:0;
 $id_filtre_annee2=(isset($_POST['filtre_annee_2']))?$_POST['filtre_annee_2']:0;
 $select_filtre_annee1="<option value=''></option>";
 $select_filtre_annee2="<option value=''></option>";
+
+//selection filtre perso
 $select_filtre_perso1="";
 $select_filtre_perso2="";
 $id_filtre_perso1=(isset($_POST['filtre_perso_1']))?$_POST['filtre_perso_1']:array();
@@ -63,8 +77,9 @@ foreach($liste_annee as $value){
 	$select_filtre_annee2.="<option value='".$value['annee_releve']."' ".(($value['annee_releve']==$id_filtre_annee2)?'selected="selected"':'').">".$value['annee_releve']."</option>";
 }
 
-$select_filtre="<option value=''></option>";
 
+//selection du filtre
+$select_filtre="<option value=''></option>";
 foreach($liste_filtre as $key=>$value){		
 	$select_filtre.="<option value='".$key."' ".(($key==$get_filtre)?'selected="selected"':'').">".$value."</option>";
 }
@@ -96,16 +111,33 @@ foreach($liste_filtre as $key=>$value){
 						<SELECT name='id_releve[]' multiple size="5"><?php echo $select_releve;?></SELECT>
 					</div>
 					<div>
-						<h3>Liste des catégories à afficher</h3>
-						<p><?php $i=1; foreach($liste_cat as $id_cat=>$libelle){
+						<h3>Liste des regroupements à afficher</h3>
+						<p><?php $i=1; foreach($liste_regroupements as $id_regroupements=>$libelle){
 							$libelle=($libelle=="")?"non défini":$libelle;
 							?>
 							<span class="coche_reports">
-								<input class="checboxFiltre" type="checkbox" name="coche_categorie[]" value="<?php echo $id_cat; ?>" id="coche_cat_<?php echo $id_cat;?>" 
-								<?php if(in_array($id_cat,$liste_coche_categorie)){echo 'checked="checked"';}?>/>
-								<label for="coche_cat_<?php echo $id_cat;?>" <?php if(!in_array($id_cat,$liste_coche_categorie)){echo 'class="deselected"';}?> id="label_coche_cat_<?php echo $id_cat;?>">
-									<?php echo $libelle;?>
-								</label>
+								<input class="checboxFiltre" type="checkbox" name="coche_regroupements[]" value="<?php echo $id_regroupements; ?>" id="coche_regroupements_<?php echo $id_regroupements;?>" 
+								<?php if(in_array($id_regroupements,$liste_coche_regroupements)){echo 'checked="checked"';}?>/>
+								<label for="coche_regroupements_<?php echo $id_regroupements;?>" <?php if(!in_array($id_regroupements,$liste_coche_regroupements)){echo 'class="deselected"';}?> id="label_coche_regroupements_<?php echo $id_regroupements;?>">
+									<?php echo $libelle;?></label>
+							</span>
+						<?php 
+						if($i==12){$i=0;echo"<br/>";}
+							$i++;
+						}
+						?>
+						</p>
+					</div>
+					<div>
+						<h3>Afficher le détail des regroupements suivants</h3>
+						<p><?php $i=1; foreach($liste_regroupements as $id_regroupements=>$libelle){
+							$libelle=($libelle=="")?"non défini":$libelle;
+							?>
+							<span class="coche_reports">
+								<input class="checboxFiltre" type="checkbox" name="coche_regroupements_detail[]" value="<?php echo $id_regroupements; ?>" id="coche_regroupements_detail_<?php echo $id_regroupements;?>" 
+								<?php if(in_array($id_regroupements,$liste_details)){echo 'checked="checked"';}?>/>
+								<label for="coche_regroupements_detail_<?php echo $id_regroupements;?>" <?php if(!in_array($id_regroupements,$liste_details)){echo 'class="deselected"';}?> id="label_coche_regroupements_detail_<?php echo $id_regroupements;?>">
+									<?php echo $libelle;?></label>
 							</span>
 						<?php 
 						if($i==12){$i=0;echo"<br/>";}
@@ -116,15 +148,16 @@ foreach($liste_filtre as $key=>$value){
 					</div>
 
 					<div>
-						<h3>Liste des Opérations à afficher</h3>
-						<p><?php $i=1; foreach($liste_operations as $id_operations=>$libelle){
+						<h3>Liste des catégories à afficher</h3>
+						<p><?php $i=1; foreach($liste_cat as $id_cat=>$libelle){
 							$libelle=($libelle=="")?"non défini":$libelle;
 							?>
 							<span class="coche_reports">
-								<input class="checboxFiltre" type="checkbox" name="coche_operations[]" value="<?php echo $id_operations; ?>" id="coche_operations_<?php echo $id_operations;?>" 
-								<?php if(in_array($id_operations,$liste_coche_operations)){echo 'checked="checked"';}?>/>
-								<label for="coche_operations_<?php echo $id_operations;?>" <?php if(!in_array($id_operations,$liste_coche_operations)){echo 'class="deselected"';}?> id="label_coche_operations_<?php echo $id_operations;?>">
-									<?php echo $libelle;?></label>
+								<input class="checboxFiltre" type="checkbox" name="coche_categorie[]" value="<?php echo $id_cat; ?>" id="coche_cat_<?php echo $id_cat;?>" 
+								<?php if(in_array($id_cat,$liste_coche_categorie)){echo 'checked="checked"';}?>/>
+								<label for="coche_cat_<?php echo $id_cat;?>" <?php if(!in_array($id_cat,$liste_coche_categorie)){echo 'class="deselected"';}?> id="label_coche_cat_<?php echo $id_cat;?>">
+									<?php echo $libelle;?>
+								</label>
 							</span>
 						<?php 
 						if($i==12){$i=0;echo"<br/>";}
@@ -203,8 +236,8 @@ foreach($liste_filtre as $key=>$value){
 		</div> <!-- /widget -->	
 			</div> <!-- /span6 -->
 </div> <!-- /row -->
-<?php }if(in_array("categorie",$liste_graphes_retenus)){?>
-<div class="row" id="graphe_categorie">
+<?php } if(in_array("regroupement",$liste_graphes_retenus)){?>
+<div class="row" id="graphe_regroupement">
 
 	<div class="span6">
 
@@ -212,64 +245,7 @@ foreach($liste_filtre as $key=>$value){
 
 			<div class="widget-header">
 				<i class="icon-star"></i>
-				<h3>Découpage en catégorie</h3>
-				<span class="reduction">
-					<i class="icon-resize-full"></i>
-				</span>
-			</div> <!-- /widget-header -->
-
-			<div class="widget-content" id="content_cat1">
-
-				<div id="percentByCategorie" style="height:400px;width:500px; "></div>
-
-			</div> <!-- /widget-content -->
-
-		</div> <!-- /widget -->
-
-
-
-
-	</div> <!-- /span6 -->
-
-
-	<div class="span6">
-
-		<div class="widget">
-
-			<div class="widget-header">
-				<i class="icon-list-alt"></i>
-				<h3>Prix par catégorie</h3>
-				<span class="reduction">
-					<i class="icon-resize-full"></i>
-				</span>
-			</div> <!-- /widget-header -->
-
-			<div class="widget-content" id="content_cat2">
-
-				<div id="prixByCategorie" style="height:400px;width:500px; "></div>
-				<div class="widget-header" id="ByCategorie" style="width:130px; cursor:pointer;float:right; margin-right:20px;margin-top: 10px;">
-					<i class="icon-zoom-out" ></i>
-					<span style="padding-left:20px">reset du zoom </span>
-				</div>	
-
-			</div> <!-- /widget-content -->
-
-		</div> <!-- /widget -->
-
-	</div> <!-- /span6 -->
-
-	
-</div> <!-- /row -->
-<?php } if(in_array("operations",$liste_graphes_retenus)){?>
-<div class="row" id="graphe_operations">
-
-	<div class="span6">
-
-		<div class="widget">
-
-			<div class="widget-header">
-				<i class="icon-star"></i>
-				<h3>Découpage en opérations</h3>
+				<h3>Découpage par regroupement (crédit)</h3>
 				<span class="reduction">
 					<i class="icon-resize-full"></i>
 				</span>
@@ -277,7 +253,11 @@ foreach($liste_filtre as $key=>$value){
 
 			<div class="widget-content" id="content_op1">
 
-				<div id="percentByOperations" style="height:400px;width:500px; "></div>
+				<div id="regroupement_credit" style="height:400px;width:500px; "></div>
+				<div class="widget-header" id="zoom_regroupement_credit" style="width:130px; cursor:pointer;float:right; margin-right:20px;margin-top: 10px;">
+					<i class="icon-zoom-out" ></i>
+					<span style="padding-left:20px" >reset du zoom </span>
+				</div>
 
 			</div> <!-- /widget-content -->
 
@@ -295,7 +275,7 @@ foreach($liste_filtre as $key=>$value){
 
 			<div class="widget-header">
 				<i class="icon-list-alt"></i>
-				<h3>Prix par opérations</h3>
+				<h3>Découpage par regroupement (débit)</h3>
 				<span class="reduction">
 					<i class="icon-resize-full"></i>
 				</span>
@@ -303,8 +283,8 @@ foreach($liste_filtre as $key=>$value){
 
 			<div class="widget-content" id="op2">
 
-				<div id="prixByOperations" style="height:400px;width:500px; "></div>
-				<div class="widget-header" id="ByOperations" style="width:130px; cursor:pointer;float:right; margin-right:20px;margin-top: 10px;">
+				<div id="regroupement_debit" style="height:400px;width:500px; "></div>
+				<div class="widget-header" id="zoom_regroupement_debit" style="width:130px; cursor:pointer;float:right; margin-right:20px;margin-top: 10px;">
 					<i class="icon-zoom-out" ></i>
 					<span style="padding-left:20px" >reset du zoom </span>
 				</div>	
@@ -317,8 +297,130 @@ foreach($liste_filtre as $key=>$value){
 	
 		
 </div> <!-- /row -->
-<?php } if(in_array("comparatif_sur_annee",$liste_graphes_retenus)){?>
-<div class="row" id="graphe_annee">
+<?php } if(in_array("categorie",$liste_graphes_retenus)){?>
+<div class="row" id="graphe_categorie">
+
+	<div class="span6">
+
+		<div class="widget">
+
+			<div class="widget-header">
+				<i class="icon-star"></i>
+				<h3>Découpage par catégorie (crédit)</h3>
+				<span class="reduction">
+					<i class="icon-resize-full"></i>
+				</span>
+			</div> <!-- /widget-header -->
+
+			<div class="widget-content" id="content_op1">
+
+				<div id="categorie_credit" style="height:400px;width:500px; "></div>
+				<div class="widget-header" id="zoom_categorie_credit" style="width:130px; cursor:pointer;float:right; margin-right:20px;margin-top: 10px;">
+					<i class="icon-zoom-out" ></i>
+					<span style="padding-left:20px" >reset du zoom </span>
+				</div>
+
+			</div> <!-- /widget-content -->
+
+		</div> <!-- /widget -->
+
+
+
+
+	</div> <!-- /span6 -->
+
+
+	<div class="span6">
+
+		<div class="widget">
+
+			<div class="widget-header">
+				<i class="icon-list-alt"></i>
+				<h3>Découpage par catégorie (débit)</h3>
+				<span class="reduction">
+					<i class="icon-resize-full"></i>
+				</span>
+			</div> <!-- /widget-header -->
+
+			<div class="widget-content" id="op2">
+
+				<div id="categorie_debit" style="height:400px;width:500px; "></div>
+				<div class="widget-header" id="zoom_categorie_debit" style="width:130px; cursor:pointer;float:right; margin-right:20px;margin-top: 10px;">
+					<i class="icon-zoom-out" ></i>
+					<span style="padding-left:20px" >reset du zoom </span>
+				</div>	
+
+			</div> <!-- /widget-content -->
+
+		</div> <!-- /widget -->
+
+	</div> <!-- /span6 -->
+	
+		
+</div> <!-- /row -->
+<?php }
+if(!empty($liste_details)){
+	foreach($liste_regroupements as $id=>$nom){
+		if(in_array($id,$liste_details)){?>
+<div class="row" id="graphe_categorie_<?php echo $id;?>">
+
+	<div class="span6">
+
+		<div class="widget">
+
+			<div class="widget-header">
+				<i class="icon-star"></i>
+				<h3>Détail de <?php echo $nom;?> (crédit)</h3>
+				<span class="reduction">
+					<i class="icon-resize-full"></i>
+				</span>
+			</div> <!-- /widget-header -->
+
+			<div class="widget-content" id="content_detail_credit_<?php echo $id;?>">
+
+				<div class="detail_regroupement_credit" id="detail_credit_<?php echo $id;?>" style="height:400px;width:500px; "></div>
+				<div class="widget-header" id="zoom_detail_credit_<?php echo $id;?>" style="width:130px; cursor:pointer;float:right; margin-right:20px;margin-top: 10px;">
+					<i class="icon-zoom-out" ></i>
+					<span style="padding-left:20px">reset du zoom </span>
+				</div>	
+			</div> <!-- /widget-content -->
+
+		</div> <!-- /widget -->
+
+
+
+
+	</div> <!-- /span6 -->
+
+
+	<div class="span6">
+
+		<div class="widget">
+
+			<div class="widget-header">
+				<i class="icon-star"></i>
+				<h3>Détail de <?php echo $nom;?> (débit)</h3>
+				<span class="reduction">
+					<i class="icon-resize-full"></i>
+				</span>
+			</div> <!-- /widget-header -->
+
+			<div class="widget-content" id="content_detail_debit_<?php echo $id;?>">
+
+				<div class="detail_regroupement_debit" id="detail_debit_<?php echo $id;?>" style="height:400px;width:500px; "></div>
+				<div class="widget-header" id="zoom_detail_debit_<?php echo $id;?>" style="width:130px; cursor:pointer;float:right; margin-right:20px;margin-top: 10px;">
+					<i class="icon-zoom-out" ></i>
+					<span style="padding-left:20px">reset du zoom </span>
+				</div>	
+			</div> <!-- /widget-content -->
+
+		</div> <!-- /widget -->
+	</div> <!-- /span6 -->
+
+	
+</div> <!-- /row -->
+<?php }}} if(in_array("comparatif_sur_annee",$liste_graphes_retenus)){?>
+<div class="row" id="graphe_annee_credit">
 
 	<div class="span12" >
 
@@ -326,7 +428,7 @@ foreach($liste_filtre as $key=>$value){
 
 			<div class="widget-header">
 				<i class="icon-star"></i>
-				<h3>Comparatif des derniers mois</h3>
+				<h3>Comparatif des derniers mois par regroupement (crédit)</h3>
 				<span class="reduction">
 					<i class="icon-resize-full"></i>
 				</span>
@@ -334,8 +436,88 @@ foreach($liste_filtre as $key=>$value){
 
 			<div class="widget-content">
 
-				<div id="plot2" style="height:700px;width:1000px; "></div>
-				<div class="widget-header" id="annuel" style="width:130px; cursor:pointer;float:right; margin-right:20px;margin-top: 10px;">
+				<div id="annuel_credit" style="height:700px;width:1000px; "></div>
+				<div class="widget-header" id="zoom_annuel_credit" style="width:130px; cursor:pointer;float:right; margin-right:20px;margin-top: 10px;">
+					<i class="icon-zoom-out" ></i>
+					<span style="padding-left:20px">reset du zoom </span>
+				</div>	
+			</div> <!-- /widget-content -->
+
+		</div> <!-- /widget -->	
+			</div> <!-- /span6 -->
+</div> <!-- /row -->
+<div class="row" id="graphe_annee_debit">
+
+	<div class="span12" >
+
+		<div class="widget">
+
+			<div class="widget-header">
+				<i class="icon-star"></i>
+				<h3>Comparatif des derniers mois par regroupement (débit)</h3>
+				<span class="reduction">
+					<i class="icon-resize-full"></i>
+				</span>
+			</div> <!-- /widget-header -->
+
+			<div class="widget-content">
+
+				<div id="annuel_debit" style="height:700px;width:1000px; "></div>
+				<div class="widget-header" id="zoom_annuel_debit" style="width:130px; cursor:pointer;float:right; margin-right:20px;margin-top: 10px;">
+					<i class="icon-zoom-out" ></i>
+					<span style="padding-left:20px">reset du zoom </span>
+				</div>	
+			</div> <!-- /widget-content -->
+
+		</div> <!-- /widget -->	
+			</div> <!-- /span6 -->
+</div> <!-- /row -->
+
+<?php } if(in_array("comparatif_sur_annee",$liste_graphes_retenus) && in_array("categorie",$liste_graphes_retenus)){?>
+<div class="row" id="graphe_annee_cat_credit">
+
+	<div class="span12" >
+
+		<div class="widget">
+
+			<div class="widget-header">
+				<i class="icon-star"></i>
+				<h3>Comparatif des derniers mois par catégorie (crédit)</h3>
+				<span class="reduction">
+					<i class="icon-resize-full"></i>
+				</span>
+			</div> <!-- /widget-header -->
+
+			<div class="widget-content">
+
+				<div id="annuel_cat_credit" style="height:700px;width:1000px; "></div>
+				<div class="widget-header" id="zoom_annuel_cat_credit" style="width:130px; cursor:pointer;float:right; margin-right:20px;margin-top: 10px;">
+					<i class="icon-zoom-out" ></i>
+					<span style="padding-left:20px">reset du zoom </span>
+				</div>	
+			</div> <!-- /widget-content -->
+
+		</div> <!-- /widget -->	
+			</div> <!-- /span6 -->
+</div> <!-- /row -->
+<div class="row" id="graphe_annee_cat_debit">
+
+	<div class="span12" >
+
+		<div class="widget">
+
+			<div class="widget-header">
+				<i class="icon-star"></i>
+				<h3>Comparatif des derniers mois par catégorie (débit)</h3>
+				<span class="reduction">
+					<i class="icon-resize-full"></i>
+				</span>
+			</div> <!-- /widget-header -->
+
+			<div class="widget-content">
+
+				<div id="annuel_cat_debit" style="height:700px;width:1000px; "></div>
+				<div class="widget-header" id="zoom_annuel_cat_debit" style="width:130px; cursor:pointer;float:right; margin-right:20px;margin-top: 10px;">
 					<i class="icon-zoom-out" ></i>
 					<span style="padding-left:20px">reset du zoom </span>
 				</div>	

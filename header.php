@@ -9,6 +9,7 @@ $liste_cat=$reports->listeCategories();
 $liste_keywords=$reports->listeKeywords();
 $liste_regex=$reports->listeRegex();
 $liste_operations=$reports->listeOperations();
+$liste_regroupements=$reports->listeRegroupement();
 $liste_Excel=$reports->listeExcel();
 $liste_filtre=$reports->get_liste_filtre();
 $liste_releve=$reports->listeReleve();
