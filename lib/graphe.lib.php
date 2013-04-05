@@ -91,12 +91,79 @@ function display_reset($nom_bouton,$nom_graphe){
 
 
 
+function display_data_graphe($nom_data,$data){
+	echo "var ".$nom_data." = [
+		";		
+		foreach($data as $key => $value){
+			echo "['".$key."', ".abs($value)."],";
+		}
+		echo"
+		];";
+}
 
 
 
 
+function display_graphe_comparatif_annuel($nom_div,$data){
+	$aLibelle=array();
+	$aLabelSeries=array();
+	foreach($data as $id_releve=>$value){
+		$aLabelSeries[]=reports::getDateIdReleve($id_releve);
+		foreach($value as $libelle => $montant){		
+			if(!in_array($libelle, $aLibelle)){
+				$aLibelle[]=$libelle;
+			}
+		}	
+	}
+
+	$aSeries=array();
+	
+	$max=0;
+	foreach($data as $id_releve=>$value){
+		$temp=array();
+		foreach($aLibelle as $libelle){		
+			$montant=(!empty($value[$libelle]))?abs($value[$libelle]):0;
+			$temp[]=$montant;
+			$max=($max>$montant)?$max:$montant;
+		}
+		echo "var s".$id_releve." = ['".implode("','",$temp)."']; ";
+		$aSeries[]="s".$id_releve;
+	}
+
+	echo "var ticks = ['".implode("','",$aLibelle)."']; ";
+
+	display_graphe_comparatif($nom_div,$aSeries,$aLabelSeries,$max);
+}
 
 
+
+function display_graphe_comparatif_2annee($nom_div,$data,$aLabelSeries){
+	$aLibelle=array();
+	foreach($data as $id_releve=>$value){
+		foreach($value as $libelle => $montant){		
+			if(!in_array($libelle, $aLibelle)){
+				$aLibelle[]=$libelle;
+			}
+		}	
+	}
+
+	$aSeries=array();	
+	$max=0;
+	foreach($data as $id_releve=>$value){
+		$temp=array();
+		foreach($aLibelle as $libelle){
+			$montant=(!empty($value[$libelle]))?abs($value[$libelle]):0;
+			$temp[]=$montant;
+			$max=($max>$montant)?$max:$montant;
+		}
+		echo "var s".$id_releve." = ['".implode("','",$temp)."']; ";
+		$aSeries[]="s".$id_releve;
+	}
+
+	echo "var ticks = ['".implode("','",$aLibelle)."']; ";
+
+	display_graphe_comparatif($nom_div,$aSeries,$aLabelSeries,$max);
+}
 
 
 

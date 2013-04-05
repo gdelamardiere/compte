@@ -537,7 +537,7 @@ if(!empty($liste_details)){
 
 			<div class="widget-header">
 				<i class="icon-star"></i>
-				<h3>Comparatif entre <?php echo $id_filtre_annee1;?> et <?php echo $id_filtre_annee2;?></h3>
+				<h3>Comparatif entre <?php echo $id_filtre_annee1;?> et <?php echo $id_filtre_annee2;?> (regroupement/crédit)</h3>
 				<span class="reduction">
 					<i class="icon-resize-full"></i>
 				</span>
@@ -545,8 +545,35 @@ if(!empty($liste_details)){
 
 			<div class="widget-content">
 
-				<div id="comparatif_annees" style="height:700px;width:1000px; "></div>
-				<div class="widget-header" id="reset_comparatif_annees" style="width:130px; cursor:pointer;float:right; margin-right:20px;margin-top: 10px;">
+				<div id="comparatif_annees_credit" style="height:700px;width:1000px; "></div>
+				<div class="widget-header" id="reset_comparatif_annees_credit" style="width:130px; cursor:pointer;float:right; margin-right:20px;margin-top: 10px;">
+					<i class="icon-zoom-out" ></i>
+					<span style="padding-left:20px">reset du zoom </span>
+				</div>	
+			</div> <!-- /widget-content -->
+
+		</div> <!-- /widget -->	
+			</div> <!-- /span6 -->
+</div> <!-- /row -->
+
+<div class="row" id="graphe_2annees">
+
+	<div class="span12" >
+
+		<div class="widget">
+
+			<div class="widget-header">
+				<i class="icon-star"></i>
+				<h3>Comparatif entre <?php echo $id_filtre_annee1;?> et <?php echo $id_filtre_annee2;?> (regroupement/dédit)</h3>
+				<span class="reduction">
+					<i class="icon-resize-full"></i>
+				</span>
+			</div> <!-- /widget-header -->
+
+			<div class="widget-content">
+
+				<div id="comparatif_annees_debit" style="height:700px;width:1000px; "></div>
+				<div class="widget-header" id="reset_comparatif_annees_debit" style="width:130px; cursor:pointer;float:right; margin-right:20px;margin-top: 10px;">
 					<i class="icon-zoom-out" ></i>
 					<span style="padding-left:20px">reset du zoom </span>
 				</div>	
@@ -568,7 +595,7 @@ if(!empty($id_filtre_perso1) && !empty($id_filtre_perso2)){?>
 
 			<div class="widget-header">
 				<i class="icon-star"></i>
-				<h3>Comparatif personalisé</h3>
+				<h3>Comparatif personalisé (regroupement/crédit)</h3>
 				<span class="reduction">
 					<i class="icon-resize-full"></i>
 				</span>
@@ -576,8 +603,35 @@ if(!empty($id_filtre_perso1) && !empty($id_filtre_perso2)){?>
 
 			<div class="widget-content">
 
-				<div id="comparatif_perso" style="height:700px;width:1000px; "></div>
-				<div class="widget-header" id="reset_comparatif_perso" style="width:130px; cursor:pointer;float:right; margin-right:20px;margin-top: 10px;">
+				<div id="comparatif_perso_credit" style="height:700px;width:1000px; "></div>
+				<div class="widget-header" id="reset_comparatif_perso_credit" style="width:130px; cursor:pointer;float:right; margin-right:20px;margin-top: 10px;">
+					<i class="icon-zoom-out" ></i>
+					<span style="padding-left:20px">reset du zoom </span>
+				</div>	
+			</div> <!-- /widget-content -->
+
+		</div> <!-- /widget -->	
+			</div> <!-- /span6 -->
+</div> <!-- /row -->
+
+<div class="row" id="graphe_perso">
+
+	<div class="span12" >
+
+		<div class="widget">
+
+			<div class="widget-header">
+				<i class="icon-star"></i>
+				<h3>Comparatif personalisé (regroupement/débit)</h3>
+				<span class="reduction">
+					<i class="icon-resize-full"></i>
+				</span>
+			</div> <!-- /widget-header -->
+
+			<div class="widget-content">
+
+				<div id="comparatif_perso_debit" style="height:700px;width:1000px; "></div>
+				<div class="widget-header" id="reset_comparatif_perso_debit" style="width:130px; cursor:pointer;float:right; margin-right:20px;margin-top: 10px;">
 					<i class="icon-zoom-out" ></i>
 					<span style="padding-left:20px">reset du zoom </span>
 				</div>	

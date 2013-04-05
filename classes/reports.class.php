@@ -492,8 +492,9 @@ function listeRegex(){
 /*fin select*/	
 
 
-	function getDateIdReleve($id_releve){
-		$requete=$this->pdo->prepare("SELECT concat(mois_releve,'/',annee_releve) as date_releve
+	static function getDateIdReleve($id_releve){
+		$pdo=database::getInstance();
+		$requete=$pdo->prepare("SELECT concat(mois_releve,'/',annee_releve) as date_releve
 										from releve WHERE id=:id");
 		$requete->execute(array('id'=>$id_releve));
 		$resultat=$requete->fetch(PDO::FETCH_ASSOC);
