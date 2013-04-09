@@ -31,7 +31,17 @@ function update_operations(id,sel){
 	});
 }
 
-
+function pointerAll(id_releve){
+	if (confirm("Voulez-vous Vraiment tout pointer")) {
+		$.ajax({
+			type: "POST",
+			url: "lib/releve.ajax.php",
+			data: { 'tout_pointer': "true", 'id_releve': id_releve }
+			}).done(function( msg ) {
+				actualiser();
+		});
+	}
+}
 
 function update_pointage(id,sel){
 	switch(sel.value){
@@ -71,7 +81,7 @@ function update_pointage(id,sel){
 
 
 function supprimer_releve(id_releve){
-	if (confirm("Voulez-vous Vraiment effacet cet import ?\n ATTENTION cette action est irréversible")) {
+	if (confirm("Voulez-vous Vraiment effacer cet import ?\n ATTENTION cette action est irréversible")) {
 		$.ajax({
 			type: "POST",
 			url: "lib/releve.ajax.php",

@@ -1,0 +1,610 @@
+-- phpMyAdmin SQL Dump
+-- version 3.4.5
+-- http://www.phpmyadmin.net
+--
+-- Client: 127.0.0.1
+-- Généré le : Mar 09 Avril 2013 à 18:26
+-- Version du serveur: 5.5.16
+-- Version de PHP: 5.3.8
+
+SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
+SET time_zone = "+00:00";
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8 */;
+
+--
+-- Base de données: `comptes`
+--
+
+DELIMITER $$
+--
+-- Procédures
+--
+DROP PROCEDURE IF EXISTS `update_releve_detail`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `update_releve_detail`()
+BEGIN
+				update releve_detail rd  set rd.id_cat=
+					ifnull((select k.id_cat
+						from keywords k 
+						where rd.libelle REGEXP k.value
+						limit 1),1)
+			where rd.bcat = 0 ; 
+			update releve_detail rd  set rd.bcat=1
+			where rd.id_cat != 1 ; 
+			END$$
+
+DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `filtres`
+--
+
+DROP TABLE IF EXISTS `filtres`;
+CREATE TABLE IF NOT EXISTS `filtres` (
+  `id_filtre` int(11) NOT NULL AUTO_INCREMENT,
+  `nom_filtre` varchar(100) NOT NULL,
+  `id_releve` varchar(100) NOT NULL,
+  `coche_operations` varchar(100) NOT NULL,
+  `coche_categorie` varchar(100) NOT NULL,
+  `liste_graphe` varchar(100) NOT NULL,
+  `filtre_annee_1` varchar(100) NOT NULL,
+  `filtre_annee_2` varchar(100) NOT NULL,
+  `filtre_perso_1` varchar(100) NOT NULL,
+  `filtre_perso_2` varchar(100) NOT NULL,
+  PRIMARY KEY (`id_filtre`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `import_excel`
+--
+
+DROP TABLE IF EXISTS `import_excel`;
+CREATE TABLE IF NOT EXISTS `import_excel` (
+  `id_excel` int(11) NOT NULL AUTO_INCREMENT,
+  `libelle` varchar(20) NOT NULL,
+  `position` int(11) NOT NULL,
+  PRIMARY KEY (`id_excel`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
+
+--
+-- Contenu de la table `import_excel`
+--
+
+INSERT INTO `import_excel` (`id_excel`, `libelle`, `position`) VALUES
+(1, 'montant', 4),
+(2, 'date', 1),
+(3, 'libelle', 2);
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `keywords`
+--
+
+DROP TABLE IF EXISTS `keywords`;
+CREATE TABLE IF NOT EXISTS `keywords` (
+  `id_keywords` int(11) NOT NULL AUTO_INCREMENT,
+  `id_cat` int(11) DEFAULT NULL,
+  `value` varchar(50) NOT NULL,
+  PRIMARY KEY (`id_keywords`),
+  KEY `id_cat` (`id_cat`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=44 ;
+
+--
+-- Contenu de la table `keywords`
+--
+
+INSERT INTO `keywords` (`id_keywords`, `id_cat`, `value`) VALUES
+(2, 19, 'CASINO'),
+(3, 5, 'SNCF'),
+(4, 6, 'GAUMONT'),
+(5, 6, 'LES ENFANTS DU CHARTRES '),
+(6, 19, 'MONOP'),
+(7, 2, 'TELEPHONE'),
+(8, 2, 'NUMERICABLE'),
+(9, 4, 'COMMISSIONS'),
+(10, 2, 'SFR'),
+(11, 15, 'EDF'),
+(12, 19, 'UNIMAG'),
+(13, 10, 'MUTUELLE MOTARD'),
+(14, 19, 'GEANT'),
+(15, 3, ' ESSFLOREALY'),
+(16, 19, 'PROXI'),
+(17, 9, 'ECHEANCE PRET'),
+(18, 19, 'G 20'),
+(19, 16, '5 A SEC'),
+(20, 6, 'UGC'),
+(21, 19, 'SUBWAY'),
+(22, 3, 'STATION AVIA'),
+(23, 17, 'LE PEL'),
+(24, 11, 'RESOURCES FRANCE'),
+(25, 19, 'CARREFOUR'),
+(26, 19, 'MCDONALDS'),
+(27, 19, 'FRANPRIX'),
+(28, 19, 'MAC DO'),
+(29, 14, 'RATP'),
+(30, 8, 'RETRAIT DAB'),
+(31, 18, 'VIR CPTE A CPTE'),
+(32, 3, 'SUPER MOZART'),
+(33, 5, 'SNC'),
+(34, 7, 'PERMANENT LOYER'),
+(35, 19, 'HUIT A 8'),
+(36, 2, 'DEBITEL'),
+(37, 19, 'GALOPINS'),
+(38, 19, 'CARREF'),
+(39, 19, 'G20'),
+(40, 19, 'CAFE'),
+(41, 19, 'ED MOZART'),
+(42, 3, 'ESSO'),
+(43, 19, 'INTERMARCHE');
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `liste_cat`
+--
+
+DROP TABLE IF EXISTS `liste_cat`;
+CREATE TABLE IF NOT EXISTS `liste_cat` (
+  `id_cat` int(11) NOT NULL AUTO_INCREMENT,
+  `libelle` varchar(50) NOT NULL,
+  PRIMARY KEY (`id_cat`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=22 ;
+
+--
+-- Contenu de la table `liste_cat`
+--
+
+INSERT INTO `liste_cat` (`id_cat`, `libelle`) VALUES
+(1, 'Non dÃ©fini'),
+(2, 'telephone + internet'),
+(3, 'essence'),
+(4, 'frais banquaire'),
+(5, 'sncf'),
+(6, 'cinema'),
+(7, 'loyer'),
+(8, 'liquide'),
+(9, 'pret'),
+(10, 'assurance'),
+(11, 'salaire'),
+(12, 'divers'),
+(13, 'impot + amende'),
+(14, 'ratp'),
+(15, 'edf'),
+(16, 'pressing'),
+(17, 'PEL'),
+(18, 'virement compte a compte'),
+(19, 'nouriture'),
+(21, 'tarata');
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `operations`
+--
+
+DROP TABLE IF EXISTS `operations`;
+CREATE TABLE IF NOT EXISTS `operations` (
+  `id_operations` int(11) NOT NULL AUTO_INCREMENT,
+  `nom_operations` varchar(50) NOT NULL,
+  PRIMARY KEY (`id_operations`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=8 ;
+
+--
+-- Contenu de la table `operations`
+--
+
+INSERT INTO `operations` (`id_operations`, `nom_operations`) VALUES
+(1, 'virement'),
+(2, 'cb'),
+(3, 'cheque'),
+(4, 'espece'),
+(5, 'prelevement'),
+(6, 'frais banquaire'),
+(7, 'pret');
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `regex_replace`
+--
+
+DROP TABLE IF EXISTS `regex_replace`;
+CREATE TABLE IF NOT EXISTS `regex_replace` (
+  `id_keywords` int(11) NOT NULL AUTO_INCREMENT,
+  `regex` varchar(50) NOT NULL,
+  `replace` varchar(50) NOT NULL,
+  `ordre` int(11) NOT NULL,
+  `id_operations` int(20) DEFAULT NULL,
+  `type` varchar(10) DEFAULT NULL,
+  PRIMARY KEY (`id_keywords`),
+  KEY `id_operations` (`id_operations`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=18 ;
+
+--
+-- Contenu de la table `regex_replace`
+--
+
+INSERT INTO `regex_replace` (`id_keywords`, `regex`, `replace`, `ordre`, `id_operations`, `type`) VALUES
+(1, '#(VIR[^R]+RECU)#', '/explode/$1', 4, 1, 'CREDIT'),
+(2, '#(VIR[^0-9^]+EMIS)#', '/explode/$1', 5, 1, 'DEBIT'),
+(4, '#(DU [0-9]{6})#', '/explode/$1', 6, 2, 'DEBIT'),
+(5, '#(PRELEVEMENT)#', '/explode/$1', 7, 5, 'DEBIT'),
+(6, '#(RETRAIT DAB)#', '/explode/$1', 8, 4, 'DEBIT'),
+(7, '#(COMMISSIONS)#', '/explode/$1', 9, 6, 'DEBIT'),
+(9, '#(CHEQUE [0-9]{6,})#', '/explode/$1', 10, 3, 'DEBIT'),
+(14, '#(ECHEANCE PRET [0-9]{5,})#', '/explode/$1', 12, 7, 'DEBIT'),
+(15, '#(REMISE[^0-9]*[0-9]{6,})#', '/explode/$1', 10, 3, 'CREDIT'),
+(16, '#(VIR[^0-9^]+FAVEUR TIERS)#', '/explode/$1', 5, 1, 'DEBIT'),
+(17, '#(CARTE)#', '/explode/$1', 13, 2, 'DEBIT');
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `regroupement`
+--
+
+DROP TABLE IF EXISTS `regroupement`;
+CREATE TABLE IF NOT EXISTS `regroupement` (
+  `id_regroupement` int(11) NOT NULL AUTO_INCREMENT,
+  `nom` varchar(50) NOT NULL,
+  PRIMARY KEY (`id_regroupement`),
+  UNIQUE KEY `nom` (`nom`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=12 ;
+
+--
+-- Contenu de la table `regroupement`
+--
+
+INSERT INTO `regroupement` (`id_regroupement`, `nom`) VALUES
+(1, 'divers');
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `releve`
+--
+
+DROP TABLE IF EXISTS `releve`;
+CREATE TABLE IF NOT EXISTS `releve` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `mois_releve` int(11) NOT NULL,
+  `annee_releve` int(11) NOT NULL,
+  `date_crea` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `date_debut` date NOT NULL,
+  `date_fin` date NOT NULL,
+  `montant_debut` double(10,2) NOT NULL,
+  `montant_fin` double(10,2) NOT NULL,
+  `fichier` varchar(100) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=43 ;
+
+--
+-- Contenu de la table `releve`
+--
+
+INSERT INTO `releve` (`id`, `mois_releve`, `annee_releve`, `date_crea`, `date_debut`, `date_fin`, `montant_debut`, `montant_fin`, `fichier`) VALUES
+(41, 1, 2013, '2013-04-04 14:44:16', '2013-01-01', '2013-01-01', 0.00, 0.00, 'J:\\EasyPHP-5.3.8.1\\www\\compte/fichiers_importes/releve_init_01_2013.xlsx'),
+(42, 2, 2013, '2013-04-04 14:44:39', '2013-01-01', '2013-01-01', 0.00, 0.00, 'J:\\EasyPHP-5.3.8.1\\www\\compte/fichiers_importes/releve_init_02_2013.xlsx');
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `releve_detail`
+--
+
+DROP TABLE IF EXISTS `releve_detail`;
+CREATE TABLE IF NOT EXISTS `releve_detail` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `libelle` varchar(200) NOT NULL,
+  `montant` double(10,2) NOT NULL,
+  `type` varchar(20) NOT NULL,
+  `id_operations` int(11) DEFAULT NULL,
+  `id_cat` int(11) NOT NULL DEFAULT '1',
+  `date` date NOT NULL,
+  `date_crea` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `date_modif` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `id_releve` int(11) NOT NULL,
+  `trouve` tinyint(1) NOT NULL DEFAULT '1',
+  `pointe` enum('-1','0','1') NOT NULL DEFAULT '0',
+  `bCat` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `id_releve` (`id_releve`),
+  KEY `id_operations` (`id_operations`),
+  KEY `id_cat` (`id_cat`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4015 ;
+
+--
+-- Contenu de la table `releve_detail`
+--
+
+INSERT INTO `releve_detail` (`id`, `libelle`, `montant`, `type`, `id_operations`, `id_cat`, `date`, `date_crea`, `date_modif`, `id_releve`, `trouve`, `pointe`, `bCat`) VALUES
+(3819, 'CARTE 26/01/2012 SNCF', -10.00, 'DEBIT', 2, 5, '1997-01-31', '2013-04-04 14:44:16', '2013-04-09 16:16:45', 41, 1, '0', 1),
+(3820, 'CARTE 26/01/2012 DAC 24/24 SUPER U', -24.00, 'DEBIT', 2, 1, '2000-01-31', '2013-04-04 14:44:16', '2013-04-09 16:16:45', 41, 1, '0', 0),
+(3821, 'CARTE 26/01/2012 ETOILE DU BERGER', -50.00, 'DEBIT', 2, 1, '2001-01-31', '2013-04-04 14:44:16', '2013-04-09 16:16:45', 41, 1, '0', 0),
+(3822, 'CARTE 25/01/2012 FRANPRIX', -7.00, 'DEBIT', 2, 19, '2012-01-31', '2013-04-04 14:44:16', '2013-04-09 16:16:45', 41, 1, '0', 1),
+(3823, 'CARTE 24/01/2012 LEROY MERLIN', -12.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:16', '2013-04-09 16:16:45', 41, 1, '0', 0),
+(3824, 'CARTE 21/01/2012 1.2.3', -122.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:16', '2013-04-09 16:16:45', 41, 1, '0', 0),
+(3825, 'CARTE 21/01/2012 CHARTRCATHEDRAUT', -2.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:16', '2013-04-09 16:16:45', 41, 1, '0', 0),
+(3826, 'CARTE 20/01/2012 3D - DOUDARD', -18.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:17', '2013-04-09 16:16:45', 41, 1, '0', 0),
+(3827, 'CARTE 21/01/2012 ESSFLOREALYG320', -59.00, 'DEBIT', 2, 3, '2012-01-31', '2013-04-04 14:44:17', '2013-04-09 16:16:45', 41, 1, '0', 1),
+(3828, 'CARTE 21/01/2012 INTERMARCHE', -31.00, 'DEBIT', 2, 19, '2012-01-31', '2013-04-04 14:44:17', '2013-04-09 16:16:45', 41, 1, '0', 1),
+(3829, 'CARTE 21/01/2012 SUPER U', -20.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:17', '2013-04-09 16:16:45', 41, 1, '0', 0),
+(3830, 'CARTE 21/01/2012 CONCEPT MODE', -44.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:17', '2013-04-09 16:16:45', 41, 1, '0', 0),
+(3831, 'CARTE 20/01/2012 CARREFOURMARKET', -37.00, 'DEBIT', 2, 19, '2012-01-31', '2013-04-04 14:44:17', '2013-04-09 16:16:45', 41, 1, '0', 1),
+(3832, 'CARTE 16/01/2012 CARREFOUR CHARTR', -2.00, 'DEBIT', 2, 19, '2012-01-31', '2013-04-04 14:44:17', '2013-04-09 16:16:45', 41, 1, '0', 1),
+(3833, 'CARTE 16/01/2012 ERAM', -90.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:17', '2013-04-09 16:16:45', 41, 1, '0', 0),
+(3834, 'CARTE 16/01/2012 CHARTRESCOEURAUT', -9.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:17', '2013-04-09 16:16:45', 41, 1, '0', 0),
+(3835, 'CARTE 16/01/2012 SNCF', -11.00, 'DEBIT', 2, 5, '2012-01-31', '2013-04-04 14:44:17', '2013-04-09 16:16:45', 41, 1, '0', 1),
+(3836, 'CARTE 16/01/2012 MONOPRIX', -35.00, 'DEBIT', 2, 19, '2012-01-31', '2013-04-04 14:44:17', '2013-04-09 16:16:45', 41, 1, '0', 1),
+(3837, 'CARTE 16/01/2012 CARREFDAC CHARTR', -75.00, 'DEBIT', 2, 19, '2012-01-31', '2013-04-04 14:44:17', '2013-04-09 16:16:45', 41, 1, '0', 1),
+(3838, 'CARTE 16/01/2012 CHARTRESCOEURAUT', -2.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:17', '2013-04-09 16:16:45', 41, 1, '0', 0),
+(3839, 'CARTE 16/01/2012 COMPASS GROUP F', -40.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:17', '2013-04-09 16:16:45', 41, 1, '0', 0),
+(3840, 'CARTE 17/01/2012 LE METROPOLITAN', -61.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:17', '2013-04-09 16:16:45', 41, 1, '0', 0),
+(3841, 'CARTE 16/01/2012 BURTON 058', -146.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:17', '2013-04-09 16:16:45', 41, 1, '0', 0),
+(3842, 'CARTE 13/01/2012 SUPER U', -19.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:17', '2013-04-09 16:16:45', 41, 1, '0', 0),
+(3843, 'CARTE 13/01/2012 AUX TISSUS BELLICE', -58.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:17', '2013-04-09 16:16:45', 41, 1, '0', 0),
+(3844, 'CARTE 13/01/2012 OLIVINE', -55.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:17', '2013-04-09 16:16:45', 41, 1, '0', 0),
+(3845, 'CARTE 14/01/2012 CHARTRESCOEURAUT', -3.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:17', '2013-04-09 16:16:45', 41, 1, '0', 0),
+(3846, 'CARTE 13/01/2012 UN JOUR AILLEURS', -69.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:17', '2013-04-09 16:16:45', 41, 1, '0', 0),
+(3847, 'CARTE 13/01/2012 3D - DOUDARD', -24.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:17', '2013-04-09 16:16:45', 41, 1, '0', 0),
+(3848, 'CARTE 16/01/2012 RATP', -3.00, 'DEBIT', 2, 14, '2012-01-31', '2013-04-04 14:44:17', '2013-04-09 16:16:45', 41, 1, '0', 1),
+(3849, 'CARTE 13/01/2012 CARREFDAC CHARTR', -73.00, 'DEBIT', 2, 19, '2012-01-31', '2013-04-04 14:44:17', '2013-04-09 16:16:45', 41, 1, '0', 1),
+(3850, 'CARTE 14/01/2012 INTERMARCHE', -151.00, 'DEBIT', 2, 19, '2012-01-31', '2013-04-04 14:44:17', '2013-04-09 16:16:45', 41, 1, '0', 1),
+(3851, 'CARTE 12/01/2012 AVERT CYRIL', -7.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:17', '2013-04-09 16:16:45', 41, 1, '0', 0),
+(3852, 'CARTE 12/01/2012 SUPER U', -8.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:17', '2013-04-09 16:16:45', 41, 1, '0', 0),
+(3853, 'CARTE 12/01/2012 ESCOFFIER NET', -49.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:17', '2013-04-09 16:16:45', 41, 1, '0', 0),
+(3854, 'CARTE 12/01/2012 SNCF INTERNET', -58.00, 'DEBIT', 2, 5, '2012-01-31', '2013-04-04 14:44:17', '2013-04-09 16:16:45', 41, 1, '0', 1),
+(3855, 'CARTE 12/01/2012 SNCF INTERNET', -24.00, 'DEBIT', 2, 5, '2012-01-31', '2013-04-04 14:44:17', '2013-04-09 16:16:45', 41, 1, '0', 1),
+(3856, 'CARTE 12/01/2012 SNCF INTERNET', -60.00, 'DEBIT', 2, 5, '2012-01-31', '2013-04-04 14:44:18', '2013-04-09 16:16:45', 41, 1, '0', 1),
+(3857, 'CARTE 12/01/2012 HALLE CHAUSSURES', -52.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:18', '2013-04-09 16:16:45', 41, 1, '0', 0),
+(3858, 'CARTE 10/01/2012 AVERT CYRIL', -8.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:18', '2013-04-09 16:16:45', 41, 1, '0', 0),
+(3859, 'CARTE 11/01/2012 CARREFOUR ATHIS', -229.00, 'DEBIT', 2, 19, '2012-01-31', '2013-04-04 14:44:18', '2013-04-09 16:16:45', 41, 1, '0', 1),
+(3860, 'CARTE 11/01/2012 CARREFOUR ATHIS', -46.00, 'DEBIT', 2, 19, '2012-01-31', '2013-04-04 14:44:18', '2013-04-09 16:16:45', 41, 1, '0', 1),
+(3861, 'CARTE 11/01/2012 BOUYGUES TELECOM', -29.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:18', '2013-04-09 16:16:45', 41, 1, '0', 0),
+(3862, 'CARTE 10/01/2012 SUPER U', -6.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:18', '2013-04-09 16:16:45', 41, 1, '0', 0),
+(3863, 'CARTE 10/01/2012 PHIE DES SABLES', -33.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:18', '2013-04-09 16:16:45', 41, 1, '0', 0),
+(3864, 'CARTE 06/01/2012 DAC INTERMARCHE VL', -66.00, 'DEBIT', 2, 19, '2012-01-31', '2013-04-04 14:44:18', '2013-04-09 16:16:45', 41, 1, '0', 1),
+(3865, 'CARTE 06/01/2012 INTERMARCHE', -16.00, 'DEBIT', 2, 19, '2012-01-31', '2013-04-04 14:44:18', '2013-04-09 16:16:45', 41, 1, '0', 1),
+(3866, 'CARTE 06/01/2012 DR BELLOY J-PAUL', -26.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:18', '2013-04-09 16:16:45', 41, 1, '0', 0),
+(3867, 'CARTE 06/01/2012 EPELBAUM MARC', -32.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:18', '2013-04-09 16:16:45', 41, 1, '0', 0),
+(3868, 'CARTE 07/01/2012 LE ST HILAIRE', -68.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:18', '2013-04-09 16:16:45', 41, 1, '0', 0),
+(3869, 'CARTE 08/01/2012 CEDIB', -7.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:18', '2013-04-09 16:16:45', 41, 1, '0', 0),
+(3870, 'CARTE 05/01/2012 CARREFOUR CHARTR', -2.00, 'DEBIT', 2, 19, '2012-01-31', '2013-04-04 14:44:18', '2013-04-09 16:16:45', 41, 1, '0', 1),
+(3871, 'CARTE 05/01/2012 CARREFDAC CHARTR', -69.00, 'DEBIT', 2, 19, '2012-01-31', '2013-04-04 14:44:18', '2013-04-09 16:16:45', 41, 1, '0', 1),
+(3872, 'CARTE 05/01/2012 LEROY MERLIN', -39.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:18', '2013-04-09 16:16:45', 41, 1, '0', 0),
+(3873, 'CARTE 05/01/2012 PHIE POUZOLS', -10.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:18', '2013-04-09 16:16:45', 41, 1, '0', 0),
+(3874, 'CARTE 03/01/2012 SNCF', -11.00, 'DEBIT', 2, 5, '2012-01-31', '2013-04-04 14:44:18', '2013-04-09 16:16:45', 41, 1, '0', 1),
+(3875, 'CARTE 03/01/2012 RATP', -3.00, 'DEBIT', 2, 14, '2012-01-31', '2013-04-04 14:44:18', '2013-04-09 16:16:45', 41, 1, '0', 1),
+(3876, 'CARTE 02/01/2012 INTERMARCHE', -11.00, 'DEBIT', 2, 19, '2012-01-31', '2013-04-04 14:44:18', '2013-04-09 16:16:45', 41, 1, '0', 1),
+(3877, 'CARTE 30/12/2011 AUX TISSUS BELLICE', -352.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:18', '2013-04-09 16:16:45', 41, 1, '0', 0),
+(3878, 'CARTE 30/12/2011 SUPER U', -25.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:19', '2013-04-09 16:16:45', 41, 1, '0', 0),
+(3879, 'CARTE 27/12/2011 CHARCUT MOUSSU', -31.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:19', '2013-04-09 16:16:45', 41, 1, '0', 0),
+(3880, 'CARTE 30/12/2011 BRICOMARCHE', -46.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:19', '2013-04-09 16:16:45', 41, 1, '0', 0),
+(3881, 'CARTE 30/12/2011 3D - DOUDARD', -33.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:19', '2013-04-09 16:16:45', 41, 1, '0', 0),
+(3882, 'CARTE 29/12/2011 SAINT MACLOU', -53.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:19', '2013-04-09 16:16:45', 41, 1, '0', 0),
+(3883, 'CARTE 29/12/2011 AUX TISSUS BELLICE', -59.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:19', '2013-04-09 16:16:45', 41, 1, '0', 0),
+(3884, 'RETRAIT DAB 27/01/2012 DAB SENONCHES', -20.00, 'DEBIT', 4, 8, '2012-01-30', '2013-04-04 14:44:19', '2013-04-09 16:16:45', 41, 1, '0', 1),
+(3885, 'RETRAIT DAB 20/01/2012 DAB COURVILLE', -220.00, 'DEBIT', 4, 8, '2012-01-30', '2013-04-04 14:44:19', '2013-04-09 16:16:45', 41, 1, '0', 1),
+(3886, 'RETRAIT DAB 20/01/2012 CM SENONCHES', -20.00, 'DEBIT', 4, 8, '2012-01-30', '2013-04-04 14:44:19', '2013-04-09 16:16:45', 41, 1, '0', 1),
+(3887, 'RETRAIT DAB 21/01/2012 DAB LA LOUPE', -200.00, 'DEBIT', 4, 8, '2012-01-30', '2013-04-04 14:44:19', '2013-04-09 16:16:45', 41, 1, '0', 1),
+(3888, 'PRELEVEMENT BOUYGUES TELECOM', -31.00, 'DEBIT', 5, 1, '2012-01-24', '2013-04-04 14:44:19', '2013-04-09 16:16:45', 41, 1, '0', 0),
+(3889, 'CHEQUE 1498717', -13.00, 'DEBIT', 3, 1, '2012-01-23', '2013-04-04 14:44:19', '2013-04-09 16:16:45', 41, 1, '0', 0),
+(3890, 'CHEQUE 1498716', -16.00, 'DEBIT', 3, 1, '2012-01-23', '2013-04-04 14:44:19', '2013-04-09 16:16:45', 41, 1, '0', 0),
+(3891, 'CHEQUE 1498715', -1500.00, 'DEBIT', 3, 1, '2012-01-23', '2013-04-04 14:44:19', '2013-04-09 16:16:45', 41, 1, '0', 0),
+(3892, 'VIREMENT SEPA EMIS VERS DE VEILLECHEZE CLAIR 10028118210 DE PAPA A CLAIRE', -20.00, 'DEBIT', 1, 1, '2012-01-23', '2013-04-04 14:44:19', '2013-04-09 16:16:45', 41, 1, '0', 0),
+(3893, 'PRELEVEMENT BANQUE ACCORD', -140.00, 'DEBIT', 5, 1, '2012-01-20', '2013-04-04 14:44:19', '2013-04-09 16:16:45', 41, 1, '0', 0),
+(3894, 'CHEQUE 1961205', -21.00, 'DEBIT', 3, 1, '2012-01-20', '2013-04-04 14:44:19', '2013-04-09 16:16:45', 41, 1, '0', 0),
+(3895, 'RETRAIT DAB 18/01/2012 RETRAIT DAB 18-01-14505-0071260', -30.00, 'DEBIT', 4, 8, '2012-01-20', '2013-04-04 14:44:19', '2013-04-09 16:16:45', 41, 1, '0', 1),
+(3896, 'VIREMENT SEPA EMIS VERS DE VEILLECHEZE GUERRIC 00000762828 DE PAPA A GUERRIC CONCERT   TR', -62.00, 'DEBIT', 1, 1, '2012-01-20', '2013-04-04 14:44:19', '2013-04-09 16:16:45', 41, 1, '0', 0),
+(3897, 'PRELEVEMENT COFIROUTE S.A.', -18.00, 'DEBIT', 5, 1, '2012-01-19', '2013-04-04 14:44:19', '2013-04-09 16:16:45', 41, 1, '0', 0),
+(3898, 'VIREMENT RECU M. DE VEILLECHEZE XAVIER 10004263942 DE LEO A CC', 2400.00, 'CREDIT', 1, 1, '2012-01-19', '2013-04-04 14:44:20', '2013-04-09 16:16:45', 41, 1, '0', 0),
+(3899, 'VIREMENT RECU S.M.I. )1135740 2012016003914', 33.00, 'CREDIT', 1, 1, '2012-01-18', '2013-04-04 14:44:20', '2013-04-09 16:16:45', 41, 1, '0', 0),
+(3900, 'CHEQUE 1961206', -334.00, 'DEBIT', 3, 1, '2012-01-18', '2013-04-04 14:44:20', '2013-04-09 16:16:45', 41, 1, '0', 0),
+(3901, 'RETRAIT DAB 13/01/2012 CM SENONCHES', -20.00, 'DEBIT', 4, 8, '2012-01-17', '2013-04-04 14:44:20', '2013-04-09 16:16:45', 41, 1, '0', 1),
+(3902, 'VIREMENT RECU S.M.I. )1135740 2012012004298', 22.00, 'CREDIT', 1, 1, '2012-01-16', '2013-04-04 14:44:20', '2013-04-09 16:16:45', 41, 1, '0', 0),
+(3903, 'PRELEVEMENT FRANCE TELECOM ORLEANS', -42.00, 'DEBIT', 5, 1, '2012-01-16', '2013-04-04 14:44:20', '2013-04-09 16:16:45', 41, 1, '0', 0),
+(3904, 'RETRAIT DAB 11/01/2012 S2P', -40.00, 'DEBIT', 4, 8, '2012-01-13', '2013-04-04 14:44:20', '2013-04-09 16:16:45', 41, 1, '0', 1),
+(3905, 'VIREMENT RECU C.P.A.M. CHARTRES 120100002786', 21.00, 'CREDIT', 1, 1, '2012-01-11', '2013-04-04 14:44:20', '2013-04-09 16:16:45', 41, 1, '0', 0),
+(3906, 'VIREMENT RECU M XAVIER DE VEILLECHEZE 11000467669 DE LIVR A XAV A CC', 200.00, 'CREDIT', 1, 1, '2012-01-11', '2013-04-04 14:44:20', '2013-04-09 16:16:45', 41, 1, '0', 0),
+(3907, 'VIREMENT SEPA EMIS VERS DE VEILLECHEZE LOUIS 30419630089 DE PAPA A LOUIS', -73.00, 'DEBIT', 1, 1, '2012-01-11', '2013-04-04 14:44:20', '2013-04-09 16:16:45', 41, 1, '0', 0),
+(3908, 'RETRAIT DAB 07/01/2012 RETRAIT DAB 07-01-14505-0071130', -20.00, 'DEBIT', 4, 8, '2012-01-10', '2013-04-04 14:44:20', '2013-04-09 16:16:45', 41, 1, '0', 1),
+(3909, 'RETRAIT DAB 06/01/2012 GAB SENONCHES', -30.00, 'DEBIT', 4, 8, '2012-01-10', '2013-04-04 14:44:20', '2013-04-09 16:16:45', 41, 1, '0', 1),
+(3910, 'RETRAIT DAB 31/12/2011 DAB COURVILLE', -120.00, 'DEBIT', 4, 8, '2012-01-10', '2013-04-04 14:44:20', '2013-04-09 16:16:45', 41, 1, '0', 1),
+(3911, 'RETRAIT DAB 02/01/2012 CHABRIERES', -100.00, 'DEBIT', 4, 8, '2012-01-10', '2013-04-04 14:44:20', '2013-04-09 16:16:45', 41, 1, '0', 1),
+(3912, 'PRELEVEMENT L ODYSSEE', -9.00, 'DEBIT', 5, 1, '2012-01-09', '2013-04-04 14:44:20', '2013-04-09 16:16:45', 41, 1, '0', 0),
+(3913, 'CHEQUE 1498714', -412.00, 'DEBIT', 3, 1, '2012-01-09', '2013-04-04 14:44:20', '2013-04-09 16:16:45', 41, 1, '0', 0),
+(3914, 'VIREMENT RECU C.A.F DE L EURE-ET-LOIR P 1038469ADE VEILLECHE122011ME', 161.00, 'CREDIT', 1, 1, '2012-01-05', '2013-04-04 14:44:20', '2013-04-09 16:16:45', 41, 1, '0', 0),
+(3915, 'RETRAIT DAB 30/12/2011 GAB SENONCHES', -200.00, 'DEBIT', 4, 8, '2012-01-03', '2013-04-04 14:44:20', '2013-04-09 16:16:45', 41, 1, '0', 1),
+(3916, 'CHEQUE 1498712', -70.00, 'DEBIT', 3, 1, '2012-01-02', '2013-04-04 14:44:20', '2013-04-09 16:16:45', 41, 1, '0', 0),
+(3917, 'CARTE 26/01/2012 SNCF', -10.00, 'DEBIT', 2, 5, '1997-01-31', '2013-04-04 14:44:39', '2013-04-09 16:16:45', 42, 1, '1', 1),
+(3918, 'CARTE 26/01/2012 DAC 24/24 SUPER U', -24.00, 'DEBIT', 2, 1, '2000-01-31', '2013-04-04 14:44:39', '2013-04-09 16:16:45', 42, 1, '1', 0),
+(3919, 'CARTE 26/01/2012 ETOILE DU BERGER', -50.00, 'DEBIT', 2, 1, '2001-01-31', '2013-04-04 14:44:39', '2013-04-09 16:16:45', 42, 1, '1', 0),
+(3920, 'CARTE 25/01/2012 FRANPRIX', -7.00, 'DEBIT', 2, 19, '2012-01-31', '2013-04-04 14:44:39', '2013-04-09 16:16:45', 42, 1, '1', 1),
+(3921, 'CARTE 24/01/2012 LEROY MERLIN', -12.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:39', '2013-04-09 16:16:45', 42, 1, '1', 0),
+(3922, 'CARTE 21/01/2012 1.2.3', -122.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:39', '2013-04-09 16:16:45', 42, 1, '1', 0),
+(3923, 'CARTE 21/01/2012 CHARTRCATHEDRAUT', -2.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:39', '2013-04-09 16:16:45', 42, 1, '1', 0),
+(3924, 'CARTE 20/01/2012 3D - DOUDARD', -18.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:39', '2013-04-09 16:16:45', 42, 1, '1', 0),
+(3925, 'CARTE 21/01/2012 ESSFLOREALYG320', -59.00, 'DEBIT', 2, 3, '2012-01-31', '2013-04-04 14:44:39', '2013-04-09 16:16:45', 42, 1, '1', 1),
+(3926, 'CARTE 21/01/2012 INTERMARCHE', -31.00, 'DEBIT', 2, 19, '2012-01-31', '2013-04-04 14:44:39', '2013-04-09 16:16:45', 42, 1, '1', 1),
+(3927, 'CARTE 21/01/2012 SUPER U', -20.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:39', '2013-04-09 16:16:45', 42, 1, '1', 0),
+(3928, 'CARTE 21/01/2012 CONCEPT MODE', -44.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:39', '2013-04-09 16:16:45', 42, 1, '1', 0),
+(3929, 'CARTE 20/01/2012 CARREFOURMARKET', -37.00, 'DEBIT', 2, 19, '2012-01-31', '2013-04-04 14:44:39', '2013-04-09 16:16:45', 42, 1, '1', 1),
+(3930, 'CARTE 16/01/2012 CARREFOUR CHARTR', -2.00, 'DEBIT', 2, 19, '2012-01-31', '2013-04-04 14:44:39', '2013-04-09 16:16:45', 42, 1, '1', 1),
+(3931, 'CARTE 16/01/2012 ERAM', -90.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:39', '2013-04-09 16:16:45', 42, 1, '1', 0),
+(3932, 'CARTE 16/01/2012 CHARTRESCOEURAUT', -9.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:39', '2013-04-09 16:16:45', 42, 1, '1', 0),
+(3933, 'CARTE 16/01/2012 SNCF', -11.00, 'DEBIT', 2, 5, '2012-01-31', '2013-04-04 14:44:39', '2013-04-09 16:16:45', 42, 1, '1', 1),
+(3934, 'CARTE 16/01/2012 MONOPRIX', -35.00, 'DEBIT', 2, 19, '2012-01-31', '2013-04-04 14:44:39', '2013-04-09 16:16:45', 42, 1, '1', 1),
+(3935, 'CARTE 16/01/2012 CARREFDAC CHARTR', -75.00, 'DEBIT', 2, 19, '2012-01-31', '2013-04-04 14:44:39', '2013-04-09 16:16:45', 42, 1, '1', 1),
+(3936, 'CARTE 16/01/2012 CHARTRESCOEURAUT', -2.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:39', '2013-04-09 16:16:45', 42, 1, '1', 0),
+(3937, 'CARTE 16/01/2012 COMPASS GROUP F', -40.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:39', '2013-04-09 16:16:45', 42, 1, '1', 0),
+(3938, 'CARTE 17/01/2012 LE METROPOLITAN', -61.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:39', '2013-04-09 16:16:45', 42, 1, '1', 0),
+(3939, 'CARTE 16/01/2012 BURTON 058', -146.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:39', '2013-04-09 16:16:45', 42, 1, '1', 0),
+(3940, 'CARTE 13/01/2012 SUPER U', -19.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:39', '2013-04-09 16:16:45', 42, 1, '1', 0),
+(3941, 'CARTE 13/01/2012 AUX TISSUS BELLICE', -58.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:40', '2013-04-09 16:16:45', 42, 1, '1', 0),
+(3942, 'CARTE 13/01/2012 OLIVINE', -55.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:40', '2013-04-09 16:16:45', 42, 1, '1', 0),
+(3943, 'CARTE 14/01/2012 CHARTRESCOEURAUT', -3.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:40', '2013-04-09 16:16:45', 42, 1, '1', 0),
+(3944, 'CARTE 13/01/2012 UN JOUR AILLEURS', -69.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:40', '2013-04-09 16:16:45', 42, 1, '1', 0),
+(3945, 'CARTE 13/01/2012 3D - DOUDARD', -24.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:40', '2013-04-09 16:16:45', 42, 1, '1', 0),
+(3946, 'CARTE 16/01/2012 RATP', -3.00, 'DEBIT', 2, 14, '2012-01-31', '2013-04-04 14:44:40', '2013-04-09 16:16:45', 42, 1, '1', 1),
+(3947, 'CARTE 13/01/2012 CARREFDAC CHARTR', -73.00, 'DEBIT', 2, 19, '2012-01-31', '2013-04-04 14:44:40', '2013-04-09 16:16:45', 42, 1, '1', 1),
+(3948, 'CARTE 14/01/2012 INTERMARCHE', -151.00, 'DEBIT', 2, 19, '2012-01-31', '2013-04-04 14:44:40', '2013-04-09 16:16:45', 42, 1, '1', 1),
+(3949, 'CARTE 12/01/2012 AVERT CYRIL', -7.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:40', '2013-04-09 16:16:45', 42, 1, '1', 0),
+(3950, 'CARTE 12/01/2012 SUPER U', -8.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:40', '2013-04-09 16:16:45', 42, 1, '1', 0),
+(3951, 'CARTE 12/01/2012 ESCOFFIER NET', -49.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:40', '2013-04-09 16:16:45', 42, 1, '1', 0),
+(3952, 'CARTE 12/01/2012 SNCF INTERNET', -58.00, 'DEBIT', 2, 5, '2012-01-31', '2013-04-04 14:44:40', '2013-04-09 16:16:45', 42, 1, '1', 1),
+(3953, 'CARTE 12/01/2012 SNCF INTERNET', -24.00, 'DEBIT', 2, 5, '2012-01-31', '2013-04-04 14:44:40', '2013-04-09 16:16:45', 42, 1, '1', 1),
+(3954, 'CARTE 12/01/2012 SNCF INTERNET', -60.00, 'DEBIT', 2, 5, '2012-01-31', '2013-04-04 14:44:40', '2013-04-09 16:16:45', 42, 1, '1', 1),
+(3955, 'CARTE 12/01/2012 HALLE CHAUSSURES', -52.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:40', '2013-04-09 16:16:45', 42, 1, '1', 0),
+(3956, 'CARTE 10/01/2012 AVERT CYRIL', -8.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:40', '2013-04-09 16:16:45', 42, 1, '1', 0),
+(3957, 'CARTE 11/01/2012 CARREFOUR ATHIS', -229.00, 'DEBIT', 2, 19, '2012-01-31', '2013-04-04 14:44:40', '2013-04-09 16:16:45', 42, 1, '1', 1),
+(3958, 'CARTE 11/01/2012 CARREFOUR ATHIS', -46.00, 'DEBIT', 2, 19, '2012-01-31', '2013-04-04 14:44:40', '2013-04-09 16:16:45', 42, 1, '1', 1),
+(3959, 'CARTE 11/01/2012 BOUYGUES TELECOM', -29.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:40', '2013-04-09 16:16:45', 42, 1, '1', 0),
+(3960, 'CARTE 10/01/2012 SUPER U', -6.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:40', '2013-04-09 16:16:45', 42, 1, '1', 0),
+(3961, 'CARTE 10/01/2012 PHIE DES SABLES', -33.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:40', '2013-04-09 16:16:45', 42, 1, '1', 0),
+(3962, 'CARTE 06/01/2012 DAC INTERMARCHE VL', -66.00, 'DEBIT', 2, 19, '2012-01-31', '2013-04-04 14:44:40', '2013-04-09 16:16:45', 42, 1, '1', 1),
+(3963, 'CARTE 06/01/2012 INTERMARCHE', -16.00, 'DEBIT', 2, 19, '2012-01-31', '2013-04-04 14:44:41', '2013-04-09 16:16:45', 42, 1, '1', 1),
+(3964, 'CARTE 06/01/2012 DR BELLOY J-PAUL', -26.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:41', '2013-04-09 16:16:45', 42, 1, '1', 0),
+(3965, 'CARTE 06/01/2012 EPELBAUM MARC', -32.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:41', '2013-04-09 16:16:45', 42, 1, '1', 0),
+(3966, 'CARTE 07/01/2012 LE ST HILAIRE', -68.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:41', '2013-04-09 16:16:45', 42, 1, '1', 0),
+(3967, 'CARTE 08/01/2012 CEDIB', -7.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:41', '2013-04-09 16:16:45', 42, 1, '1', 0),
+(3968, 'CARTE 05/01/2012 CARREFOUR CHARTR', -2.00, 'DEBIT', 2, 19, '2012-01-31', '2013-04-04 14:44:41', '2013-04-09 16:16:45', 42, 1, '1', 1),
+(3969, 'CARTE 05/01/2012 CARREFDAC CHARTR', -69.00, 'DEBIT', 2, 19, '2012-01-31', '2013-04-04 14:44:41', '2013-04-09 16:16:45', 42, 1, '1', 1),
+(3970, 'CARTE 05/01/2012 LEROY MERLIN', -39.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:41', '2013-04-09 16:16:45', 42, 1, '1', 0),
+(3971, 'CARTE 05/01/2012 PHIE POUZOLS', -10.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:41', '2013-04-09 16:16:45', 42, 1, '1', 0),
+(3972, 'CARTE 03/01/2012 SNCF', -11.00, 'DEBIT', 2, 5, '2012-01-31', '2013-04-04 14:44:41', '2013-04-09 16:16:45', 42, 1, '1', 1),
+(3973, 'CARTE 03/01/2012 RATP', -3.00, 'DEBIT', 2, 14, '2012-01-31', '2013-04-04 14:44:41', '2013-04-09 16:16:45', 42, 1, '1', 1),
+(3974, 'CARTE 02/01/2012 INTERMARCHE', -11.00, 'DEBIT', 2, 19, '2012-01-31', '2013-04-04 14:44:41', '2013-04-09 16:16:45', 42, 1, '1', 1),
+(3975, 'CARTE 30/12/2011 AUX TISSUS BELLICE', -352.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:41', '2013-04-09 16:16:45', 42, 1, '1', 0),
+(3976, 'CARTE 30/12/2011 SUPER U', -25.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:41', '2013-04-09 16:16:45', 42, 1, '1', 0),
+(3977, 'CARTE 27/12/2011 CHARCUT MOUSSU', -31.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:41', '2013-04-09 16:16:45', 42, 1, '1', 0),
+(3978, 'CARTE 30/12/2011 BRICOMARCHE', -46.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:41', '2013-04-09 16:16:45', 42, 1, '1', 0),
+(3979, 'CARTE 30/12/2011 3D - DOUDARD', -33.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:41', '2013-04-09 16:16:45', 42, 1, '1', 0),
+(3980, 'CARTE 29/12/2011 SAINT MACLOU', -53.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:42', '2013-04-09 16:16:45', 42, 1, '1', 0),
+(3981, 'CARTE 29/12/2011 AUX TISSUS BELLICE', -59.00, 'DEBIT', 2, 1, '2012-01-31', '2013-04-04 14:44:42', '2013-04-09 16:16:45', 42, 1, '1', 0),
+(3982, 'RETRAIT DAB 27/01/2012 DAB SENONCHES', -20.00, 'DEBIT', 4, 8, '2012-01-30', '2013-04-04 14:44:42', '2013-04-09 16:16:45', 42, 1, '1', 1),
+(3983, 'RETRAIT DAB 20/01/2012 DAB COURVILLE', -220.00, 'DEBIT', 4, 8, '2012-01-30', '2013-04-04 14:44:42', '2013-04-09 16:16:45', 42, 1, '1', 1),
+(3984, 'RETRAIT DAB 20/01/2012 CM SENONCHES', -20.00, 'DEBIT', 4, 8, '2012-01-30', '2013-04-04 14:44:42', '2013-04-09 16:16:45', 42, 1, '1', 1),
+(3985, 'RETRAIT DAB 21/01/2012 DAB LA LOUPE', -200.00, 'DEBIT', 4, 8, '2012-01-30', '2013-04-04 14:44:42', '2013-04-09 16:16:45', 42, 1, '1', 1),
+(3986, 'PRELEVEMENT BOUYGUES TELECOM', -31.00, 'DEBIT', 5, 1, '2012-01-24', '2013-04-04 14:44:42', '2013-04-09 16:16:45', 42, 1, '1', 0),
+(3987, 'CHEQUE 1498717', -13.00, 'DEBIT', 3, 1, '2012-01-23', '2013-04-04 14:44:42', '2013-04-09 16:16:45', 42, 1, '1', 0),
+(3988, 'CHEQUE 1498716', -16.00, 'DEBIT', 3, 1, '2012-01-23', '2013-04-04 14:44:42', '2013-04-09 16:16:45', 42, 1, '1', 0),
+(3989, 'CHEQUE 1498715', -1500.00, 'DEBIT', 3, 1, '2012-01-23', '2013-04-04 14:44:42', '2013-04-09 16:16:45', 42, 1, '1', 0),
+(3990, 'VIREMENT SEPA EMIS VERS DE VEILLECHEZE CLAIR 10028118210 DE PAPA A CLAIRE', -20.00, 'DEBIT', 1, 1, '2012-01-23', '2013-04-04 14:44:42', '2013-04-09 16:16:45', 42, 1, '1', 0),
+(3991, 'PRELEVEMENT BANQUE ACCORD', -140.00, 'DEBIT', 5, 1, '2012-01-20', '2013-04-04 14:44:42', '2013-04-09 16:16:45', 42, 1, '1', 0),
+(3992, 'CHEQUE 1961205', -21.00, 'DEBIT', 3, 1, '2012-01-20', '2013-04-04 14:44:42', '2013-04-09 16:16:45', 42, 1, '1', 0),
+(3993, 'RETRAIT DAB 18/01/2012 RETRAIT DAB 18-01-14505-0071260', -30.00, 'DEBIT', 4, 8, '2012-01-20', '2013-04-04 14:44:42', '2013-04-09 16:16:45', 42, 1, '1', 1),
+(3994, 'VIREMENT SEPA EMIS VERS DE VEILLECHEZE GUERRIC 00000762828 DE PAPA A GUERRIC CONCERT   TR', -62.00, 'DEBIT', 1, 1, '2012-01-20', '2013-04-04 14:44:42', '2013-04-09 16:16:45', 42, 1, '1', 0),
+(3995, 'PRELEVEMENT COFIROUTE S.A.', -18.00, 'DEBIT', 5, 1, '2012-01-19', '2013-04-04 14:44:42', '2013-04-09 16:16:45', 42, 1, '1', 0),
+(3996, 'VIREMENT RECU M. DE VEILLECHEZE XAVIER 10004263942 DE LEO A CC', 2400.00, 'CREDIT', 1, 1, '2012-01-19', '2013-04-04 14:44:42', '2013-04-09 16:16:45', 42, 1, '1', 0),
+(3997, 'VIREMENT RECU S.M.I. )1135740 2012016003914', 33.00, 'CREDIT', 1, 1, '2012-01-18', '2013-04-04 14:44:42', '2013-04-09 16:16:45', 42, 1, '1', 0),
+(3998, 'CHEQUE 1961206', -334.00, 'DEBIT', 3, 1, '2012-01-18', '2013-04-04 14:44:42', '2013-04-09 16:16:45', 42, 1, '1', 0),
+(3999, 'RETRAIT DAB 13/01/2012 CM SENONCHES', -20.00, 'DEBIT', 4, 8, '2012-01-17', '2013-04-04 14:44:42', '2013-04-09 16:16:45', 42, 1, '1', 1),
+(4000, 'VIREMENT RECU S.M.I. )1135740 2012012004298', 22.00, 'CREDIT', 1, 1, '2012-01-16', '2013-04-04 14:44:42', '2013-04-09 16:16:45', 42, 1, '1', 0),
+(4001, 'PRELEVEMENT FRANCE TELECOM ORLEANS', -42.00, 'DEBIT', 5, 1, '2012-01-16', '2013-04-04 14:44:43', '2013-04-09 16:16:45', 42, 1, '1', 0),
+(4002, 'RETRAIT DAB 11/01/2012 S2P', -40.00, 'DEBIT', 4, 8, '2012-01-13', '2013-04-04 14:44:43', '2013-04-09 16:16:45', 42, 1, '1', 1),
+(4003, 'VIREMENT RECU C.P.A.M. CHARTRES 120100002786', 21.00, 'CREDIT', 1, 1, '2012-01-11', '2013-04-04 14:44:43', '2013-04-09 16:16:45', 42, 1, '1', 0),
+(4004, 'VIREMENT RECU M XAVIER DE VEILLECHEZE 11000467669 DE LIVR A XAV A CC', 200.00, 'CREDIT', 1, 1, '2012-01-11', '2013-04-04 14:44:43', '2013-04-09 16:16:45', 42, 1, '1', 0),
+(4005, 'VIREMENT SEPA EMIS VERS DE VEILLECHEZE LOUIS 30419630089 DE PAPA A LOUIS', -73.00, 'DEBIT', 1, 1, '2012-01-11', '2013-04-04 14:44:43', '2013-04-09 16:16:45', 42, 1, '1', 0),
+(4006, 'RETRAIT DAB 07/01/2012 RETRAIT DAB 07-01-14505-0071130', -20.00, 'DEBIT', 4, 8, '2012-01-10', '2013-04-04 14:44:43', '2013-04-09 16:16:45', 42, 1, '1', 1),
+(4007, 'RETRAIT DAB 06/01/2012 GAB SENONCHES', -30.00, 'DEBIT', 4, 8, '2012-01-10', '2013-04-04 14:44:43', '2013-04-09 16:16:45', 42, 1, '1', 1),
+(4008, 'RETRAIT DAB 31/12/2011 DAB COURVILLE', -120.00, 'DEBIT', 4, 8, '2012-01-10', '2013-04-04 14:44:43', '2013-04-09 16:16:45', 42, 1, '1', 1),
+(4009, 'RETRAIT DAB 02/01/2012 CHABRIERES', -100.00, 'DEBIT', 4, 8, '2012-01-10', '2013-04-04 14:44:43', '2013-04-09 16:16:45', 42, 1, '1', 1),
+(4010, 'PRELEVEMENT L ODYSSEE', -9.00, 'DEBIT', 5, 1, '2012-01-09', '2013-04-04 14:44:43', '2013-04-09 16:16:45', 42, 1, '1', 0),
+(4011, 'CHEQUE 1498714', -412.00, 'DEBIT', 3, 1, '2012-01-09', '2013-04-04 14:44:43', '2013-04-09 16:16:45', 42, 1, '1', 0),
+(4012, 'VIREMENT RECU C.A.F DE L EURE-ET-LOIR P 1038469ADE VEILLECHE122011ME', 161.00, 'CREDIT', 1, 1, '2012-01-05', '2013-04-04 14:44:43', '2013-04-09 16:16:45', 42, 1, '1', 0),
+(4013, 'RETRAIT DAB 30/12/2011 GAB SENONCHES', -200.00, 'DEBIT', 4, 8, '2012-01-03', '2013-04-04 14:44:43', '2013-04-09 16:16:45', 42, 1, '1', 1),
+(4014, 'CHEQUE 1498712', -70.00, 'DEBIT', 3, 1, '2012-01-02', '2013-04-04 14:44:43', '2013-04-09 16:16:45', 42, 1, '1', 0);
+
+--
+-- Déclencheurs `releve_detail`
+--
+DROP TRIGGER IF EXISTS `releve_detail_update`;
+DELIMITER //
+CREATE TRIGGER `releve_detail_update` BEFORE UPDATE ON `releve_detail`
+ FOR EACH ROW BEGIN
+SET NEW.`date_modif`= NOW();
+END
+//
+DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `releve_not_find`
+--
+
+DROP TABLE IF EXISTS `releve_not_find`;
+CREATE TABLE IF NOT EXISTS `releve_not_find` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id_releve` int(11) NOT NULL,
+  `libelle` varchar(100) NOT NULL,
+  `date` date NOT NULL,
+  `montant` double NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `id_releve` (`id_releve`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `r_regroupement_cat`
+--
+
+DROP TABLE IF EXISTS `r_regroupement_cat`;
+CREATE TABLE IF NOT EXISTS `r_regroupement_cat` (
+  `id_regroupement` int(11) NOT NULL,
+  `id_cat` int(11) NOT NULL,
+  KEY `id_regroupement` (`id_regroupement`),
+  KEY `id_cat` (`id_cat`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Contenu de la table `r_regroupement_cat`
+--
+
+INSERT INTO `r_regroupement_cat` (`id_regroupement`, `id_cat`) VALUES
+(1, 1);
+
+--
+-- Contraintes pour les tables exportées
+--
+
+--
+-- Contraintes pour la table `keywords`
+--
+ALTER TABLE `keywords`
+  ADD CONSTRAINT `keywords_ibfk_1` FOREIGN KEY (`id_cat`) REFERENCES `liste_cat` (`id_cat`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+--
+-- Contraintes pour la table `releve_detail`
+--
+ALTER TABLE `releve_detail`
+  ADD CONSTRAINT `releve_detail_ibfk_3` FOREIGN KEY (`id_releve`) REFERENCES `releve` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `releve_detail_ibfk_4` FOREIGN KEY (`id_operations`) REFERENCES `operations` (`id_operations`),
+  ADD CONSTRAINT `releve_detail_ibfk_5` FOREIGN KEY (`id_cat`) REFERENCES `liste_cat` (`id_cat`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Contraintes pour la table `releve_not_find`
+--
+ALTER TABLE `releve_not_find`
+  ADD CONSTRAINT `releve_not_find_ibfk_1` FOREIGN KEY (`id_releve`) REFERENCES `releve` (`id`) ON DELETE CASCADE;
+
+--
+-- Contraintes pour la table `r_regroupement_cat`
+--
+ALTER TABLE `r_regroupement_cat`
+  ADD CONSTRAINT `r_regroupement_cat_ibfk_2` FOREIGN KEY (`id_cat`) REFERENCES `liste_cat` (`id_cat`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `r_regroupement_cat_ibfk_1` FOREIGN KEY (`id_regroupement`) REFERENCES `regroupement` (`id_regroupement`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

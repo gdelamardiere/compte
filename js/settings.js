@@ -23,6 +23,16 @@ function update_settings(table,champ,id,valeur){
 	});
 }
 
+function update_regroupements(id_regroupement,id_cat){	
+	$.ajax({
+		type: "POST",
+		url: "lib/releve.ajax.php",
+		data: { 'update_regroupements': true,'id_regroupement': id_regroupement, 'id_cat': id_cat }
+		}).done(function( msg ) {
+			$('#modif_settings').val('1');
+	});
+}
+
 
 function change_onglet(onglet){	
 	$.ajax({
@@ -56,6 +66,18 @@ function ajout_operations(){
 	});
 }
 
+function ajout_regroupements(){	
+	$.ajax({
+		type: "POST",
+		url: "lib/releve.ajax.php",
+		data: { 'new_regroupements': $('#new_regroupements').val() }
+		}).done(function( msg ) {
+			$('#modif_settings').val('1');
+			change_onglet('regroupements');
+	});
+}
+
+
 
 function ajout_keywords(){	
 	$.ajax({
@@ -80,7 +102,7 @@ function ajout_regex(){
 }
 
 function supprimer_settings_keywords(id){
-	if (confirm("Voulez-vous Vraiment effacer ce mot-clé ?")) {
+	if (confirm("Voulez-vous vraiment effacer ce mot-clé ?")) {
 		$.ajax({
 			type: "POST",
 			url: "lib/releve.ajax.php",
@@ -93,7 +115,7 @@ function supprimer_settings_keywords(id){
 }
 
 function supprimer_settings_categories(id){
-	if (confirm("Voulez-vous Vraiment effacer cette catégorie ?\n Attention cette action est irréversible\nToutes les lignes associés n'auront plus de catégorie")) {
+	if (confirm("Voulez-vous vraiment effacer cette catégorie ?\n Attention cette action est irréversible\nToutes les lignes associés n'auront plus de catégorie")) {
 		$.ajax({
 			type: "POST",
 			url: "lib/releve.ajax.php",
@@ -105,8 +127,21 @@ function supprimer_settings_categories(id){
 	}
 }
 
+function supprimer_settings_regroupements(id){
+	if (confirm("Voulez-vous vraiment effacer ce regroupement")) {
+		$.ajax({
+			type: "POST",
+			url: "lib/releve.ajax.php",
+			data: { 'supprimer_regroupement': "true", 'id_regroupement': id }
+			}).done(function( msg ) {
+				$('#modif_settings').val('1');
+				change_onglet('regroupements');
+		});
+	}
+}
+
 function supprimer_settings_filtres(id){
-	if (confirm("Voulez-vous Vraiment effacer ce filtre ?")) {
+	if (confirm("Voulez-vous vraiment effacer ce filtre ?")) {
 		$.ajax({
 			type: "POST",
 			url: "lib/releve.ajax.php",

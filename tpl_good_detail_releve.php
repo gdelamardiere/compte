@@ -25,6 +25,7 @@
 				<td>".$value['libelle']."</td>				
 				<td class='".(($value['montant']<0)?'odd':'green')."' style='text-align:right'>".$value['montant']." &euro;</td>
 				<td style='text-align:center'>".$value['type']."</td> 
+				<td style='text-align:center'>".$value['regroupements']."</td>
 				<td class='lecture' id='operations_".$value['id']."'>".$value['operations']."</td>
 				<td style='display:none' id='cat2_".$value['id']."'>".$value['categorie']."</td>
 				<td class='edition' >

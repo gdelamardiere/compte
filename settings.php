@@ -7,6 +7,7 @@
 	<div class="modal-body" style="max-height:600px;">
 		 <ul class="nav nav-tabs">
 		    <li  class="active"><a href="#settings_categories" id="tab_settings_categories" data-toggle="tab">Catégories</a></li>
+		    <li><a href="#settings_regroupements" id="tab_settings_regroupements" data-toggle="tab">Regroupements</a></li>
 		    <li><a href="#settings_operations" id="tab_settings_operations" data-toggle="tab">Opérations</a></li>
 		    <li><a href="#settings_keywords" id="tab_settings_keywords" data-toggle="tab">Keywords</a></li>
 		    <li><a href="#settings_regex" id="tab_settings_regex" data-toggle="tab">Regex</a></li>
@@ -16,7 +17,10 @@
     	<div id="myTabContent" class="tab-content">
 			<div id="settings_categories" class="tab-pane fade active in">
 				<?php require_once(ROOT.'settings/categories.php');?>
-			</div>			
+			</div>	
+			<div id="settings_regroupements" class="tab-pane fade">
+				<?php require_once(ROOT.'settings/regroupements.php');?>
+			</div>		
 			<div id="settings_operations" class="tab-pane fade">
 				<?php require_once(ROOT.'settings/operations.php');?>
 			</div>

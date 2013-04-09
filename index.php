@@ -6,7 +6,7 @@ $liste_graphes_retenus=array();
 $liste_releve=$reports->listeReleve();
 if(!empty($liste_releve)){
 	$id_selected=$liste_releve[0]['id_releve'];
-	$liste_graphes_retenus[]="categorie";
+	$liste_graphes_retenus[]="regroupement";
 }
 $erreur=0;
 if(!empty($_GET['erreur'])){
@@ -36,14 +36,14 @@ if(!empty($_GET['erreur'])){
 					<div class="widget-header">
 						<i class="icon-signal"></i>
 						<?php if(!empty($liste_releve)){?>
-						<h3>Prix par catégories pour le relevé du <?php echo $liste_releve[0]['date'];?></h3>
+						<h3>Découpage par regroupement (débit) pour le relevé du <?php echo $liste_releve[0]['date'];?></h3>
 						<?php }?>
 					</div> <!-- /widget-header -->
 					
 					<div class="widget-content">	
 						<?php if(!empty($liste_releve)){?>				
-						<div id="prixByCategorie" style="height:400px;width:500px; "></div>
-						<div style="margin-top: 10px; float: right;"><input type="button" id="ByCategorie" value="reset du zoom"/></div>					
+						<div id="regroupement_debit" style="height:400px;width:500px; "></div>
+						<div style="margin-top: 10px; float: right;"><input type="button" id="zoom_regroupement_debit" value="reset du zoom"/></div>					
 						<?php }else{?>	
 						Aucun relevé en base !!
 						<?php }?>	

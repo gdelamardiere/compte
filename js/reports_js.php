@@ -46,12 +46,12 @@ if(!empty($liste_details)){
 		if(in_array($id,$liste_details)){
 			$reports->setFiltersCatRegroupements($id);
 			$data=$reports->getByCategorie($id_selected,"CREDIT");
-			display_data_graphe('data_detail_credit_'.$i,$data);
+			display_data_graphe('data_detail_credit_'.$id,$data);
 			display_graphe_chart("detail_credit_".$id,"data_detail_credit_".$id);
 			display_reset("zoom_detail_credit_".$id,"detail_credit_".$id);
 
 			$data=$reports->getByCategorie($id_selected,"DEBIT");
-			display_data_graphe('data_detail_debit_'.$i,$data);
+			display_data_graphe('data_detail_debit_'.$id,$data);
 			display_graphe_chart("detail_debit_".$id,"data_detail_debit_".$id);
 			display_reset("zoom_detail_debit_".$id,"detail_debit_".$id);			
 		}
@@ -110,11 +110,11 @@ if(in_array("comparatif_sur_annee",$liste_graphes_retenus)){
 	$id_anne1=min($id_filtre_annee1,$id_filtre_annee2);
 	$id_filtre_annee1=$id_anne1;
 	$id_filtre_annee2=$id_anne2;
-	$data=$reports->CompareByCategorieAnnee($id_filtre_annee1,$id_filtre_annee2,"CREDIT");
+	$data=$reports->CompareByRegroupementAnnee($id_filtre_annee1,$id_filtre_annee2,"CREDIT");
 	$aLabelSeries=array($id_filtre_annee1,$id_filtre_annee2);
 	display_graphe_comparatif_2annee('comparatif_annees_credit',$data,$aLabelSeries);
 	display_reset("reset_comparatif_annees_credit","comparatif_annees_credit");
-	$data=$reports->CompareByCategorieAnnee($id_filtre_annee1,$id_filtre_annee2,"DEBIT");
+	$data=$reports->CompareByRegroupementAnnee($id_filtre_annee1,$id_filtre_annee2,"DEBIT");
 	$aLabelSeries=array($id_filtre_annee1,$id_filtre_annee2);
 	display_graphe_comparatif_2annee('comparatif_annees_debit',$data,$aLabelSeries);
 	display_reset("reset_comparatif_annees_debit","comparatif_annees_debit");
@@ -141,10 +141,10 @@ if(in_array("comparatif_sur_annee",$liste_graphes_retenus)){
 if(isset($id_filtre_perso1) && isset($id_filtre_perso2) && !empty($id_filtre_perso1) && !empty($id_filtre_perso2)){
 	
 	$aLabelSeries=array("serie 1","serie 2");
-	$data=$reports->CompareByCategoriePerso($id_filtre_perso1,$id_filtre_perso2,"CREDIT");
+	$data=$reports->CompareByRegroupementPerso($id_filtre_perso1,$id_filtre_perso2,"CREDIT");
 	display_graphe_comparatif_2annee('comparatif_perso_credit',$data,$aLabelSeries);
 	display_reset("reset_comparatif_perso_credit","comparatif_perso_credit");
-	$data=$reports->CompareByCategoriePerso($id_filtre_perso1,$id_filtre_perso2,"DEBIT");
+	$data=$reports->CompareByRegroupementPerso($id_filtre_perso1,$id_filtre_perso2,"DEBIT");
 	display_graphe_comparatif_2annee('comparatif_perso_debit',$data,$aLabelSeries);
 	display_reset("reset_comparatif_perso_debit","comparatif_perso_debit");
 

@@ -90,14 +90,14 @@ class reports{
 	function listeCatByRegroupement($id_regroupement=0){
 		if(empty($this->listeCatByRegroupement)){
 			$requete=$this->pdo->prepare("SELECT c.id_cat,c.libelle,rc.id_regroupement
-										from regroupement rc
+										from r_regroupement_cat rc
 										INNER JOIN liste_cat c on c.id_cat=rc.id_cat
 										ORDER BY rc.id_regroupement,c.libelle
 										");
 			$requete->execute();
 			$resultat=array();
 			while($result=$requete->fetch(PDO::FETCH_ASSOC)){
-				$resultat[$result['id_regroupement']][]=array($result['id_cat']=>$result['libelle']);
+				$resultat[$result['id_regroupement']][$result['id_cat']]=$result['libelle'];
 			}
 			$this->listeRegroupement= $resultat;
 		}
@@ -424,6 +424,12 @@ function listeRegex(){
 		$listeIdAnne2=$this->getListeIdForYear($anne2);
 		return $this->CompareByCategoriePerso($listeIdAnne1,$listeIdAnne2,$filtre_type);
 	}
+	function CompareByRegroupementAnnee($anne1,$anne2,$filtre_type=""){
+		$listeIdAnne1=$this->getListeIdForYear($anne1);
+		$listeIdAnne2=$this->getListeIdForYear($anne2);
+		return $this->CompareByRegroupementPerso($listeIdAnne1,$listeIdAnne2,$filtre_type);
+	}
+	
 
 	function CompareByCategoriePerso($listeId1,$listeId2,$filtre_type=""){
 		if(is_array($listeId1)){
@@ -460,6 +466,48 @@ function listeRegex(){
 	}
 
 
+	function CompareByRegroupementPerso($listeId1,$listeId2,$filtre_type=""){
+		if(is_array($listeId1)){
+			$listeId1=implode(",",$listeId1);
+		}
+		if(is_array($listeId2)){
+			$listeId2=implode(",",$listeId2);
+		}
+		$filtre_type=(in_array($filtre_type,$this->aAllowedTypes))?" AND type='".$filtre_type."' ":"";
+		$requete=$this->pdo->prepare("SELECT r.nom as libelle, SUM(montant) as montant 
+										from regroupement r,
+										 r_regroupement_cat rc,
+										 releve_detail rd
+										 inner join releve re on rd.id_releve=re.id
+										where id_releve in(".$listeId1.") 
+										AND rc.id_regroupement=r.id_regroupement
+										and rc.id_cat=rd.id_cat	
+										".$this->sFilterOperations.$this->sFilterCategorie.$this->sFilterCatRegroupements.$filtre_type." 
+										Group by rc.id_regroupement");
+		$requete->execute();
+		$resultat=array();
+		while($result=$requete->fetch(PDO::FETCH_ASSOC)){
+			$resultat["liste1"][$result['libelle']]= $result['montant'];
+		}
+
+		$requete=$this->pdo->prepare("SELECT r.nom as libelle, SUM(montant) as montant 
+										from regroupement r,
+										 r_regroupement_cat rc,
+										 releve_detail rd
+										 inner join releve re on rd.id_releve=re.id
+										where id_releve in(".$listeId2.") 
+										AND rc.id_regroupement=r.id_regroupement
+										and rc.id_cat=rd.id_cat	
+										".$this->sFilterOperations.$this->sFilterCategorie.$this->sFilterCatRegroupements.$filtre_type." 
+										Group by rc.id_regroupement");
+		$requete->execute();
+		while($result=$requete->fetch(PDO::FETCH_ASSOC)){
+			$resultat["liste2"][$result['libelle']]= $result['montant'];
+		}
+
+		return $resultat;
+	}
+
 
 
 
@@ -485,6 +533,16 @@ function listeRegex(){
 		$liste_op=$this->listeOperations();
 		foreach($liste_op as $id=>$value){
 			$select.="<option value='".$id."' ".(($id_selected==$id)?"selected='selected'":"").">".$value."</option>";
+		}
+		return $select;
+	}
+
+	function getSelectCatByRegroupement($id_regroupement){
+		$select="";
+		$liste_cat_regroupement=$this->listeCatByRegroupement($id_regroupement);
+		$liste_cat=$this->listeCategories();
+		foreach($liste_cat as $id=>$value){
+			$select.="<option value='".$id."' ".((array_key_exists($id,$liste_cat_regroupement))?"selected='selected'":"").">".$value."</option>";
 		}
 		return $select;
 	}

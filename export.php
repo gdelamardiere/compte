@@ -39,14 +39,17 @@ $objPHPExcel->getProperties()->setCreator("Michel de la Mardière")
 
 
 //select_mois
-$stmt = $pdo->prepare("SELECT r.mois_releve,rd.id,rd.libelle,rd.montant,rd.type,rd.id_operations,rd.id_cat,
+$stmt = $pdo->prepare("SELECT r.mois_releve,rd.id,rd.libelle,rd.montant,rd.type,rd.id_operations,rd.id_cat,GROUP_CONCAT(re.nom  ORDER BY re.nom SEPARATOR ',') as regroupements,
 									DATE_FORMAT(rd.date, '%e/%m/%Y') as date,rd.id_releve,rd.trouve,rd.pointe,
 									o.nom_operations as operations, lc.libelle as categorie
 		from releve_detail rd
 		left join releve r on r.id=rd.id_releve 
 		inner join operations o on o.id_operations=rd.id_operations 
 		left join liste_cat lc on rd.id_cat=lc.id_cat
+		left join r_regroupement_cat rc on rd.id_cat=rc.id_cat
+		left join regroupement re on rc.id_regroupement=re.id_regroupement
 		where rd.id_releve =:id
+		GROUP BY rd.id
 		ORDER BY rd.date,rd.id_operations,rd.type");
 
 
@@ -64,12 +67,14 @@ $objPHPExcel->createSheet($sheet);
 	            ->setCellValue('C1', 'Montant')
 	            ->setCellValue('D1', 'Type')
 	            ->setCellValue('E1', 'Opérations')
-	            ->setCellValue('F1', 'Catégorie')
-	            ->setCellValue('G1', 'Pointage')
+	            ->setCellValue('F1', 'Regroupement')
+	            ->setCellValue('G1', 'Catégorie')
+	            ->setCellValue('H1', 'Pointage')
 	            ->getColumnDimension('A')->setWidth(12);
 	$objPHPExcel->setActiveSheetIndex($sheet)->getColumnDimension('B')->setWidth(80);
 	$objPHPExcel->setActiveSheetIndex($sheet)->getColumnDimension('E')->setWidth(20);
 	$objPHPExcel->setActiveSheetIndex($sheet)->getColumnDimension('F')->setWidth(20);
+	$objPHPExcel->setActiveSheetIndex($sheet)->getColumnDimension('G')->setWidth(20);
 
 
 
@@ -81,11 +86,12 @@ $objPHPExcel->createSheet($sheet);
 	            ->setCellValue('C'.$i, $value['montant'])
 	            ->setCellValue('D'.$i, $value['type'])
 	            ->setCellValue('E'.$i, $value['operations'])
-	            ->setCellValue('F'.$i, $value['categorie'])
-	            ->setCellValue('G'.$i, $value['pointe']);
+	            ->setCellValue('F'.$i, $value['regroupements'])
+	            ->setCellValue('G'.$i, $value['categorie'])
+	            ->setCellValue('H'.$i, $value['pointe']);
 	            $i++;
 	}
-
+	$objPHPExcel->getActiveSheet()->setAutoFilter($objPHPExcel->getActiveSheet()->calculateWorksheetDimension());
 
 	// Rename worksheet
 	$objPHPExcel->getActiveSheet()->setTitle($aReleve[0]['mois_releve'].'_'.$annee);
@@ -97,13 +103,16 @@ $objPHPExcel->createSheet($sheet);
 
 //select_total
 if(sizeof($array_id)>1){
-	$stmt = $pdo->prepare("SELECT rd.id,rd.libelle,rd.montant,rd.type,rd.id_operations,rd.id_cat,
+	$stmt = $pdo->prepare("SELECT rd.id,rd.libelle,rd.montant,rd.type,rd.id_operations,rd.id_cat,GROUP_CONCAT(re.nom  ORDER BY re.nom SEPARATOR ',') as regroupements,
 										DATE_FORMAT(rd.date, '%e/%m/%Y') as date,rd.id_releve,rd.trouve,rd.pointe,
 										o.nom_operations as operations, lc.libelle as categorie
 			from releve_detail rd
 			inner join operations o on o.id_operations=rd.id_operations 
-			left join liste_cat lc on rd.id_cat=lc.id_cat
+			left join liste_cat lc on rd.id_cat=lc.id_cat			
+		left join r_regroupement_cat rc on rd.id_cat=rc.id_cat
+		left join regroupement re on rc.id_regroupement=re.id_regroupement
 			where rd.id_releve in(".$liste_id.")
+			GROUP BY rd.id
 			ORDER BY rd.date,rd.id_operations,rd.type");
 
 	$stmt->execute();
@@ -118,12 +127,14 @@ if(sizeof($array_id)>1){
 	            ->setCellValue('C1', 'Montant')
 	            ->setCellValue('D1', 'Type')
 	            ->setCellValue('E1', 'Opérations')
-	            ->setCellValue('F1', 'Catégorie')
-	            ->setCellValue('G1', 'Pointage')	            
+	            ->setCellValue('F1', 'Regroupement')
+	            ->setCellValue('G1', 'Catégorie')
+	            ->setCellValue('H1', 'Pointage')            
 	            ->getColumnDimension('A')->setWidth(12);
 	$objPHPExcel->setActiveSheetIndex($sheet)->getColumnDimension('B')->setWidth(80);
 	$objPHPExcel->setActiveSheetIndex($sheet)->getColumnDimension('E')->setWidth(20);
 	$objPHPExcel->setActiveSheetIndex($sheet)->getColumnDimension('F')->setWidth(20);
+	$objPHPExcel->setActiveSheetIndex($sheet)->getColumnDimension('G')->setWidth(20);
 
 
 
@@ -136,14 +147,16 @@ if(sizeof($array_id)>1){
 	            ->setCellValue('C'.$i, $value['montant'])
 	            ->setCellValue('D'.$i, $value['type'])
 	            ->setCellValue('E'.$i, $value['operations'])
-	            ->setCellValue('F'.$i, $value['categorie'])
-	            ->setCellValue('G'.$i, $value['pointe']);
+	            ->setCellValue('F'.$i, $value['regroupements'])
+	            ->setCellValue('G'.$i, $value['categorie'])
+	            ->setCellValue('H'.$i, $value['pointe']);
 	            $i++;
 	}
 
 
 	// Rename worksheet
 	$objPHPExcel->getActiveSheet()->setTitle('total '.$date);
+	$objPHPExcel->getActiveSheet()->setAutoFilter($objPHPExcel->getActiveSheet()->calculateWorksheetDimension());
 }
 
 

@@ -583,10 +583,62 @@ if(!empty($liste_details)){
 			</div> <!-- /span6 -->
 </div> <!-- /row -->
 
-<?php } ?>
+<?php } if($id_filtre_annee1!=0 && $id_filtre_annee2!=0 && in_array("categorie",$liste_graphes_retenus)){?>
+<div class="row" id="graphe_2annees">
 
-<?php
-if(!empty($id_filtre_perso1) && !empty($id_filtre_perso2)){?>
+	<div class="span12" >
+
+		<div class="widget">
+
+			<div class="widget-header">
+				<i class="icon-star"></i>
+				<h3>Comparatif entre <?php echo $id_filtre_annee1;?> et <?php echo $id_filtre_annee2;?> (catégorie/crédit)</h3>
+				<span class="reduction">
+					<i class="icon-resize-full"></i>
+				</span>
+			</div> <!-- /widget-header -->
+
+			<div class="widget-content">
+
+				<div id="comparatif_annees_credit_cat" style="height:700px;width:1000px; "></div>
+				<div class="widget-header" id="reset_comparatif_annees_credit_cat" style="width:130px; cursor:pointer;float:right; margin-right:20px;margin-top: 10px;">
+					<i class="icon-zoom-out" ></i>
+					<span style="padding-left:20px">reset du zoom </span>
+				</div>	
+			</div> <!-- /widget-content -->
+
+		</div> <!-- /widget -->	
+			</div> <!-- /span6 -->
+</div> <!-- /row -->
+
+<div class="row" id="graphe_2annees">
+
+	<div class="span12" >
+
+		<div class="widget">
+
+			<div class="widget-header">
+				<i class="icon-star"></i>
+				<h3>Comparatif entre <?php echo $id_filtre_annee1;?> et <?php echo $id_filtre_annee2;?> (catégorie/dédit)</h3>
+				<span class="reduction">
+					<i class="icon-resize-full"></i>
+				</span>
+			</div> <!-- /widget-header -->
+
+			<div class="widget-content">
+
+				<div id="comparatif_annees_debit_cat" style="height:700px;width:1000px; "></div>
+				<div class="widget-header" id="reset_comparatif_annees_debit_cat" style="width:130px; cursor:pointer;float:right; margin-right:20px;margin-top: 10px;">
+					<i class="icon-zoom-out" ></i>
+					<span style="padding-left:20px">reset du zoom </span>
+				</div>	
+			</div> <!-- /widget-content -->
+
+		</div> <!-- /widget -->	
+			</div> <!-- /span6 -->
+</div> <!-- /row -->
+
+<?php } if(!empty($id_filtre_perso1) && !empty($id_filtre_perso2)){?>
 <div class="row" id="graphe_perso">
 
 	<div class="span12" >
@@ -632,6 +684,61 @@ if(!empty($id_filtre_perso1) && !empty($id_filtre_perso2)){?>
 
 				<div id="comparatif_perso_debit" style="height:700px;width:1000px; "></div>
 				<div class="widget-header" id="reset_comparatif_perso_debit" style="width:130px; cursor:pointer;float:right; margin-right:20px;margin-top: 10px;">
+					<i class="icon-zoom-out" ></i>
+					<span style="padding-left:20px">reset du zoom </span>
+				</div>	
+			</div> <!-- /widget-content -->
+
+		</div> <!-- /widget -->	
+			</div> <!-- /span6 -->
+</div> <!-- /row -->
+
+<?php } if(!empty($id_filtre_perso1) && !empty($id_filtre_perso2)  && in_array("categorie",$liste_graphes_retenus)){?>
+<div class="row" id="graphe_perso">
+
+	<div class="span12" >
+
+		<div class="widget">
+
+			<div class="widget-header">
+				<i class="icon-star"></i>
+				<h3>Comparatif personalisé (catégorie/crédit)</h3>
+				<span class="reduction">
+					<i class="icon-resize-full"></i>
+				</span>
+			</div> <!-- /widget-header -->
+
+			<div class="widget-content">
+
+				<div id="comparatif_perso_credit_cat" style="height:700px;width:1000px; "></div>
+				<div class="widget-header" id="reset_comparatif_perso_credit_cat" style="width:130px; cursor:pointer;float:right; margin-right:20px;margin-top: 10px;">
+					<i class="icon-zoom-out" ></i>
+					<span style="padding-left:20px">reset du zoom </span>
+				</div>	
+			</div> <!-- /widget-content -->
+
+		</div> <!-- /widget -->	
+			</div> <!-- /span6 -->
+</div> <!-- /row -->
+
+<div class="row" id="graphe_perso">
+
+	<div class="span12" >
+
+		<div class="widget">
+
+			<div class="widget-header">
+				<i class="icon-star"></i>
+				<h3>Comparatif personalisé (catégorie/débit)</h3>
+				<span class="reduction">
+					<i class="icon-resize-full"></i>
+				</span>
+			</div> <!-- /widget-header -->
+
+			<div class="widget-content">
+
+				<div id="comparatif_perso_debit_cat" style="height:700px;width:1000px; "></div>
+				<div class="widget-header" id="reset_comparatif_perso_debit_cat" style="width:130px; cursor:pointer;float:right; margin-right:20px;margin-top: 10px;">
 					<i class="icon-zoom-out" ></i>
 					<span style="padding-left:20px">reset du zoom </span>
 				</div>	

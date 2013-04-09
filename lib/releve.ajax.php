@@ -39,6 +39,7 @@ if(isset($_POST['verif_insert_releve']) && isset($_POST['mois_releve'])  && isse
 
 if(isset($_POST['fonction']) && $_POST['fonction']=="get_detail_releve_good" && isset($_POST['id_releve']) && isset($_POST['sens']) && isset($_POST['tri'])){
 	if(in_array($_POST['tri'],array("rd.date",
+									"regroupements",
 									"rd.libelle",
 									"operations",
 									"rd.montant",
@@ -47,13 +48,16 @@ if(isset($_POST['fonction']) && $_POST['fonction']=="get_detail_releve_good" && 
 									"pointe")
 	) && in_array($_POST['sens'],array("ASC","DESC"))
 	){
-		$stmt = $pdo->prepare("SELECT rd.id,rd.libelle,rd.montant,rd.type,rd.id_operations,rd.id_cat,
+		$stmt = $pdo->prepare("SELECT rd.id,rd.libelle,rd.montant,rd.type,rd.id_operations,rd.id_cat,GROUP_CONCAT(r.nom  ORDER BY r.nom SEPARATOR ',') as regroupements,
 									DATE_FORMAT(rd.date, '%e/%m/%Y') as date,rd.id_releve,rd.trouve,rd.pointe,o.nom_operations as operations, lc.libelle as categorie
 			from releve_detail rd
 			inner join operations o on o.id_operations=rd.id_operations 
 			left join liste_cat lc on rd.id_cat=lc.id_cat
+			left join r_regroupement_cat rc on rd.id_cat=rc.id_cat
+			left join regroupement r on rc.id_regroupement=r.id_regroupement
 			where rd.id_releve=:id_releve
 			AND trouve='1'
+			GROUP BY rd.id
 			ORDER BY ".$_POST['tri']." ".$_POST['sens']." ");
 
 
@@ -62,7 +66,7 @@ if(isset($_POST['fonction']) && $_POST['fonction']=="get_detail_releve_good" && 
 		$stmt->execute(array("id_releve"=>$_POST['id_releve']));
 		$aReleve=$stmt->fetchAll(PDO::FETCH_ASSOC);
 
-		$stmt = $pdo->prepare('SELECT * from liste_cat');	
+		$stmt = $pdo->prepare('SELECT * from liste_cat ORDER BY libelle');	
 		$stmt->execute();
 		$select="";
 		$aCat=array();
@@ -145,9 +149,16 @@ if(isset($_POST['update_table']) && isset($_POST['update_champ']) && isset($_POS
 				}
 			break;
 
+		case 'regroupements':
+				if($_POST['update_champ']=="libelle"){
+					$stmt = $pdo->prepare("Update `liste_cat` SET libelle = :valeur WHERE id_cat=:id");
+					$ok=true;
+				}
+			break;
+
 		case 'operations':
 				if($_POST['update_champ']=="libelle"){
-					$stmt = $pdo->prepare("Update `operations` SET nom_operations = :valeur WHERE id_operations=:id");
+					$stmt = $pdo->prepare("Update `regroupements` SET nom = :valeur WHERE id_regroupements=:id");
 					$ok=true;
 				}
 			break;
@@ -202,8 +213,16 @@ if(isset($_POST['update_table']) && isset($_POST['update_champ']) && isset($_POS
 }
 
 
-
-
+if(isset($_POST['update_regroupements']) && isset($_POST['id_regroupement']) && isset($_POST['id_cat'])){
+	$stmt = $pdo->prepare("delete from `r_regroupement_cat` WHERE id_regroupement=:id_regroupement");
+	$stmt->execute(array("id_regroupement"=>$_POST['id_regroupement']));
+	var_dump($_POST['id_cat']);
+	$stmt = $pdo->prepare("INSERT INTO `r_regroupement_cat` (id_regroupement ,id_cat) VALUES (:id_regroupement,:id_cat)");
+	foreach($_POST['id_cat'] as $id){
+		$stmt->execute(array("id_regroupement"=>$_POST['id_regroupement'],"id_cat"=>$id)) ;
+	}
+	
+}
 
 
 	if(isset($_POST['new_cat']) && $_POST['new_cat']!=''){
@@ -217,6 +236,12 @@ if(isset($_POST['update_table']) && isset($_POST['update_champ']) && isset($_POS
 		$stmt = $pdo->prepare("INSERT INTO operations(nom_operations) VALUE(:libelle)");
 		$stmt->execute(array("libelle"=>$_POST['new_operations']));
 		$stmt = $pdo->prepare("call update_releve_detail()");
+		$stmt->execute();
+	}
+
+	if(isset($_POST['new_regroupements']) && $_POST['new_regroupements']!=''){
+		$stmt = $pdo->prepare("INSERT INTO regroupement(nom) VALUE(:libelle)");
+		$stmt->execute(array("libelle"=>$_POST['new_regroupements']));
 		$stmt->execute();
 	}
 
@@ -246,13 +271,22 @@ if(isset($_POST['supprimer_categories']) && isset($_POST['id_categories']) && $_
 	$stmt->execute(array("id_categories"=>$_POST['id_categories']));
 }
 
+if(isset($_POST['supprimer_regroupement']) && isset($_POST['id_regroupement']) && $_POST['id_regroupement']!=1){
+	$stmt = $pdo->prepare("DELETE  FROM `regroupement` where id_regroupement=:id_regroupement");
+	$stmt->execute(array("id_regroupement"=>$_POST['id_regroupement']));
+}
+
+
 if(isset($_POST['supprimer_filtre']) && isset($_POST['id_filtre'])){
 	$stmt = $pdo->prepare("DELETE  FROM `filtres` where id_filtre=:id_filtre");
 	$stmt->execute(array("id_filtre"=>$_POST['id_filtre']));
 }
 
 
-
+if(isset($_POST['tout_pointer']) && isset($_POST['id_releve'])){
+	$stmt = $pdo->prepare("UPDATE  `releve_detail` set pointe='1' where id_releve=:id_releve AND trouve='1'");
+	$stmt->execute(array("id_releve"=>$_POST['id_releve']));
+}
 
 
 

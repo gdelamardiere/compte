@@ -1,6 +1,6 @@
 <?php
 function display_graphe_chart($nom_div,$nom_data){
-	echo "if($('#".$nom_div."').length && ".$nom_data.".length>0){
+	echo "if($('#".$nom_div."').length>0 && ".$nom_data.".length>0){
 		var ".$nom_div." = $.jqplot('".$nom_div."', [".$nom_data."], {
 			// Turns on animatino for all series in this plot.
 			animate: true,
@@ -56,7 +56,7 @@ function display_graphe_chart($nom_div,$nom_data){
 }
 
 function display_graphe_percent($nom_div,$nom_data){
-	echo "if($('#".$nom_div."').length && ".$nom_data.".length>0){
+	echo "if($('#".$nom_div."').length>0 && ".$nom_data.".length>0){
 		//graphe pourcent par categorie	
 		var ".$nom_div." = $.jqplot('".$nom_div."', [".$nom_data."], 
 			{ 
@@ -84,7 +84,7 @@ function display_graphe_percent($nom_div,$nom_data){
 
 
 function display_reset($nom_bouton,$nom_graphe){
-	echo " if($('#".$nom_bouton."').length){
+	echo " if($('#".$nom_bouton."').length>0){
 				$('#".$nom_bouton."').click(function() { ".$nom_graphe.".resetZoom() });
 			}";
 }
@@ -171,7 +171,7 @@ function display_graphe_comparatif_2annee($nom_div,$data,$aLabelSeries){
 
 
 function display_graphe_comparatif($nom_div,$aSeries,$aLabelSeries,$max){
-	echo "if($('#".$nom_div."').length && ".$aLabelSeries.".length>0){
+	echo "if($('#".$nom_div."').length>0 && ".$aLabelSeries.".length>0){
 		var ".$nom_div." = $.jqplot('".$nom_div."', [".implode(",",$aSeries)."], {
 			series:[";
 				foreach($aLabelSeries as $label){

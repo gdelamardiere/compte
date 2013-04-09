@@ -1,7 +1,7 @@
 <?php
 $page="releve";
 require_once ('header.php');
-
+$edition='';
 
 
 $id_selected=(isset($_GET['id_releve']))?$_GET['id_releve']:$liste_releve[0]['id_releve'];
@@ -10,11 +10,13 @@ if(isset($id_selected)){
 	if(isset($_POST['new_cat']) && $_POST['new_cat']!=''){
 		$stmt = $pdo->prepare("INSERT INTO liste_cat(libelle) VALUE(:libelle)");
 		$stmt->execute(array("libelle"=>$_POST['new_cat']));
+		$edition='<script type="text/javascript">$(document).ready(function() {edition();});</script>';
 	}
 
 	if(isset($_POST['new_keywords']) && $_POST['new_keywords']!='' ){
 		$stmt = $pdo->prepare("INSERT INTO keywords(id_cat,value) VALUE(:id_cat,:value)");
-		$stmt->execute(array("id_cat"=>$_POST['keywords_cat'],"value"=>$_POST['new_keywords']));
+		$stmt->execute(array("id_cat"=>$_POST['keywords_cat'],"value"=>$_POST['new_keywords']));		
+		$edition='<script type="text/javascript">$(document).ready(function() {edition();});</script>';
 	}
 
 	$stmt = $pdo->prepare("call update_releve_detail()");
@@ -40,14 +42,17 @@ if(isset($id_selected)){
 
 
 
-	$stmt = $pdo->prepare("SELECT rd.id,rd.libelle,rd.montant,rd.type,rd.id_operations,rd.id_cat,
+	$stmt = $pdo->prepare("SELECT rd.id,rd.libelle,rd.montant,rd.type,rd.id_operations,rd.id_cat,GROUP_CONCAT(r.nom  ORDER BY r.nom SEPARATOR ',') as regroupements,
 									DATE_FORMAT(rd.date, '%e/%m/%Y') as date,rd.id_releve,rd.trouve,rd.pointe,
 									o.nom_operations as operations, lc.libelle as categorie
 		from releve_detail rd
 		inner join operations o on o.id_operations=rd.id_operations 
 		left join liste_cat lc on rd.id_cat=lc.id_cat
+		left join r_regroupement_cat rc on rd.id_cat=rc.id_cat
+		left join regroupement r on rc.id_regroupement=r.id_regroupement
 		where rd.id_releve=:id_releve
 		AND trouve='1'
+		GROUP BY rd.id
 		ORDER BY rd.date,rd.id_operations,rd.type");
 
 	$stmt->execute(array("id_releve"=>$id_selected));
@@ -65,7 +70,7 @@ if(isset($id_selected)){
 	$aReleveErreur=$stmt->fetchAll(PDO::FETCH_ASSOC);
 
 
-	$stmt = $pdo->prepare('SELECT * from liste_cat');	
+	$stmt = $pdo->prepare('SELECT * from liste_cat ORDER BY libelle');	
 	$stmt->execute();
 	$select="";
 	$aCat=array();
@@ -143,16 +148,31 @@ if(isset($id_selected)){
 				</div> <!-- /widget -->
 
 
-	
+	<form method="post" action="#">
+		<div class="edition">
+			Nouvelle catégorie:  <input type='text' name="new_cat"/>
+			<input type="submit" name="button_cat" value="Ajouter">
+			<br><br>
+			Nouveau Keywords:  <input type='text' name="new_keywords"/> <SELECT name='keywords_cat' ><?php echo $select;?></SELECT>
+			<input type="submit" name="button_keywords" value="Ajouter">
+		</div>
+	</form> 
 		
 		
 	
 	<div class="widget-header" id="clearFilter" style="cursor:pointer;float:right;width:100px;margin-bottom: 10px;padding-left:20px;margin-right:30px;">
 						Vider le filtre 
 	</div> 
-	<div class="widget-header" style="float:right;width:140px;margin-bottom: 10px;padding-left:20px;margin-right:30px;">
-			<span style="cursor:pointer;" onclick="edition();" class="lecture" >Passer en mode édition</span>
-			<span style="cursor:pointer;" onclick="lecture();" class="edition" >Passer en mode lecture</span>   
+
+	<div class="widget-header edition" id="clearFilter" style="cursor:pointer;float:right;width:100px;margin-bottom: 10px;padding-left:20px;margin-right:30px;" onclick="pointerAll(<?php echo $id_selected;?>);">
+						Tout pointer
+	</div> 
+
+	<div class="widget-header  lecture" style="cursor:pointer;float:right;width:140px;margin-bottom: 10px;padding-left:20px;margin-right:30px;" onclick="edition();">
+			Passer en mode édition			
+	</div> 
+	<div class="widget-header edition" style="cursor:pointer;float:right;width:140px;margin-bottom: 10px;padding-left:20px;margin-right:30px;" onclick="lecture();">
+			Passer en mode lecture 
 	</div> 
 	<div class="widget-header" style="width:140px;margin-bottom: 10px;padding-left:20px;">
 		Relevé du mois 
@@ -165,9 +185,9 @@ if(isset($id_selected)){
 					<th width="80" class="tri_good" id="rd.date"><i class="icon-arrow-down"></i> Date Transaction </th>
 					<th width="400" class="tri_good" id="rd.libelle"><i style="display:none"></i> Libellé</th>
 					<th width="80" class="tri_good" id="rd.montant"><i style="display:none"></i> Montant</th>
-					<th width="80" class="tri_good" id="rd.type" filter-type='ddl'><i style="display:none"></i> Type</th>
-					<th width="150" class="tri_good" id="operations" filter-type='ddl'><i style="display:none"></i> Opérations</th>		
-							
+					<th width="80" class="tri_good" id="rd.type" filter-type='ddl'><i style="display:none"></i> Type</th>	
+					<th width="150" class="tri_good" id="regroupements" filter-type='ddl'><i style="display:none"></i> Regroupements</th>
+					<th width="150" class="tri_good" id="operations" filter-type='ddl'><i style="display:none"></i> Opérations</th>				
 					<th width="200" class="tri_good" id="categorie"  filter-type='ddl'><i style="display:none"></i> Catégorie</th>
 					<th width="0" style="display:none"  filter='false'></th>
 					<th width="50" class="tri_good" id="pointe"  filter='false'><i style="display:none"></i> Pointage</th>
@@ -228,5 +248,6 @@ if(isset($id_selected)){
 <?php
 	}
 	require_once ('footer.php');
+	echo $edition;
 }
 ?>
