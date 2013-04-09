@@ -78,7 +78,7 @@ if(!empty($_GET['erreur'])){
 									<label class="control-label">Mois de l'import (ex: 01)</label>
 									<div class="controls">
 										<input type="text" required  name="mois_import" id="mois_import"
-										data-validation-regex-regex="[0-1][1-9]"
+										data-validation-regex-regex="[0-1][0-9]"
 										data-validation-regex-message="le mois doit être sur 2 chiffres (ex: 01)" />
 										<p class="help-block"></p>
 									</div>

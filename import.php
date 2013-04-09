@@ -20,7 +20,7 @@ if(isset($_FILES['fichier_import'])
 	$id_releve = (empty($ret))?0:$ret['id'];
 	$modifier=($_POST['modifier']==1)?1:0;
 	$extension=strtolower(pathinfo($_FILES['fichier_import']['name'],PATHINFO_EXTENSION));
-	if($extension!="xls" && $extension!="xlsx" && $extension!="csv"){	
+	if($extension!="xls" && $extension!="xlsx" && $extension!="csv"  && $extension!="txt"){	
 		$erreur=3;	
 	}
 	else {
@@ -32,19 +32,6 @@ if(isset($_FILES['fichier_import'])
 			$aRegex_find=$stmt->fetchAll(PDO::FETCH_ASSOC);
 
 			
-			if($extension=="xls" || $extension=="xlsx"){
-				$objPHPExcel = PHPExcel_IOFactory::load($fichier);
-				$aContenuFichier = $objPHPExcel->getActiveSheet()->toArray(null,true,false,false);
-			}
-			else if($extension=="csv"){
-				$aContenuFichier=parse_csv_file($fichier,0,4);
-			}
-			else{
-				header('Location: index.php?erreur=3');
-				die();
-			}
-			
-
 			
 			$date_deb="";
 			$date_fin="";
@@ -73,7 +60,7 @@ if(isset($_FILES['fichier_import'])
 
 			
 
-			$stmt = $pdo->prepare("INSERT INTO  `releve_detail` (
+			$stmt_good = $pdo->prepare("INSERT INTO  `releve_detail` (
 				id_operations,type,libelle,id_releve,montant,date
 				)
 			VALUES (:id_operations,:type,:libelle,:id_releve,:montant,:date)"
@@ -84,32 +71,47 @@ if(isset($_FILES['fichier_import'])
 				)
 			VALUES (:trouve,:type,:libelle,:id_releve,:montant,:date)"
 			);
-			foreach($liste_Excel as $id=>$tab){
-				${'pos_'.$tab['libelle']}=$tab['position']-1;
-			}
 
-			foreach($aContenuFichier as $key=> $value){
-				$j=0;
-				$montant=number_format(floatval(str_replace(",",".",$value[$pos_montant])) , 2,',','' );
-				if($extension=="xls" || $extension=="xlsx"){
-					$date=PHPExcel_Style_NumberFormat::toFormattedString($value[$pos_date], "YYYY/MM/DD");
+			if($extension=="xls" || $extension=="xlsx"){
+				$objPHPExcel = PHPExcel_IOFactory::load($fichier);
+				$aContenuFichier = $objPHPExcel->getActiveSheet()->toArray(null,true,false,false);
+			}
+			else if($extension=="csv"){
+				$aContenuFichier=parse_csv_file($fichier,0,4);
+			}			
+			else{	
+				require_once(ROOT.'import_txt.php')	;
+			}
+			
+			if($extension!="txt"){
+				foreach($liste_Excel as $id=>$tab){
+					${'pos_'.$tab['libelle']}=$tab['position']-1;
 				}
-				else if($extension=="csv"){
-					$date=preg_replace("#([0-9]{2})/([0-9]{2})/([0-9]{4})#","$3-$2-$1",$value[$pos_date]);
+
+				foreach($aContenuFichier as $key=> $value){
+					$j=0;
+					$montant=number_format(floatval(str_replace(",",".",$value[$pos_montant])) , 2,',','' );
+					if($extension=="xls" || $extension=="xlsx"){
+						$date=PHPExcel_Style_NumberFormat::toFormattedString($value[$pos_date], "YYYY/MM/DD");
+					}
+					else if($extension=="csv"){
+						$date=preg_replace("#([0-9]{2})/([0-9]{2})/([0-9]{4})#","$3-$2-$1",$value[$pos_date]);
+					}
+					
+					$type=($montant<0)?"DEBIT":"CREDIT";	
+					while($j<sizeof($aRegex_find) && !preg_match($aRegex_find[$j]['regex'],$value[$pos_libelle])){
+						$j++;
+					}
+					if($j>=sizeof($aRegex_find)){
+						$val=array('id_releve'=>$id_releve,'trouve'=>'0','type'=>$type,"libelle"=>$value[1],"montant"=>$montant,'date'=>$date);
+						$stmt_erreur->execute($val);
+					}
+					else{	    		
+						$val=array('id_releve'=>$id_releve,'id_operations'=>$aRegex_find[$j]['id_operations'],'type'=>$type,"libelle"=>$value[1],"montant"=>$montant,'date'=>$date);  
+						$stmt_good->execute($val);
+					}
 				}
 				
-				$type=($montant<0)?"DEBIT":"CREDIT";	
-				while($j<sizeof($aRegex_find) && !preg_match($aRegex_find[$j]['regex'],$value[$pos_libelle])){
-					$j++;
-				}
-				if($j>=sizeof($aRegex_find)){
-					$val=array('id_releve'=>$id_releve,'trouve'=>'0','type'=>$type,"libelle"=>$value[1],"montant"=>$montant,'date'=>$date);
-					$stmt_erreur->execute($val);
-				}
-				else{	    		
-					$val=array('id_releve'=>$id_releve,'id_operations'=>$aRegex_find[$j]['id_operations'],'type'=>$type,"libelle"=>$value[1],"montant"=>$montant,'date'=>$date);  
-					$stmt->execute($val);
-				}
 			}
 			$erreur=0;
 		}
