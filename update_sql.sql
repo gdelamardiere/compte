@@ -10,7 +10,9 @@ ALTER TABLE `releve_detail` ADD FOREIGN KEY ( `id_cat` ) REFERENCES `comptes`.`l
 ) ON DELETE CASCADE ON UPDATE CASCADE ;
 UPDATE `comptes`.`liste_cat` SET `libelle` = 'Non défini' WHERE `liste_cat`.`id_cat` =1;
 
-
+ALTER TABLE `liste_cat` ADD UNIQUE (
+`libelle`
+);
 
 -- --------------------------------------------------------
 
