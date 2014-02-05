@@ -1,6 +1,6 @@
 <?php
 
-$db=false;
+$db=true;
 	// on crée la requête SQL
 $stmt = $pdo->prepare('SELECT * FROM regex_replace order by ordre ');
 $stmt->execute();
@@ -15,7 +15,7 @@ if($db){
 foreach($aRegex_replace as $regex){
 	$contenu_fichier = preg_replace ($regex['regex'],$regex['replace'],$contenu_fichier);
 }
-	//$contenu_fichier=str_replace("/explode//explode/","/explode/",$contenu_fichier);
+	$contenu_fichier=str_replace("/explode//explode/","/explode/",$contenu_fichier);
 $result=array();
 	//date et solde
 preg_match("#Credit SOLDE (CREDITEUR)?(DEBITEUR)? AU ([0-9]{2}.[0-9]{2}.[0-9]{4}) ([^ ]+)#",$contenu_fichier,$temp);
